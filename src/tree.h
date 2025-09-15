@@ -40,7 +40,7 @@ class Tree {
 
     BaseNode()
         : item(value_type()),
-          color(false),
+          color(BLACK),
           right(nullptr),
           left(nullptr),
           p(nullptr) {}

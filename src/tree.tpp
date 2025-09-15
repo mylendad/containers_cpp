@@ -12,18 +12,26 @@
 namespace s21 {
 
 template <typename T>
-s21::Tree<T>::Tree(const Tree &m) {
-  // if del?
-  this->color = m->color;
-  this->left = m->left;
-  this->right = m->right;
-  this->p = m->p;
-
-  this->size_ = m->size_;
+s21::Tree<T>::Tree(const Tree &m)
+// : color(m->color), left(m->left), right(m->right), p(m->p), size(m->size_)
+{
+  // if del
+  this->tree_root_ = m.tree_root_;
+  this->tree_nil_ = m.tree_nil_;
+  this->size_ = m.size_;
 }  // copy constructor
 
 template <typename T>
-s21::Tree<T>::Tree(Tree &&m) {}  // moTe constructor
+s21::Tree<T>::Tree(Tree &&m) {
+  this->tree_root_ = m.tree_root_;
+  this->tree_nil_ = m.tree_nil_;
+  this->size_ = m->size_;
+
+  m.tree_root_ = nullptr;
+  m.tree_nil_ = nullptr;
+  m.size_ = 0;
+}  // moTe constructor
+
 template <typename T>
 s21::Tree<T>::~Tree() {}  // destructor
 

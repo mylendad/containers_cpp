@@ -34,6 +34,22 @@ TEST(TestMap, Size_map) {
   // myMap.print_start();
 }
 
+TEST(TestCopy, Size_map) {
+  s21::Map<std::string, int> myMap = {
+      {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4},
+      {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8},
+      {"ключ09", 9}, {"ключ10", 10}};
+
+  // myMap.print_start();
+
+  s21::Map<std::string, int> myMap_1 = myMap;
+
+  EXPECT_EQ((int)myMap.size(), (int)myMap_1.size());
+
+  myMap.print_start();
+  myMap_1.print_start();
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
