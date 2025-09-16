@@ -46,6 +46,16 @@ const s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator=(
   return *this;
 }
 
+// template <typename T>
+// const s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator=(
+//     const TreeIterator &other) {
+//   if (this != &other) {
+//     this->current_ = other.current_;
+//     this->tree_ = other.tree_;
+//   }
+//   return *this;
+// }
+
 template <typename T>
 
 typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator++() {
@@ -55,11 +65,28 @@ typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator++() {
 }
 
 template <typename T>
-
+// как это работает??
 typename s21::Tree<T>::TreeIterator s21::Tree<T>::TreeIterator::operator++(
     int) {
   iterator temp = *this;
   ++(*this);
+  return temp;
+}
+
+template <typename T>
+
+typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator--() {
+  this->current_ = tree_->TreeDescendant(this->current_);
+
+  return *this;
+}
+
+template <typename T>
+
+typename s21::Tree<T>::TreeIterator s21::Tree<T>::TreeIterator::operator--(
+    int) {
+  iterator temp = *this;
+  --(*this);
   return temp;
 }
 

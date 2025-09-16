@@ -26,8 +26,8 @@ class Tree {
   struct BaseNode;
 
  protected:
-  BaseNode *tree_root_;
   BaseNode *tree_nil_;
+  BaseNode *tree_root_;
   size_type size_ = 0;
 
  public:
@@ -51,7 +51,11 @@ class Tree {
 
   BaseNode *TreeMinimum(BaseNode *&node) const;
 
+  BaseNode *TreeMaximum(BaseNode *&node) const;
+
   BaseNode *TreeSuccessor(BaseNode *&x) const;
+
+  BaseNode *TreeDescendant(BaseNode *&x) const;
 
   void repainting_red_uncle_n_dad(BaseNode *&y, BaseNode *&z);
 
@@ -72,6 +76,8 @@ class Tree {
   void transplant(BaseNode *&u, BaseNode *&v);
 
   void erase(iterator pos);
+
+  void swap(Tree &other);
 
   void delete_fixup(BaseNode *&x);
 
@@ -102,6 +108,7 @@ class Tree {
     BaseNode *get_node() const { return current_; }
 
     const TreeIterator &operator=(const TreeIterator &other);
+
     // typename Tree<K, T>::TreeIterator &Tree<K,
     // T>::TreeIterator::operator+(
     //     const TreeIterator &other);
@@ -115,7 +122,21 @@ class Tree {
     TreeIterator &operator++();
 
     TreeIterator operator++(int);
+
+    TreeIterator &operator--();
+
+    TreeIterator operator--(int);
   };
+
+  Tree &operator=(const Tree &other);
+
+  Tree &operator=(Tree &&other);
+
+  // Tree(const Tree &m);
+
+  // operator=(Tree && m);
+
+  // Tree(map &&m);
 
   // Tree(std::initializer_list<value_type> const &items);
 

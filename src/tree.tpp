@@ -25,12 +25,20 @@ template <typename T>
 s21::Tree<T>::Tree(Tree &&m) {
   this->tree_root_ = m.tree_root_;
   this->tree_nil_ = m.tree_nil_;
-  this->size_ = m->size_;
+  this->size_ = m.size_;
 
   m.tree_root_ = nullptr;
   m.tree_nil_ = nullptr;
   m.size_ = 0;
 }  // moTe constructor
+
+// template <typename T>
+// s21::Tree<T>::~Tree() {
+//   delete[] tree_nil_;
+//   tree_root_ = nullptr;
+//   tree_nil_ = nullptr;
+//   size_ = 0;
+// }  // destructor
 
 template <typename T>
 s21::Tree<T>::~Tree() {}  // destructor
@@ -38,9 +46,9 @@ s21::Tree<T>::~Tree() {}  // destructor
 template <typename T>
 s21::Tree<T>::Tree() {
   tree_nil_ = new BaseNode();
-  tree_nil_->color = BLACK;
+  tree_nil_->color = BLACK;  // вынести
   tree_nil_->left = tree_nil_;
-  tree_nil_->right = tree_nil_;
+  tree_nil_->right = tree_root_;
   tree_nil_->p = tree_nil_;
 
   tree_root_ = tree_nil_;
@@ -61,6 +69,29 @@ s21::Tree<T>::Tree(std::initializer_list<value_type> const &items) {
   for (auto &item : items) {
     this->insert(item);
   }
+}
+
+template <typename T>
+
+s21::Tree<T> &s21::Tree<T>::operator=(const Tree<T> &other) {
+  // if del
+  this->tree_root_ = other.tree_root_;  // вынести
+  this->tree_nil_ = other.tree_nil_;
+  this->size_ = other.size_;
+  return *this;
+}
+
+template <typename T>
+
+s21::Tree<T> &s21::Tree<T>::operator=(Tree<T> &&other) {
+  this->tree_root_ = other.tree_root_;  // вынести
+  this->tree_nil_ = other.tree_nil_;
+  this->size_ = other.size_;
+
+  other.tree_root_ = nullptr;
+  other.tree_nil_ = nullptr;
+  other.size_ = 0;
+  return *this;
 }
 
 // template <typename T>
@@ -296,6 +327,14 @@ void s21::Tree<T>::erase(iterator pos) {
 }
 
 template <typename T>
+
+void s21::Tree<T>::swap(Tree &other) {
+  Tree temp(other);
+  other = std::move(*this);
+  *this = std::move(temp);
+}
+
+template <typename T>
 void s21::Tree<T>::delete_fixup(BaseNode *&x) {
   while (x != tree_root_ && x->color == BLACK) {
     if (x == x->p->left) {
@@ -394,10 +433,10 @@ void s21::Tree<T>::print_start() {
   std::cout << "======================" << std::endl;
 }
 
-template <typename T>
-bool s21::Tree<T>::is_zero(size_type value) {
-  return (bool)fabs(value) < 1e-7;
-}
+// template <typename T>
+// bool s21::Tree<T>::is_zero(size_type value) {
+//   return (bool)fabs(value) < 1e-7;
+// }
 
 template <typename T>
 typename s21::Tree<T>::size_type s21::Tree<T>::size() {
@@ -406,8 +445,8 @@ typename s21::Tree<T>::size_type s21::Tree<T>::size() {
 
 template <typename T>
 bool s21::Tree<T>::empty() {
-  bool res = true;
-  if (!is_zero(this->size_)) res = false;
+  bool res = false;
+  if (this->size_ == 0) res = true;
   return res;
 }
 
@@ -439,6 +478,19 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMinimum(
 }
 
 template <typename T>
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(
+    BaseNode *&node) const {
+  BaseNode *x;
+  BaseNode *max;
+  x = node;
+  while (x != this->tree_nil_) {
+    max = x;
+    x = x->right;
+  }
+  return max;
+}
+
+template <typename T>
 typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeSuccessor(
 
     BaseNode *&x) const {
@@ -455,6 +507,22 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeSuccessor(
 }
 
 template <typename T>
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeDescendant(
+
+    BaseNode *&x) const {
+  BaseNode *y;
+  if (x->left != tree_nil_) {
+    return TreeMaximum(x->left);
+  }
+  y = x->p;
+  while (y != tree_nil_ && x == y->left) {
+    x = y;
+    y = y->p;
+  }
+  return y;
+}
+
+template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
   BaseNode *min = TreeMinimum(this->tree_root_);
   iterator minimum = iterator(min, this);
@@ -463,9 +531,9 @@ typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
 
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::end() {
-  BaseNode *min = TreeMinimum(this->tree_root_);
-  iterator minimum = iterator(min, this);
-  BaseNode *max;
+  BaseNode *max = TreeMaximum(this->tree_root_);
+  iterator maximum = iterator(max, this);
+  return *max;
 }
 
 // template <typename T>
