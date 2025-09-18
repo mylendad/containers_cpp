@@ -11,27 +11,62 @@
 
 namespace s21 {
 
-// template <typename K, typename T>
-// void s21::Map<const K, T>::node_insert(Node &arr, const value_type &item) {
+// template <typename Key, typename T>
+
+// std::pair<typename s21::Map<Key, T>::iterator, bool> s21::Map<Key,
+// T>::insert(
+//     const Key &key, const T &obj) {
+//   //   value_type value;
+//   //   value.first = key;
+//   //   value.second = obj;
+//   value_type value(key, obj);
+//   this->insert(value);
+// }
+
+// template <typename Key, typename T>
+
+// T& s21::Map<Key, T>::operator[](const Key& key){
+
+// }
+
+// template <typename Key, typename T>
+// //
+// T& s21::Map<Key, T>::at(const Key& Key) {
+//     T temp = 0;
+//     iterator iter = this->begin();
+//     size_type size = this->size();
+//     for (size_type i = 0; i<size; i++){
+// if ()
+//     }
+//     if ()
+//     throw std::out_of_range("Key not exist.");
+// }
+
+// template <typename Key, typename T>
+// T& s21::Map<Key, T>::at(const Key& key) {
+// }
+
+// template <typename Key, typename T>
+// void s21::Map<const Key, T>::node_insert(Node &arr, const value_type &item) {
 //   arr.item = item;
 // }
 
-// template <typename K, typename T>
-// void s21::Map<const K, T>::node_insert(Node &arr, const value_type &item) {
+// template <typename Key, typename T>
+// void s21::Map<const Key, T>::node_insert(Node &arr, const value_type &item) {
 //   arr = Node(item);
 // }
-// template <typename K, typename T>
-// bool s21::Map<const K, T>::is_zero(size_type value) {
+// template <typename Key, typename T>
+// bool s21::Map<const Key, T>::is_zero(size_type value) {
 //   return (bool)fabs(value) < 1e-7;
 // }
 
-// template <typename K, typename T>
-// typename s21::Map<const K, T>::size_type s21::Map<const K, T>::size() {
+// template <typename Key, typename T>
+// typename s21::Map<Key, T>::size_type s21::Map< Key, T>::size() {
 //   return this->size_;
 // }
 
-// template <typename K, typename T>
-// bool s21::Map<const K, T>::empty() {
+// template <typename Key, typename T>
+// bool s21::Map<const Key, T>::empty() {
 //   bool res = true;
 //   if (!is_zero(this->size_)) res = false;
 //   return res;
@@ -39,8 +74,8 @@ namespace s21 {
 
 // using
 
-// template <typename K, typename T>
-// s21::Map<const K, T>::Map(std::initializer_list<value_type> const &items) {
+// template <typename Key, typename T>
+// s21::Map<const Key, T>::Map(std::initializer_list<value_type> const &items) {
 //   // Node arr[items.size()];
 
 //   Node *x;
@@ -78,12 +113,12 @@ namespace s21 {
 //    // std::initializer_list
 // }
 
-// template <typename K, typename T>
-// s21::Map<const K, T>::Map(const Map &m) {}  // copy constructor
-// template <typename K, typename T>
-// s21::Map<const K, T>::Map(Map &&m) {}  // moTe constructor
-// template <typename K, typename T>
-// s21::Map<const K, T>::~Map()  // destructor
+// template <typename Key, typename T>
+// s21::Map<const Key, T>::Map(const Map &m) {}  // copy constructor
+// template <typename Key, typename T>
+// s21::Map<const Key, T>::Map(Map &&m) {}  // moTe constructor
+// template <typename Key, typename T>
+// s21::Map<const Key, T>::~Map()  // destructor
 // // operator=(Map &&m)
 // {}  // assignment operator oTerload for moTing object
 // };  // namespace s21
@@ -96,23 +131,23 @@ namespace s21 {
 //   return new BaseNode(item);
 // }
 
-// template <typename K, typename T>
-// typename s21::Map<const K, T>::Node s21::Map<const K, T>::create_node(
+// template <typename Key, typename T>
+// typename s21::Map<const Key, T>::Node s21::Map<const Key, T>::create_node(
 //     const value_type &item) {
-//   // typename s21::Map<const K, T>::size_type s21::Map<const K, T>::size() {
-//   return new Node(item);
+//   // typename s21::Map<const Key, T>::size_type s21::Map<const Key,
+//   T>::size() { return new Node(item);
 // }
 //   //   std::cout << "bread\t" << myMap["ключ1"] << std::endl;
-//   //   std::cout << "milk\t" << myMap["ключ2"] << std::endl;
+//   //   std::cout << "milKey\t" << myMap["ключ2"] << std::endl;
 //   //   std::cout << "apple\t" << myMap["ключ3"] << std::endl;
 
 //   // s21::Map<std::string, unsigned> products_2;
 //   // products_2["bread"] = 30;
-//   // products_2["milk"] = 80;
+//   // products_2["milKey"] = 80;
 //   // products_2["apple"] = 60;
 
 //   // std::cout << "bread\t" << products_2["bread"] << std::endl;
-//   // std::cout << "milk\t" << products_2["milk"] << std::endl;
+//   // std::cout << "milKey\t" << products_2["milKey"] << std::endl;
 //   // std::cout << "apple\t" << products_2["apple"] << std::endl;
 // }
 }  // namespace s21

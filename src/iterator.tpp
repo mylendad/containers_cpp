@@ -14,20 +14,22 @@ namespace s21 {
 template <typename T>
 s21::Tree<T>::TreeIterator::TreeIterator()
     : current_(nullptr),
-      tree_(nullptr)
+      nil_(nullptr)
 // , nil_(nullptr)
 {}
 
 template <typename T>
-s21::Tree<T>::TreeIterator::TreeIterator(BaseNode *node, Tree<T> *tree) {
+s21::Tree<T>::TreeIterator::TreeIterator(BaseNode *node,
+                                         //  Tree<T> *tree
+                                         BaseNode *&nil) {
   this->current_ = node;
-  this->tree_ = tree;
+  this->nil_ = nil;
 }
 
 template <typename T>
 s21::Tree<T>::TreeIterator::TreeIterator(const TreeIterator &other) {
   this->current_ = other.current_;
-  this->tree_ = other.tree_;
+  this->nil_ = other.nil_;
 }
 
 template <typename T>
@@ -41,9 +43,14 @@ const s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator=(
     const TreeIterator &other) {
   if (this != &other) {
     this->current_ = other.current_;
-    this->tree_ = other.tree_;
+    this->nil_ = other.nil_;
   }
   return *this;
+}
+
+template <typename T>
+const typename s21::Tree<T>::BaseNode &s21::Tree<T>::TreeIterator::operator*() {
+  return this->current_;
 }
 
 // template <typename T>
@@ -59,8 +66,29 @@ const s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator=(
 template <typename T>
 
 typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator++() {
-  this->current_ = tree_->TreeSuccessor(this->current_);
+  // this->current_ = tree_->TreeSuccessor(this->current_);
 
+  BaseNode *x = this->get_node();
+  BaseNode *y;
+  BaseNode *z = x->right;
+  BaseNode *min;
+  if (x->right != nil_) {
+    // this->current_ = TreeMinimum(x->right);
+
+    while (z != this->nil_) {
+      min = z;
+      z = z->left;
+    }
+    this->current_ = min;
+
+  } else {
+    y = x->p;
+    while (y != nil_ && x == y->right) {
+      x = y;
+      y = y->p;
+    }
+    this->current_ = y;
+  }
   return *this;
 }
 

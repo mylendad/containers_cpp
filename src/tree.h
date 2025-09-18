@@ -22,6 +22,7 @@ class Tree {
   typedef value_type &reference;
   typedef const value_type &const_reference;
   typedef TreeIterator iterator;
+  // using iterator = TreeIterator;
   typedef const key_type *const_iterator;
   struct BaseNode;
 
@@ -71,7 +72,11 @@ class Tree {
 
   void insert_fixup(BaseNode *&y, BaseNode *&z);
 
-  void insert(const value_type &node);
+  // std::pair<iterator, bool> simple_insert(const value_type &node);
+
+  std::pair<iterator, bool> insert(const value_type &node);
+
+  // std::pair<iterator, bool> insert(const Key &key, const T &obj);
 
   void transplant(BaseNode *&u, BaseNode *&v);
 
@@ -93,13 +98,15 @@ class Tree {
   class TreeIterator {
    private:
     BaseNode *current_;
-    Tree<T> *tree_;  //
+    // Tree<T> *tree_;  //
     BaseNode *nil_;
 
    public:
     TreeIterator();
 
-    TreeIterator(BaseNode *node, Tree<T> *tree);
+    TreeIterator(BaseNode *node,
+                 // , Tree<T> *tree
+                 BaseNode *&nil);
 
     TreeIterator(const TreeIterator &other);
 
@@ -108,6 +115,8 @@ class Tree {
     BaseNode *get_node() const { return current_; }
 
     const TreeIterator &operator=(const TreeIterator &other);
+
+    const BaseNode &operator*();
 
     // typename Tree<K, T>::TreeIterator &Tree<K,
     // T>::TreeIterator::operator+(

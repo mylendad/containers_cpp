@@ -228,39 +228,65 @@ void s21::Tree<T>::insert_fixup(BaseNode *&y, BaseNode *&z) {
   }
 }
 
+// template <typename T>
+// std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::simple_insert(
+//     const Key &key, const T &obj) {
+
+//     }
+
 template <typename T>
-void s21::Tree<T>::insert(const value_type &node) {
+std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
+    const value_type &node) {
   BaseNode *x;
   BaseNode *y;
+  std::pair<typename s21::Tree<T>::iterator, bool> result;
+  int flag = 0;
+
+  result.second = false;
 
   y = this->tree_nil_;
   x = this->tree_root_;
   BaseNode *z;
   z = create_node(node);
+  iterator iter(z, y);
+  result.first = iter;
   this->size_++;
   while (x != this->tree_nil_) {  // начинаем с корня (может не работать!)
     y = x;
     if ((z->item.first) < (x->item.first))  //
       x = x->left;                          // если < то идем влево от
     // корня
-    else
+    else if ((z->item.first) > (x->item.first))
       x = x->right;  // если > или = идем вправо от корня
+    else {
+      iterator iter_1(x, y);
+      result.first = iter_1;
+      flag = 1;
+      return result;  // изменить (вернуть итератор на сущ)
+    }
   }
-  z->p = y;  // здесь на место листа ставим зэт , и родителем зэта узел
-             // находящийся выше
-  if (y == this->tree_nil_) {  // в цикл while (x != this->tree_nil_) не
-                               // заходил значит дерево пустое
-    this->tree_root_ = z;      // дерево было пустым, делаем зэт корнем
-  } else if ((z->item.first) <
-             (y->item.first))  // устанавливаем зет на место потомка
-    y->left = z;
-  else
-    y->right = z;
-  z->left = this->tree_nil_;
-  z->right = this->tree_nil_;
-  z->color = RED;
-  insert_fixup(y, z);
-  this->tree_root_->color = BLACK;
+  if (flag == 0) {
+    z->p = y;  // здесь на место листа ставим зэт , и родителем зэта узел
+               // находящийся выше
+    if (y == this->tree_nil_) {  // в цикл while (x != this->tree_nil_) не
+                                 // заходил значит дерево пустое
+      this->tree_root_ = z;      // дерево было пустым, делаем зэт корнем
+    } else if ((z->item.first) <
+               (y->item.first))  // устанавливаем зет на место потомка
+      y->left = z;
+    else
+      y->right = z;
+    z->left = this->tree_nil_;
+    z->right = this->tree_nil_;
+    z->color = RED;
+    insert_fixup(y, z);
+    this->tree_root_->color = BLACK;
+
+    // result.first =
+    result.second = true;
+  }
+
+  return result;
 }
 
 template <typename T>
@@ -294,7 +320,9 @@ void s21::Tree<T>::erase(iterator pos) {
   } else if (z->left != this->tree_nil_ &&
              z->right != this->tree_nil_) {  // когда есть 2 дочерних узла
 
-    y = this->TreeSuccessor(z);
+    // y = this->TreeSuccessor(z);  // поменять на ++
+    pos++;
+    y = pos.get_node();
     if (z->right != this->tree_nil_) {
       y = TreeMinimum(z->right);
     } else {
@@ -490,21 +518,21 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(
   return max;
 }
 
-template <typename T>
-typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeSuccessor(
+// template <typename T>
+// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeSuccessor(
 
-    BaseNode *&x) const {
-  BaseNode *y;
-  if (x->right != tree_nil_) {
-    return TreeMinimum(x->right);
-  }
-  y = x->p;
-  while (y != tree_nil_ && x == y->right) {
-    x = y;
-    y = y->p;
-  }
-  return y;
-}
+//     BaseNode *&x) const {
+//   BaseNode *y;
+//   if (x->right != tree_nil_) {
+//     return TreeMinimum(x->right);
+//   }
+//   y = x->p;
+//   while (y != tree_nil_ && x == y->right) {
+//     x = y;
+//     y = y->p;
+//   }
+//   return y;
+// }
 
 template <typename T>
 typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeDescendant(
@@ -525,14 +553,14 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeDescendant(
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
   BaseNode *min = TreeMinimum(this->tree_root_);
-  iterator minimum = iterator(min, this);
+  iterator minimum = iterator(min, this->tree_nil_);
   return minimum;
 }
 
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::end() {
   BaseNode *max = TreeMaximum(this->tree_root_);
-  iterator maximum = iterator(max, this);
+  iterator maximum = iterator(max, this->tree_nil_);
   return *max;
 }
 

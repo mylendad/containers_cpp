@@ -16,33 +16,33 @@ TEST(TestMap, Size_map) {
 
   iter = myMap.begin();
   iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
-  iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
+  // iter++;
   iter++;
   iter--;
-  iter++;
-  iter++;
-  iter++;
+  // iter++;
+  // iter++;
+  // iter++;
   myMap.erase(iter);
 
   // std::cout << (int)myMap.size() << std::endl;
   // s21::Map<std::string, int>::Node A = new Node;
   EXPECT_EQ((int)myMap.size(), 9);
-
+  std::cout << "После удаления" << std::endl;
   myMap.print_start();
 
   // iter++; // sega
@@ -74,7 +74,7 @@ TEST(TestMapCopyMoveConstructor, Size_map) {
   myMap_1.print_start();
 }
 
-TEST(TestSwapConstructor, Size_map) {
+TEST(TestSwapAtConstructor, Size_map) {
   s21::Map<std::string, int> myMap = {
       {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4},
       {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8},
@@ -89,6 +89,7 @@ TEST(TestSwapConstructor, Size_map) {
 
   };
 
+  myMap_1.insert("ключ06", 666);
   myMap.swap(myMap_1);
 
   EXPECT_EQ((int)myMap.size(), (int)myMap_1.size());
@@ -97,10 +98,15 @@ TEST(TestSwapConstructor, Size_map) {
   myMap.print_start();
   std::cout << "TestSwapmyMap_1: " << std::endl;
   myMap_1.print_start();
+
+  // myMap_1.insert_or_assign("ключ06", 666); // вернуть
+  myMap_1.print_start();
+  // std::cout << myMap.at("ключ10") << std::endl;
+  // myMap.at("ключ10");
 }
 
 int main(int argc, char** argv) {
-  ::testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 

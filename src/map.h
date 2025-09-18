@@ -16,44 +16,49 @@
 
 namespace s21 {
 
-template <typename K, typename T>
-class Map : public Tree<std::pair<const K, T>> {
+template <typename Key, typename T>
+class Map : public Tree<std::pair<const Key, T>> {
  public:
   //  private:
   class MapIterator;
 
   // typedef MapIterator iterator;
-  using typename Tree<std::pair<const K, T>>::size_type;
-  using key_type = K;
-  using value_type = std::pair<const K, T>;
+  using iterator = typename Tree<std::pair<const Key, T>>::TreeIterator;
+  using typename Tree<std::pair<const Key, T>>::size_type;
+  using key_type = Key;
+  using value_type = std::pair<const Key, T>;  // из-за такая не прокатит: const
+                                               // Key //   value.first = key;
+  //   value.second = obj;
   using mapped_type = T;
+  // using Key = Key;
 
-  // using typename TreeIterator<K, T>::iterator;
-  // internal class `MapIterator<K, T>` or `BinaryTree::iterator`
-  // as internal iterator of tree subclass; defines the type for
-  // iterating through the container
-  // using Node = typename Tree<std::pair<const K, T>>::TreeNode;
+  // using typename TreeIterator<Key, T>::iterator;
+  // using iterator = MapIterator;  //` or `BinaryTree::iterator`
+  // as internal iterator of tree subclass;
+  // defines the type for iterating through the
+  // container using Node = typename
+  // Tree<std::pair<const Key, T>>::TreeNode;
 
-  // typedef K key_type;
+  // typedef Key key_type;
   // typedef T mapped_type;
   // typedef std::pair<const key_type, mapped_type> value_type;
 
-  using Tree<std::pair<const K, T>>::operator=;  //??
+  using Tree<std::pair<const Key, T>>::operator=;  //??
 
-  using Tree<std::pair<const K, T>>::Tree;  // constructors
+  using Tree<std::pair<const Key, T>>::Tree;  // constructors
 
-  struct Node : public Tree<std::pair<const K, T>>::BaseNode {
+  struct Node : public Tree<std::pair<const Key, T>>::BaseNode {
     value_type item;
 
     Node()
-        : Tree<std::pair<const K, T>>::BaseNode(),
+        : Tree<std::pair<const Key, T>>::BaseNode(),
           item(key_type(), mapped_type()) {
       this->right = nullptr;
       this->left = nullptr;
       this->p = nullptr;
     }
     explicit Node(const value_type &val)
-        : Tree<std::pair<const K, T>>::BaseNode() {
+        : Tree<std::pair<const Key, T>>::BaseNode() {
       this->right = nullptr;
       this->left = nullptr;
       this->p = nullptr;
@@ -71,16 +76,16 @@ class Map : public Tree<std::pair<const K, T>> {
   size_type size_ = 0;
 
  public:
-  class MapIterator : public Tree<std::pair<const K, T>>::TreeIterator {
+  class MapIterator : public Tree<std::pair<const Key, T>>::TreeIterator {
     // friend class MapConstIterator;
 
    private:
-    s21::Map<K, T>::Node *current_;
+    s21::Map<Key, T>::Node *current_;
 
    public:
-    MapIterator() : Tree<std::pair<const K, T>>::TreeIterator() {}
+    MapIterator() : Tree<std::pair<const Key, T>>::TreeIterator() {}
     explicit MapIterator(Node *node)
-        : Tree<std::pair<const K, T>>::TreeIterator(node) {}
+        : Tree<std::pair<const Key, T>>::TreeIterator(node) {}
     // MapIterator(const MapIterator &other) : current_(other.current_) {}
     // MapIterator(MapIterator &&other) noexcept : current_(other.current_) {
     //   other.current_ = nullptr;
@@ -89,29 +94,58 @@ class Map : public Tree<std::pair<const K, T>> {
  public:
   // operators
   // MapIterator &operator=(const MapIterator &other);
-  // // typename Map<K, T>::MapIterator &Map<K, T>::MapIterator::operator+(
+  // // typename Map<Key, T>::MapIterator &Map<Key, T>::MapIterator::operator+(
   // //     const MapIterator &other);
   // bool operator==(const MapIterator &other) const;
   // bool operator!=(const MapIterator &other) const;
-  // T &operator[](const K &key);
+  // T &operator[](const Key &key);
   Map() = default;
   // default constructor, creates empty Map
 
   Map(std::initializer_list<value_type> const &items)
-      : Tree<std::pair<const K, T>>(items) {}
+      : Tree<std::pair<const Key, T>>(items) {}
   Map(const Map &m) = default;  // copy constructor
   Map(Map &&m) = default;       // moTe constructor
   ~Map() = default;             // destructor
   // // operator=(Map &&m)
   // // assignment operator oTerload for moTing object
 
-  using Tree<std::pair<const K, T>>::size;
-  using Tree<std::pair<const K, T>>::empty;
-  using Tree<std::pair<const K, T>>::create_node;
-  using Tree<std::pair<const K, T>>::erase;
+  // std::pair<iterator, bool> insert(const Key &key, const T &obj); // dthy?
 
-  using Tree<std::pair<const K, T>>::print_start;
+  using Tree<std::pair<const Key, T>>::insert;
+
+  std::pair<iterator, bool> insert(const Key &key, const T &value) {
+    return this->insert(value_type(key, value));  // BO вынести
+  }
+
+  // std::pair<iterator, bool> insert_or_assign(const Key &key, const T &obj) {
+  //   std::pair<iterator, bool> result = this->insert(value_type(key, obj));
+  //   Node *x;
+  //   if (result.second == false) {
+  //     std::cout
+  //         << "apple!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\t"
+  //         << std::endl;
+  //     // result.second = obj;
+  //     x = result.first.tree_  // сделать сеттер на изменение значения по
+  //     итератору;
+  //   }
+  //   return result;
+  // }
+
+  using Tree<std::pair<const Key, T>>::size;
+  using Tree<std::pair<const Key, T>>::empty;
+  using Tree<std::pair<const Key, T>>::create_node;
+  using Tree<std::pair<const Key, T>>::erase;
+
+  using Tree<std::pair<const Key, T>>::print_start;
   // size_type max_size;
+
+  T &at(const Key &key);
+
+  // T &at(const Key &key);
+
+  T &operator[](const Key &key);
+  // const T& at(const Key& key) const;
 
  private:
   Node create_node(const value_type &item);
