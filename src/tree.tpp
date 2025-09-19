@@ -234,6 +234,25 @@ void s21::Tree<T>::insert_fixup(BaseNode *&y, BaseNode *&z) {
 
 //     }
 
+// template <typename T>
+
+// void s21::Tree<T>::find() {
+//   while (x != this->tree_nil_) {  // начинаем с корня (может не работать!)
+//     y = x;
+//     if ((z->item.first) < (x->item.first))  //
+//       x = x->left;                          // если < то идем влево от
+//     // корня
+//     else if ((z->item.first) > (x->item.first))
+//       x = x->right;  // если > или = идем вправо от корня
+//     else {
+//       iterator iter_1(x, this->tree_nil_);
+//       result.first = iter_1;
+//       flag = 1;
+//       return result;  // изменить (вернуть итератор на сущ)
+//     }
+//   }
+// }
+
 template <typename T>
 std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
     const value_type &node) {
@@ -250,29 +269,34 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
   z = create_node(node);
   iterator iter(z, this->tree_nil_);
   result.first = iter;
-  this->size_++;
-  while (x != this->tree_nil_) {  // начинаем с корня (может не работать!)
+
+  // вынести в поиск
+  while (x != this->tree_nil_ &&
+         flag == 0) {  // начинаем с корня (может не работать!)
     y = x;
-    if ((z->item.first) < (x->item.first))  //
-      x = x->left;                          // если < то идем влево от
+    if ((z->item) < (x->item))  //
+      x = x->left;              // если < то идем влево от
     // корня
-    else if ((z->item.first) > (x->item.first))
+    else if ((z->item) > (x->item))
       x = x->right;  // если > или = идем вправо от корня
     else {
-      iterator iter_1(x, this->tree_nil_);
+      iterator iter_1(x, this->tree_nil_);  // суем результат в итератор
       result.first = iter_1;
       flag = 1;
-      return result;  // изменить (вернуть итератор на сущ)
     }
   }
+  // вынести в поиск
+
   if (flag == 0) {
     z->p = y;  // здесь на место листа ставим зэт , и родителем зэта узел
                // находящийся выше
-    if (y == this->tree_nil_) {  // в цикл while (x != this->tree_nil_) не
-                                 // заходил значит дерево пустое
-      this->tree_root_ = z;      // дерево было пустым, делаем зэт корнем
-    } else if ((z->item.first) <
-               (y->item.first))  // устанавливаем зет на место потомка
+
+    // вынести в поиск
+
+    if (y == this->tree_nil_) {        // в цикл while (x != this->tree_nil_) не
+                                       // заходил значит дерево пустое
+      this->tree_root_ = z;            // дерево было пустым, делаем зэт корнем
+    } else if ((z->item) < (y->item))  // устанавливаем зет на место потомка
       y->left = z;
     else
       y->right = z;
@@ -284,6 +308,7 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
 
     // result.first =
     result.second = true;
+    this->size_++;
   }
 
   return result;
@@ -350,7 +375,7 @@ void s21::Tree<T>::erase(iterator pos) {
       z->p->right = this->tree_nil_;
     else
       z->p->left = this->tree_nil_;
-    this->size_--;
+    // this->size_--;
     // return;  // change
   }
   if (y_original_color == BLACK) delete_fixup(x);

@@ -73,6 +73,8 @@ class Tree {
 
   // std::pair<iterator, bool> simple_insert(const value_type &node);
 
+  // void s21::Tree<T>::find();
+
   std::pair<iterator, bool> insert(const value_type &node);
 
   // std::pair<iterator, bool> insert(const Key &key, const T &obj);

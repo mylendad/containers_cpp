@@ -29,15 +29,56 @@ namespace s21 {
 
 // }
 
-// template <typename Key, typename T>
-// //
-// T& s21::Map<Key, T>::at(const Key& Key) {
-//   T temp = 0;
-//   iterator iter = this->begin();
-//   size_type size = this->size();
+template <typename Key, typename T>
 
-//   if () throw std::out_of_range("Key not exist.");
-// }
+typename std::pair<typename s21::Map<Key, T>::iterator, bool>
+s21::Map<Key, T>::find(const Key& key) {
+  std::pair<iterator, bool> result;
+  iterator iter;
+  result.first = iter;
+  result.second = false;
+  int flag = 0;
+  //   mapped_type result;
+
+  // убрать логику работы с узлами вынести в метод `tree
+  Node* y = this->tree_nil_;
+  Node* x = this->tree_root_;
+  while (x != this->tree_nil_ &&
+         flag == 0) {  // начинаем с корня (может не работать!)
+
+    y = x;
+    if ((key) < (x->item.first))  //
+      x = x->left;                // если < то идем влево от
+    // корня
+    else if ((key) > (x->item.first))
+      x = x->right;  // если > или = идем вправо от корня
+    else {
+      iterator iter_1(x, this->tree_nil_);
+      //   result.first = x.item.second;
+      result.first = iter_1;
+      result.second = true;
+      flag = 1;
+
+      // убрать логику работы с узлами вынести в метод `tree
+
+      //   iterator iter_1(x, this->tree_nil_);  // суем результат в итератор
+      //   result.first = iter_1;
+    }
+  }
+  return result;
+}
+
+template <typename Key, typename T>
+//
+T& s21::Map<Key, T>::at(const Key& key) {
+  std::pair<iterator, bool> result = this->find(key);
+
+  if (result.second == false) throw std::out_of_range("Key not exist.");
+
+  //   T t = result.first;
+
+  return result.first->second;
+}
 
 // template <typename Key, typename T>
 // T& s21::Map<Key, T>::at(const Key& key) {

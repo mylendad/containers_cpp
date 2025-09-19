@@ -50,7 +50,7 @@ class Map : public Tree<std::pair<const Key, T>> {
   using Tree<std::pair<const Key, T>>::Tree;  // constructors
 
   struct Node : public Tree<std::pair<const Key, T>>::BaseNode {
-    value_type item;
+    value_type item;  // это надо?
 
     Node()
         : Tree<std::pair<const Key, T>>::BaseNode(),
@@ -109,15 +109,17 @@ class Map : public Tree<std::pair<const Key, T>> {
   Map(const Map &m) = default;  // copy constructor
   Map(Map &&m) = default;       // moTe constructor
   ~Map() = default;             // destructor
-  // // operator=(Map &&m)
+                                // // operator=(Map &&m)
   // // assignment operator oTerload for moTing object
 
   // std::pair<iterator, bool> insert(const Key &key, const T &obj); // dthy?
 
+  std::pair<iterator, bool> find(const Key &key);
+
   using Tree<std::pair<const Key, T>>::insert;
 
-  std::pair<iterator, bool> insert(const Key &key, const T &value) {
-    return this->insert(value_type(key, value));  // BO вынести
+  std::pair<iterator, bool> insert(const Key &key, const T &obj) {
+    return this->insert(value_type(key, obj));  // BO вынести
   }
 
   std::pair<iterator, bool> insert_or_assign(const Key &key, const T &obj) {

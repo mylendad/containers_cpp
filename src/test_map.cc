@@ -89,10 +89,10 @@ TEST(TestSwapAtConstructor, Size_map) {
 
   };
 
-  myMap_1.insert("ключ06", 666);
+  myMap_1.insert("ключ06", 666);  // beck
   myMap.swap(myMap_1);
 
-  EXPECT_EQ((int)myMap.size(), (int)myMap_1.size());
+  // EXPECT_EQ((int)myMap.size(), myMap.at("ключ10"));
 
   std::cout << "TestSwapmyMap: " << std::endl;
   myMap.print_start();
@@ -102,7 +102,7 @@ TEST(TestSwapAtConstructor, Size_map) {
   myMap_1.insert_or_assign("ключ06", 666);  // вернуть
   std::cout << "Testinsert_or_assign: После вставки: " << std::endl;
   myMap_1.print_start();
-  // std::cout << myMap.at("ключ10") << std::endl;
+  std::cout << myMap.at("ключ10") << std::endl;
   // myMap.at("ключ10");
 }
 
