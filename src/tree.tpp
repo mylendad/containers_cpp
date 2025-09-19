@@ -319,12 +319,11 @@ void s21::Tree<T>::erase(iterator pos) {
     transplant(z, z->left);
   } else if (z->left != this->tree_nil_ &&
              z->right != this->tree_nil_) {  // когда есть 2 дочерних узла
-
-    // y = this->TreeSuccessor(z);  // поменять на ++
     pos++;
     y = pos.get_node();
     if (z->right != this->tree_nil_) {
-      y = TreeMinimum(z->right);
+      y = TreeMinimum(z->right, this->tree_nil_);
+
     } else {
       y = z->p;  // вынести в TreeSuccessor
     }
@@ -348,7 +347,7 @@ void s21::Tree<T>::erase(iterator pos) {
     else
       z->p->left = this->tree_nil_;
     this->size_--;
-    return;  // change
+    // return;  // change
   }
   if (y_original_color == BLACK) delete_fixup(x);
   this->size_--;
@@ -492,13 +491,38 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::create_node(
 //   }
 // }
 
+// template <typename T>
+// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMinimum(
+//     BaseNode *&node) const {
+//   BaseNode *x;
+//   BaseNode *min;
+//   x = node;
+//   while (x != this->tree_nil_) {
+//     min = x;
+//     x = x->left;
+//   }
+//   return min;
+// }
+
+// template <typename T>
+// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(
+//     BaseNode *&node) const {
+//   BaseNode *x;
+//   BaseNode *max;
+//   x = node;
+//   while (x != this->tree_nil_) {
+//     max = x;
+//     x = x->right;
+//   }
+//   return max;
+// }
+
 template <typename T>
-typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMinimum(
-    BaseNode *&node) const {
-  BaseNode *x;
-  BaseNode *min;
-  x = node;
-  while (x != this->tree_nil_) {
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMinimum(BaseNode *node,
+                                                           BaseNode *nil) {
+  BaseNode *x = node;
+  BaseNode *min = nil;
+  while (x != nil) {
     min = x;
     x = x->left;
   }
@@ -506,12 +530,11 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMinimum(
 }
 
 template <typename T>
-typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(
-    BaseNode *&node) const {
-  BaseNode *x;
-  BaseNode *max;
-  x = node;
-  while (x != this->tree_nil_) {
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(BaseNode *node,
+                                                           BaseNode *nil) {
+  BaseNode *x = node;
+  BaseNode *max = nil;
+  while (x != nil) {
     max = x;
     x = x->right;
   }
@@ -534,32 +557,34 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(
 //   return y;
 // }
 
-template <typename T>
-typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeDescendant(
+// template <typename T>
+// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeDescendant(
 
-    BaseNode *&x) const {
-  BaseNode *y;
-  if (x->left != tree_nil_) {
-    return TreeMaximum(x->left);
-  }
-  y = x->p;
-  while (y != tree_nil_ && x == y->left) {
-    x = y;
-    y = y->p;
-  }
-  return y;
-}
+//     BaseNode *&x) const {
+//   BaseNode *y;
+//   if (x->left != tree_nil_) {
+//     return TreeMaximum(x->left);
+//   }
+//   y = x->p;
+//   while (y != tree_nil_ && x == y->left) {
+//     x = y;
+//     y = y->p;
+//   }
+//   return y;
+// }
 
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
-  BaseNode *min = TreeMinimum(this->tree_root_);
+  BaseNode *min = TreeMinimum(this->tree_root_, this->tree_nil_);
+
   iterator minimum = iterator(min, this->tree_nil_);
   return minimum;
 }
 
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::end() {
-  BaseNode *max = TreeMaximum(this->tree_root_);
+  BaseNode *max = TreeMaximum(this->tree_root_, this->tree_nil_);
+
   iterator maximum = iterator(max, this->tree_nil_);
   return *max;
 }

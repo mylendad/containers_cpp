@@ -12,6 +12,64 @@
 namespace s21 {
 
 template <typename T>
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeMinimum(
+    BaseNode *&node) const {
+  BaseNode *x;
+  BaseNode *min;
+  x = node;
+  while (x != this->nil_) {
+    min = x;
+    x = x->left;
+  }
+  return min;
+}
+
+template <typename T>
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeMaximum(
+    BaseNode *&node) const {
+  BaseNode *x;
+  BaseNode *max;
+  x = node;
+  while (x != this->nil_) {
+    max = x;
+    x = x->right;
+  }
+  return max;
+}
+
+template <typename T>
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeSuccessor(
+
+    BaseNode *&x) const {
+  BaseNode *y;
+  if (x->right != nil_) {
+    return TreeMinimum(x->right);
+  }
+  y = x->p;
+  while (y != nil_ && x == y->right) {
+    x = y;
+    y = y->p;
+  }
+  return y;
+}
+
+template <typename T>
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeDescendant(
+
+    BaseNode *&x) const {
+  BaseNode *y;
+  if (x->left != nil_) {
+    return TreeMaximum(x->left);
+  }
+  y = x->p;
+  while (y != nil_ && x == y->left) {
+    x = y;
+    y = y->p;
+  }
+  return y;
+}
+
+template <typename T>
 s21::Tree<T>::TreeIterator::TreeIterator()
     : current_(nullptr),
       nil_(nullptr)
@@ -66,29 +124,29 @@ const typename s21::Tree<T>::BaseNode &s21::Tree<T>::TreeIterator::operator*() {
 template <typename T>
 
 typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator++() {
-  // this->current_ = tree_->TreeSuccessor(this->current_);
+  this->current_ = TreeSuccessor(this->current_);
 
-  BaseNode *x = this->get_node();
-  BaseNode *y;
-  BaseNode *z = x->right;
-  BaseNode *min;
-  if (x->right != nil_) {
-    // this->current_ = TreeMinimum(x->right);
+  // BaseNode *x = this->get_node();
+  // BaseNode *y;
+  // BaseNode *z = x->right;
+  // BaseNode *min;
+  // if (x->right != nil_) {
+  //   // this->current_ = TreeMinimum(x->right);
 
-    while (z != this->nil_) {
-      min = z;
-      z = z->left;
-    }
-    this->current_ = min;
+  //   while (z != this->nil_) {
+  //     min = z;
+  //     z = z->left;
+  //   }
+  //   this->current_ = min;
 
-  } else {
-    y = x->p;
-    while (y != nil_ && x == y->right) {
-      x = y;
-      y = y->p;
-    }
-    this->current_ = y;
-  }
+  // } else {
+  //   y = x->p;
+  //   while (y != nil_ && x == y->right) {
+  //     x = y;
+  //     y = y->p;
+  //   }
+  //   this->current_ = y;
+  // }
   return *this;
 }
 
@@ -104,7 +162,7 @@ typename s21::Tree<T>::TreeIterator s21::Tree<T>::TreeIterator::operator++(
 template <typename T>
 
 typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator--() {
-  this->current_ = tree_->TreeDescendant(this->current_);
+  this->current_ = TreeDescendant(this->current_);
 
   return *this;
 }

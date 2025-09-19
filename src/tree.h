@@ -50,13 +50,12 @@ class Tree {
         : item(val), color(false), right(nullptr), left(nullptr), p(nullptr) {}
   };
 
-  BaseNode *TreeMinimum(BaseNode *&node) const;
+  static BaseNode *TreeMinimum(BaseNode *node, BaseNode *nil);
+  static BaseNode *TreeMaximum(BaseNode *node, BaseNode *nil);
 
-  BaseNode *TreeMaximum(BaseNode *&node) const;
+  // BaseNode *TreeSuccessor(BaseNode *&x) const;
 
-  BaseNode *TreeSuccessor(BaseNode *&x) const;
-
-  BaseNode *TreeDescendant(BaseNode *&x) const;
+  // BaseNode *TreeDescendant(BaseNode *&x) const;
 
   void repainting_red_uncle_n_dad(BaseNode *&y, BaseNode *&z);
 
@@ -102,6 +101,7 @@ class Tree {
     BaseNode *nil_;
 
    public:
+    friend class Tree<T>;
     TreeIterator();
 
     TreeIterator(BaseNode *node,
@@ -123,6 +123,14 @@ class Tree {
     //     const TreeIterator &other);
 
     // operator BaseNode *() const { return current; }
+
+    BaseNode *TreeMinimum(BaseNode *&node) const;
+
+    BaseNode *TreeMaximum(BaseNode *&node) const;
+
+    BaseNode *TreeSuccessor(BaseNode *&x) const;
+
+    BaseNode *TreeDescendant(BaseNode *&x) const;
 
     bool operator==(const TreeIterator &other) const;
     bool operator!=(const TreeIterator &other) const;
