@@ -305,7 +305,9 @@ void s21::Tree<T>::transplant(BaseNode *&u, BaseNode *&v) {
 
 template <typename T>
 void s21::Tree<T>::erase(iterator pos) {
-  BaseNode *z = pos.get_node();
+  // BaseNode *z = pos.get_node();
+  // BaseNode *z = *pos;
+  BaseNode *z = pos.current_;
   BaseNode *x;
   BaseNode *y = z;
   bool y_original_color = y->color;
@@ -320,7 +322,9 @@ void s21::Tree<T>::erase(iterator pos) {
   } else if (z->left != this->tree_nil_ &&
              z->right != this->tree_nil_) {  // когда есть 2 дочерних узла
     pos++;
-    y = pos.get_node();
+    // y = pos.get_node();
+    // y = *pos;
+    y = pos.current_;
     if (z->right != this->tree_nil_) {
       y = TreeMinimum(z->right, this->tree_nil_);
 
@@ -460,11 +464,6 @@ void s21::Tree<T>::print_start() {
   std::cout << "======================" << std::endl;
 }
 
-// template <typename T>
-// bool s21::Tree<T>::is_zero(size_type value) {
-//   return (bool)fabs(value) < 1e-7;
-// }
-
 template <typename T>
 typename s21::Tree<T>::size_type s21::Tree<T>::size() {
   return this->size_;
@@ -482,40 +481,6 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::create_node(
     const value_type item) {
   return new BaseNode(item);
 }
-
-// template <typename T>
-// s21::Tree<T>::Tree(std::initializer_list<value_type> const &items) {
-//   // BaseNode arr[items.size()];
-//   for (auto &item : items) {
-//     this->insert(item);
-//   }
-// }
-
-// template <typename T>
-// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMinimum(
-//     BaseNode *&node) const {
-//   BaseNode *x;
-//   BaseNode *min;
-//   x = node;
-//   while (x != this->tree_nil_) {
-//     min = x;
-//     x = x->left;
-//   }
-//   return min;
-// }
-
-// template <typename T>
-// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(
-//     BaseNode *&node) const {
-//   BaseNode *x;
-//   BaseNode *max;
-//   x = node;
-//   while (x != this->tree_nil_) {
-//     max = x;
-//     x = x->right;
-//   }
-//   return max;
-// }
 
 template <typename T>
 typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMinimum(BaseNode *node,
@@ -540,38 +505,6 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(BaseNode *node,
   }
   return max;
 }
-
-// template <typename T>
-// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeSuccessor(
-
-//     BaseNode *&x) const {
-//   BaseNode *y;
-//   if (x->right != tree_nil_) {
-//     return TreeMinimum(x->right);
-//   }
-//   y = x->p;
-//   while (y != tree_nil_ && x == y->right) {
-//     x = y;
-//     y = y->p;
-//   }
-//   return y;
-// }
-
-// template <typename T>
-// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeDescendant(
-
-//     BaseNode *&x) const {
-//   BaseNode *y;
-//   if (x->left != tree_nil_) {
-//     return TreeMaximum(x->left);
-//   }
-//   y = x->p;
-//   while (y != tree_nil_ && x == y->left) {
-//     x = y;
-//     y = y->p;
-//   }
-//   return y;
-// }
 
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
@@ -669,34 +602,6 @@ typename s21::Tree<T>::iterator s21::Tree<T>::end() {
 // }
 // std::initializer_list
 // // }
-
-// operator=(Tree &&m)
-// template <typename T>
-// typename s21::Tree<T>::TreeIterator &operator=(const TreeIterator &other) {
-//   if (this != &other) {
-//     current_ = other.current_;
-//   }
-//   return *this;
-// }
-// {}  // assignment operator oTerload for moTing object
-// }  // namespace s21
-// int main() {
-//   s21::Tree<std::string, int> myMap = {{"ключ1", 1}, {"ключ2", 2}, {"ключ3",
-//   3}};
-
-//   //   std::cout << "bread\t" << myMap["ключ1"] << std::endl;
-//   //   std::cout << "milk\t" << myMap["ключ2"] << std::endl;
-//   //
-
-//   // s21::Tree<std::string, unsigned> products_2;
-//   // products_2["bread"] = 30;
-//   // products_2["milk"] = 80;
-//   // products_2["apple"] = 60;
-
-//   // std::cout << "bread\t" << products_2["bread"] << std::endl;
-//   // std::cout << "milk\t" << products_2["milk"] << std::endl;
-//   // std::cout << "apple\t" << products_2["apple"] << std::endl;
-// }
 }  // namespace s21
 
 #endif  // MAP_TPP

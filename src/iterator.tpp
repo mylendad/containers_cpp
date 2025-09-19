@@ -11,31 +11,31 @@
 
 namespace s21 {
 
-template <typename T>
-typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeMinimum(
-    BaseNode *&node) const {
-  BaseNode *x;
-  BaseNode *min;
-  x = node;
-  while (x != this->nil_) {
-    min = x;
-    x = x->left;
-  }
-  return min;
-}
+// template <typename T>
+// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeMinimum(
+//     BaseNode *&node) const {
+//   BaseNode *x;
+//   BaseNode *min;
+//   x = node;
+//   while (x != this->nil_) {
+//     min = x;
+//     x = x->left;
+//   }
+//   return min;
+// }
 
-template <typename T>
-typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeMaximum(
-    BaseNode *&node) const {
-  BaseNode *x;
-  BaseNode *max;
-  x = node;
-  while (x != this->nil_) {
-    max = x;
-    x = x->right;
-  }
-  return max;
-}
+// template <typename T>
+// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeMaximum(
+//     BaseNode *&node) const {
+//   BaseNode *x;
+//   BaseNode *max;
+//   x = node;
+//   while (x != this->nil_) {
+//     max = x;
+//     x = x->right;
+//   }
+//   return max;
+// }
 
 template <typename T>
 typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeSuccessor(
@@ -43,7 +43,7 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeSuccessor(
     BaseNode *&x) const {
   BaseNode *y;
   if (x->right != nil_) {
-    return TreeMinimum(x->right);
+    return TreeMinimum(x->right, this->nil_);
   }
   y = x->p;
   while (y != nil_ && x == y->right) {
@@ -59,7 +59,7 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeDescendant(
     BaseNode *&x) const {
   BaseNode *y;
   if (x->left != nil_) {
-    return TreeMaximum(x->left);
+    return TreeMaximum(x->left, this->nil_);
   }
   y = x->p;
   while (y != nil_ && x == y->left) {
@@ -107,7 +107,7 @@ const s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator=(
 }
 
 template <typename T>
-const typename s21::Tree<T>::BaseNode &s21::Tree<T>::TreeIterator::operator*() {
+typename s21::Tree<T>::BaseNode *&s21::Tree<T>::TreeIterator::operator*() {
   return this->current_;
 }
 

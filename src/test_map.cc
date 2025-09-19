@@ -16,7 +16,7 @@ TEST(TestMap, Size_map) {
 
   iter = myMap.begin();
   iter++;
-  // iter++;
+  iter++;
   // iter++;
   // iter++;
   // iter++;

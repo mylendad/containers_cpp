@@ -116,7 +116,7 @@ class Tree {
 
     const TreeIterator &operator=(const TreeIterator &other);
 
-    const BaseNode &operator*();
+    // BaseNode *&operator*();
 
     // typename Tree<K, T>::TreeIterator &Tree<K,
     // T>::TreeIterator::operator+(
@@ -124,9 +124,9 @@ class Tree {
 
     // operator BaseNode *() const { return current; }
 
-    BaseNode *TreeMinimum(BaseNode *&node) const;
+    // BaseNode *TreeMinimum(BaseNode *&node) const;
 
-    BaseNode *TreeMaximum(BaseNode *&node) const;
+    // BaseNode *TreeMaximum(BaseNode *&node) const;
 
     BaseNode *TreeSuccessor(BaseNode *&x) const;
 
