@@ -248,7 +248,7 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
   x = this->tree_root_;
   BaseNode *z;
   z = create_node(node);
-  iterator iter(z, y);
+  iterator iter(z, this->tree_nil_);
   result.first = iter;
   this->size_++;
   while (x != this->tree_nil_) {  // начинаем с корня (может не работать!)
@@ -259,7 +259,7 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
     else if ((z->item.first) > (x->item.first))
       x = x->right;  // если > или = идем вправо от корня
     else {
-      iterator iter_1(x, y);
+      iterator iter_1(x, this->tree_nil_);
       result.first = iter_1;
       flag = 1;
       return result;  // изменить (вернуть итератор на сущ)

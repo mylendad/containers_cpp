@@ -95,7 +95,7 @@ class Tree {
 
  public:
   class TreeIterator {
-   private:
+   private:  // back
     BaseNode *current_;
     // Tree<T> *tree_;  //
     BaseNode *nil_;
@@ -116,7 +116,13 @@ class Tree {
 
     const TreeIterator &operator=(const TreeIterator &other);
 
-    // BaseNode *&operator*();
+    value_type &operator*();
+
+    const value_type &operator*() const;
+
+    value_type *operator->();
+
+    const value_type *operator->() const;
 
     // typename Tree<K, T>::TreeIterator &Tree<K,
     // T>::TreeIterator::operator+(

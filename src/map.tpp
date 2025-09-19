@@ -32,14 +32,11 @@ namespace s21 {
 // template <typename Key, typename T>
 // //
 // T& s21::Map<Key, T>::at(const Key& Key) {
-//     T temp = 0;
-//     iterator iter = this->begin();
-//     size_type size = this->size();
-//     for (size_type i = 0; i<size; i++){
-// if ()
-//     }
-//     if ()
-//     throw std::out_of_range("Key not exist.");
+//   T temp = 0;
+//   iterator iter = this->begin();
+//   size_type size = this->size();
+
+//   if () throw std::out_of_range("Key not exist.");
 // }
 
 // template <typename Key, typename T>

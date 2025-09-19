@@ -5,7 +5,9 @@
 
 #include <initializer_list>
 #include <iostream>
-#include <map>
+// #include <map>
+
+// #include <map>
 
 #include "tree.h"
 
@@ -79,7 +81,7 @@ class Map : public Tree<std::pair<const Key, T>> {
   class MapIterator : public Tree<std::pair<const Key, T>>::TreeIterator {
     // friend class MapConstIterator;
 
-   private:
+   private:  // remove
     s21::Map<Key, T>::Node *current_;
 
    public:
@@ -118,19 +120,14 @@ class Map : public Tree<std::pair<const Key, T>> {
     return this->insert(value_type(key, value));  // BO вынести
   }
 
-  // std::pair<iterator, bool> insert_or_assign(const Key &key, const T &obj) {
-  //   std::pair<iterator, bool> result = this->insert(value_type(key, obj));
-  //   Node *x;
-  //   if (result.second == false) {
-  //     std::cout
-  //         << "apple!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\t"
-  //         << std::endl;
-  //     // result.second = obj;
-  //     x = result.first.tree_  // сделать сеттер на изменение значения по
-  //     итератору;
-  //   }
-  //   return result;
-  // }
+  std::pair<iterator, bool> insert_or_assign(const Key &key, const T &obj) {
+    std::pair<iterator, bool> result = this->insert(value_type(key, obj));
+    // Node *x;
+    if (result.second == false) {
+      result.first->second = obj;
+    }
+    return result;
+  }
 
   using Tree<std::pair<const Key, T>>::size;
   using Tree<std::pair<const Key, T>>::empty;

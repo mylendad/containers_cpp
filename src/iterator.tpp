@@ -107,8 +107,37 @@ const s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator=(
 }
 
 template <typename T>
-typename s21::Tree<T>::BaseNode *&s21::Tree<T>::TreeIterator::operator*() {
-  return this->current_;
+typename s21::Tree<T>::value_type &s21::Tree<T>::TreeIterator::operator*() {
+  if (current_ == nullptr || current_ == nil_) {
+    throw std::out_of_range("Dereferencing end iterator");
+  }
+  return current_->item;
+}
+
+template <typename T>
+const typename s21::Tree<T>::value_type &s21::Tree<T>::TreeIterator::operator*()
+    const {
+  if (current_ == nullptr || current_ == nil_) {
+    throw std::out_of_range("Dereferencing end iterator");
+  }
+  return current_->item;
+}
+
+template <typename T>
+typename s21::Tree<T>::value_type *s21::Tree<T>::TreeIterator::operator->() {
+  if (current_ == nullptr || current_ == nil_) {
+    throw std::out_of_range("Accessing end iterator");
+  }
+  return &(current_->item);
+}
+
+template <typename T>
+const typename s21::Tree<T>::value_type *
+s21::Tree<T>::TreeIterator::operator->() const {
+  if (current_ == nullptr || current_ == nil_) {
+    throw std::out_of_range("Accessing end iterator");
+  }
+  return &(current_->item);
 }
 
 // template <typename T>

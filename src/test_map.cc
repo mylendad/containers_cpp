@@ -99,7 +99,8 @@ TEST(TestSwapAtConstructor, Size_map) {
   std::cout << "TestSwapmyMap_1: " << std::endl;
   myMap_1.print_start();
 
-  // myMap_1.insert_or_assign("ключ06", 666); // вернуть
+  myMap_1.insert_or_assign("ключ06", 666);  // вернуть
+  std::cout << "Testinsert_or_assign: После вставки: " << std::endl;
   myMap_1.print_start();
   // std::cout << myMap.at("ключ10") << std::endl;
   // myMap.at("ключ10");
