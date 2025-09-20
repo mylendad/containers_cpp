@@ -5,11 +5,21 @@
 
 #include <initializer_list>
 #include <iostream>
+#include <type_traits>
 
 #define RED false
 #define BLACK true
 
 namespace s21 {
+
+template <typename T>
+struct is_pair : std::false_type {};
+
+template <typename Key, typename Value>
+struct is_pair<std::pair<Key, Value>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_pair_v = is_pair<T>::value;
 
 template <typename T>
 class Tree {
@@ -73,7 +83,7 @@ class Tree {
 
   // std::pair<iterator, bool> simple_insert(const value_type &node);
 
-  // void s21::Tree<T>::find();
+  std::pair<Tree<T>::iterator, bool> find(T &obj);
 
   std::pair<iterator, bool> insert(const value_type &node);
 

@@ -234,24 +234,113 @@ void s21::Tree<T>::insert_fixup(BaseNode *&y, BaseNode *&z) {
 
 //     }
 
-// template <typename T>
+// template <typename Key, typename T>
 
-// void s21::Tree<T>::find() {
-//   while (x != this->tree_nil_) {  // начинаем с корня (может не работать!)
+// typename std::pair<typename s21::Map<Key, T>::iterator, bool>
+// s21::Map<Key, T>::find(const Key& key) {
+//   std::pair<iterator, bool> result;
+//   iterator iter;
+//   result.first = iter;
+//   result.second = false;
+//   int flag = 0;
+//   //   mapped_type result;
+
+//   // убрать логику работы с узлами вынести в метод `tree
+//   Node* y = this->tree_nil_;
+//   Node* x = this->tree_root_;
+//   while (x != this->tree_nil_ &&
+//          flag == 0) {  // начинаем с корня (может не работать!)
+
 //     y = x;
-//     if ((z->item.first) < (x->item.first))  //
-//       x = x->left;                          // если < то идем влево от
+//     if ((key) < (x->item.first))  //
+//       x = x->left;                // если < то идем влево от
 //     // корня
-//     else if ((z->item.first) > (x->item.first))
+//     else if ((key) > (x->item.first))
 //       x = x->right;  // если > или = идем вправо от корня
 //     else {
 //       iterator iter_1(x, this->tree_nil_);
+//       //   result.first = x.item.second;
 //       result.first = iter_1;
+//       result.second = true;
 //       flag = 1;
-//       return result;  // изменить (вернуть итератор на сущ)
+
+//       // убрать логику работы с узлами вынести в метод
+//       // `tree!!!!!!!!!!!!!!!!!!!!!!!
+
+//       //   iterator iter_1(x, this->tree_nil_);  // суем результат в итератор
+//       //   result.first = iter_1;
 //     }
 //   }
+//   return result;
 // }
+
+// template <typename T>
+
+// std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(
+//     T &obj) {  //
+//   std::pair<iterator, bool> result;
+//   iterator iter;
+//   result.first = iter;
+//   result.second = false;
+//   int flag = 0;
+//   //   mapped_type result;
+
+//   // убрать логику работы с узлами вынести в метод `tree
+//   // BaseNode *y = this->tree_nil_;
+//   BaseNode *x = this->tree_root_;
+//   while (x != this->tree_nil_ &&
+//          flag == 0) {  // начинаем с корня (может не работать!)
+
+//     // y = x;
+//     if ((obj.first) < (x->item.first))  //
+//       x = x->left;                      // если < то идем влево от
+//     // корня
+//     else if ((obj.first) > (x->item.first))
+//       x = x->right;  // если > или = идем вправо от корня
+//     else {
+//       iterator iter_1(x, this->tree_nil_);
+//       //   result.first = x.item.second;
+//       result.first = iter_1;
+//       result.second = true;
+//       flag = 1;
+
+//       // убрать логику работы с узлами вынести в метод
+//       // `tree!!!!!!!!!!!!!!!!!!!!!!!
+
+//       //   iterator iter_1(x, this->tree_nil_);  // суем результат в итератор
+//       //   result.first = iter_1;
+//     }
+//   }
+//   return result;
+// }
+
+template <typename T>
+std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(T &obj) {
+  if constexpr (is_pair_v<T>) {
+    BaseNode *x = this->tree_root_;
+    while (x != this->tree_nil_) {
+      if (obj.first < x->item.first) {
+        x = x->left;
+      } else if (obj.first > x->item.first) {
+        x = x->right;
+      } else {
+        return std::make_pair(iterator(x, this->tree_nil_), true);
+      }
+    }
+  } else {
+    BaseNode *x = this->tree_root_;
+    while (x != this->tree_nil_) {
+      if (obj < x->item) {
+        x = x->left;
+      } else if (obj > x->item) {
+        x = x->right;
+      } else {
+        return std::make_pair(iterator(x, this->tree_nil_), true);
+      }
+    }
+  }
+  return std::make_pair(iterator(this->tree_nil_, this->tree_nil_), false);
+}
 
 template <typename T>
 std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
@@ -264,13 +353,14 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
   result.second = false;
 
   y = this->tree_nil_;
-  x = this->tree_root_;
+
   BaseNode *z;
   z = create_node(node);
   iterator iter(z, this->tree_nil_);
   result.first = iter;
 
   // вынести в поиск
+  x = this->tree_root_;
   while (x != this->tree_nil_ &&
          flag == 0) {  // начинаем с корня (может не работать!)
     y = x;
@@ -280,7 +370,7 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
     else if ((z->item) > (x->item))
       x = x->right;  // если > или = идем вправо от корня
     else {
-      iterator iter_1(x, this->tree_nil_);  // суем результат в итератор
+      iterator iter_1(x, this->tree_nil_);  // суем результат поиска в итератор
       result.first = iter_1;
       flag = 1;
     }

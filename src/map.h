@@ -50,24 +50,24 @@ class Map : public Tree<std::pair<const Key, T>> {
   using Tree<std::pair<const Key, T>>::Tree;  // constructors
 
   struct Node : public Tree<std::pair<const Key, T>>::BaseNode {
-    value_type item;  // это надо?
+    // value_type item;  // это надо?
+    // using Tree<std::pair<const Key, T>>::BaseNode::item;
 
-    Node()
-        : Tree<std::pair<const Key, T>>::BaseNode(),
-          item(key_type(), mapped_type()) {
-      this->right = nullptr;
-      this->left = nullptr;
-      this->p = nullptr;
+    Node() : Tree<std::pair<const Key, T>>::BaseNode() {  //,
+      // item(key_type(), mapped_type()) {
+      // this->right = nullptr;
+      // this->left = nullptr;
+      // this->p = nullptr;
     }
     explicit Node(const value_type &val)
         : Tree<std::pair<const Key, T>>::BaseNode() {
-      this->right = nullptr;
-      this->left = nullptr;
-      this->p = nullptr;
+      // this->right = nullptr;
+      // this->left = nullptr;
+      // this->p = nullptr;
     }
 
-    const key_type &get_key() const { return item.first; }
-    mapped_type &get_value() { return item.second; }
+    // const key_type &get_key() const { return item.first; }
+    // mapped_type &get_value() { return item.second; }
   };
 
  private:
@@ -114,7 +114,7 @@ class Map : public Tree<std::pair<const Key, T>> {
 
   // std::pair<iterator, bool> insert(const Key &key, const T &obj); // dthy?
 
-  std::pair<iterator, bool> find(const Key &key);
+  using Tree<std::pair<const Key, T>>::find;
 
   using Tree<std::pair<const Key, T>>::insert;
 
@@ -143,8 +143,8 @@ class Map : public Tree<std::pair<const Key, T>> {
 
   // T &at(const Key &key);
 
-  T &operator[](const Key &key);
-  // const T& at(const Key& key) const;
+  T &operator[](const Key &key);  // access or insert specified element
+                                  // const T& at(const Key& key) const;
 
  private:
   Node create_node(const value_type &item);
