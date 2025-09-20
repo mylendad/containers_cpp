@@ -381,8 +381,6 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
     z->p = y;  // здесь на место листа ставим зэт , и родителем зэта узел
                // находящийся выше
 
-    // вынести в поиск
-
     if (y == this->tree_nil_) {        // в цикл while (x != this->tree_nil_) не
                                        // заходил значит дерево пустое
       this->tree_root_ = z;            // дерево было пустым, делаем зэт корнем
@@ -585,13 +583,6 @@ typename s21::Tree<T>::size_type s21::Tree<T>::size() {
 }
 
 template <typename T>
-bool s21::Tree<T>::empty() {
-  bool res = false;
-  if (this->size_ == 0) res = true;
-  return res;
-}
-
-template <typename T>
 typename s21::Tree<T>::BaseNode *s21::Tree<T>::create_node(
     const value_type item) {
   return new BaseNode(item);
@@ -634,7 +625,30 @@ typename s21::Tree<T>::iterator s21::Tree<T>::end() {
   BaseNode *max = TreeMaximum(this->tree_root_, this->tree_nil_);
 
   iterator maximum = iterator(max, this->tree_nil_);
-  return *max;
+  return maximum;
+}
+
+template <typename T>
+void s21::Tree<T>::clear() {
+  while (this->size_ != 0) {
+    erase(begin());
+  }
+  // iterator end(this->tree_root_, this->tree_nil_); // sega
+  // erase(end);
+}
+
+template <typename T>
+bool s21::Tree<T>::empty() {
+  bool result = false;
+  if (this->size_ == 0) result = true;
+  return result;
+}
+
+template <typename T>
+
+typename s21::Tree<T>::size_type s21::Tree<T>::max_size() {
+  size_type result = 256204778801521550;
+  return result;
 }
 
 // template <typename T>

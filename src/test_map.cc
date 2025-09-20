@@ -108,6 +108,30 @@ TEST(TestSwapAtConstructor, Size_map) {
   // myMap.at("ключ10");
 }
 
+TEST(TestEmptyMaxSizeClear, Size_map) {
+  s21::Map<std::string, int> myMap = {
+      {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4},
+      {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8},
+      {"ключ09", 9}, {"ключ10", 10}};
+
+  // myMap.print_start();
+  EXPECT_EQ((int)myMap.size(), 10);
+  myMap.print_start();
+  myMap.empty();
+
+  std::cout << "myMap.empty(): " << myMap.empty() << std::endl;
+
+  EXPECT_EQ(myMap.empty(), false);
+
+  EXPECT_EQ(myMap.max_size(), 256204778801521550);
+
+  myMap.clear();
+  myMap.print_start();
+
+  EXPECT_EQ((int)myMap.size(), 0);
+  myMap.print_start();
+}
+
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

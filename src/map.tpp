@@ -82,6 +82,15 @@ T& s21::Map<Key, T>::at(const Key& key) {
 
 template <typename Key, typename T>
 //
+bool s21::Map<Key, T>::contains(const Key& key) {
+  std::pair<const Key, T> temp = {key, T()};
+  std::pair<iterator, bool> result = this->find(temp);
+
+  return result.second;
+}
+
+template <typename Key, typename T>
+//
 T& s21::Map<Key, T>::operator[](const Key& key) {
   std::pair<const Key, T> temp = {key, T()};
   std::pair<iterator, bool> result = this->find(temp);

@@ -95,6 +95,8 @@ class Tree {
 
   void swap(Tree &other);
 
+  bool empty();
+
   void delete_fixup(BaseNode *&x);
 
   iterator begin();
@@ -178,7 +180,10 @@ class Tree {
   //   // void Basenode_insert(BaseNode &arr, const value_type &item);
 
   size_type size();
-  bool empty();
+  // bool empty();
+  void clear();
+
+  size_type max_size();
 
   Tree();  // default constructor, creates empty Tree
   Tree(std::initializer_list<value_type> const &items);

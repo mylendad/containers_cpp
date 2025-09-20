@@ -133,6 +133,7 @@ class Map : public Tree<std::pair<const Key, T>> {
 
   using Tree<std::pair<const Key, T>>::size;
   using Tree<std::pair<const Key, T>>::empty;
+  using Tree<std::pair<const Key, T>>::max_size;
   using Tree<std::pair<const Key, T>>::create_node;
   using Tree<std::pair<const Key, T>>::erase;
 
@@ -141,10 +142,13 @@ class Map : public Tree<std::pair<const Key, T>> {
 
   T &at(const Key &key);
 
+  bool contains(const Key &key);
+
   // T &at(const Key &key);
 
   T &operator[](const Key &key);  // access or insert specified element
-                                  // const T& at(const Key& key) const;
+
+  // const T& at(const Key& key) const;
 
  private:
   Node create_node(const value_type &item);
