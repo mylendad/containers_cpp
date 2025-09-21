@@ -16,7 +16,7 @@ int main() {
        it != myMap.end(); ++it) {
     std::cout << "Key: " << it->first << ", Value: " << it->second << std::endl;
 
-    std::cout << myMap.max_size() << std::endl;
+    // std::cout << myMap.contains("ключ09") << std::endl;
     std::cout << myMap_1.max_size() << std::endl;
   }
   return 0;

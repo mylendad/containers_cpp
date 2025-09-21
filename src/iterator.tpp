@@ -97,8 +97,8 @@ s21::Tree<T>::TreeIterator::TreeIterator(TreeIterator &&other) noexcept
 }
 
 template <typename T>
-const s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator=(
-    const TreeIterator &other) {
+const typename s21::Tree<T>::TreeIterator &
+s21::Tree<T>::TreeIterator::operator=(const TreeIterator &other) {
   if (this != &other) {
     this->current_ = other.current_;
     this->nil_ = other.nil_;

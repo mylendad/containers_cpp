@@ -132,6 +132,11 @@ TEST(TestEmptyMaxSizeClear, Size_map) {
   myMap.print_start();
 }
 
+// TEST(TestPrintEmptyTree, Size_map) {
+//   s21::Map<std::string, int> myMap;
+//   myMap.print_start();
+// }
+
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
