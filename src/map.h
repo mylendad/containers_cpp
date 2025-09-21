@@ -133,6 +133,7 @@ class Map : public Tree<std::pair<const Key, T>> {
 
   using Tree<std::pair<const Key, T>>::size;
   using Tree<std::pair<const Key, T>>::empty;
+  using Tree<std::pair<const Key, T>>::merge;
   using Tree<std::pair<const Key, T>>::max_size;
   using Tree<std::pair<const Key, T>>::create_node;
   using Tree<std::pair<const Key, T>>::erase;

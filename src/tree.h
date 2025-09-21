@@ -50,7 +50,9 @@ class Tree {
     BaseNode *p;
 
     BaseNode()
-        : item(value_type()),
+        : item(value_type()),  // создать временный объект типа value_type,
+                               // инициализированный значением по умолчанию, и
+                               // передать его в качестве аргумента
           color(BLACK),
           right(nullptr),
           left(nullptr),
@@ -169,15 +171,7 @@ class Tree {
 
   Tree &operator=(Tree &&other);
 
-  // Tree(const Tree &m);
-
-  // operator=(Tree && m);
-
-  // Tree(map &&m);
-
-  // Tree(std::initializer_list<value_type> const &items);
-
-  //   // void Basenode_insert(BaseNode &arr, const value_type &item);
+  void merge(Tree &other);
 
   size_type size();
   // bool empty();

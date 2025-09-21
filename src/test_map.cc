@@ -132,10 +132,27 @@ TEST(TestEmptyMaxSizeClear, Size_map) {
   myMap.print_start();
 }
 
-// TEST(TestPrintEmptyTree, Size_map) {
-//   s21::Map<std::string, int> myMap;
-//   myMap.print_start();
-// }
+TEST(TestPrintEmptyTree, Size_map) {
+  s21::Map<std::string, int> myMap;
+  myMap.print_start();
+}
+
+TEST(TestMerge, Size_map) {
+  s21::Map<int, std::string> map1;
+  s21::Map<int, std::string> map2;
+
+  map1.insert({1, "Apple"});
+  map1.insert({2, "Banana"});
+  map1.insert({3, "Cherry"});
+
+  map2.insert({3, "Coconut"});
+  map2.insert({4, "Date"});
+  map2.insert({5, "Elderberry"});
+
+  map1.merge(map2);
+  map1.print_start();
+  map2.print_start();
+}
 
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);

@@ -324,7 +324,8 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(T &obj) {
       } else if (obj.first > x->item.first) {
         x = x->right;
       } else {
-        return std::make_pair(iterator(x, this->tree_nil_), true);
+        return std::make_pair(iterator(x, this->tree_nil_),
+                              true);  // переделать
       }
     }
   } else {
@@ -335,7 +336,8 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(T &obj) {
       } else if (obj > x->item) {
         x = x->right;
       } else {
-        return std::make_pair(iterator(x, this->tree_nil_), true);
+        return std::make_pair(iterator(x, this->tree_nil_),
+                              true);  // переделать
       }
     }
   }
@@ -449,7 +451,7 @@ void s21::Tree<T>::erase(iterator pos) {
     // y = *pos;
     y = pos.current_;
     if (z->right != this->tree_nil_) {
-      y = TreeMinimum(z->right, this->tree_nil_);
+      y = TreeMinimum(z->right, this->tree_nil_);  // тут
 
     } else {
       y = z->p;  // вынести в TreeSuccessor
@@ -486,6 +488,32 @@ void s21::Tree<T>::swap(Tree &other) {
   Tree temp(other);
   other = std::move(*this);
   *this = std::move(temp);
+}
+
+// Before merge:
+// Map1: {1: Apple} {2: Banana} {3: Cherry}
+// Map2: {3: Coconut} {4: Date} {5: Elderberry}
+
+// After merge:
+// Map1: {1: Apple} {2: Banana} {3: Cherry} {4: Date} {5: Elderberry}
+// Map2: {3: Coconut}
+
+template <typename T>
+
+void s21::Tree<T>::merge(Tree &other) {
+  std::pair<typename s21::Tree<T>::iterator, bool> result;
+  iterator iter = other.begin();
+  for (size_type i = 0; i < other.size_; i++) {
+    if (!(this->find(iter.current_->item)).second) {
+      result = this->insert(iter.current_->item);
+      // this->erase(iter); // че то с удалением сделать
+      iter++;
+      // return;
+    } else {
+      iter++;
+      // return;
+    }
+  }
 }
 
 template <typename T>
