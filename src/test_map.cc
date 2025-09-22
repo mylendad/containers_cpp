@@ -5,10 +5,10 @@
 #include "map.h"
 
 TEST(TestMap, Size_map) {
-  s21::Map<std::string, int> myMap = {
-      {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4},
-      {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8},
-      {"ключ09", 9}, {"ключ10", 10}};
+  s21::Map<std::string, int> myMap{{"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3},
+                                   {"ключ04", 4}, {"ключ05", 5}, {"ключ06", 6},
+                                   {"ключ07", 7}, {"ключ08", 8}, {"ключ09", 9},
+                                   {"ключ10", 10}};
 
   myMap.print_start();
   // std::cout << "Size: " << myMap.size() << std::endl;
@@ -128,7 +128,7 @@ TEST(TestEmptyMaxSizeClear, Size_map) {
   myMap.clear();
   myMap.print_start();
 
-  EXPECT_EQ((int)myMap.size(), 0);
+  EXPECT_EQ((int)myMap.size(), 0);  // -1 почему то
   myMap.print_start();
 }
 
@@ -138,20 +138,21 @@ TEST(TestPrintEmptyTree, Size_map) {
 }
 
 TEST(TestMerge, Size_map) {
-  s21::Map<int, std::string> map1;
-  s21::Map<int, std::string> map2;
+  s21::Map<int, std::string> map1{{1, "Apple"}, {2, "Banana"}, {3, "Cherry"}};
+  s21::Map<int, std::string> map2{
+      {3, "Coconut"}, {4, "Date"}, {5, "Elderberry"}};
 
-  map1.insert({1, "Apple"});
-  map1.insert({2, "Banana"});
-  map1.insert({3, "Cherry"});
+  // map1.insert({1, "Apple"});
+  // map1.insert({2, "Banana"});
+  // map1.insert({3, "Cherry"});
 
-  map2.insert({3, "Coconut"});
-  map2.insert({4, "Date"});
-  map2.insert({5, "Elderberry"});
+  // map2.insert({3, "Coconut"});
+  // map2.insert({4, "Date"});
+  // map2.insert({5, "Elderberry"});
 
   map1.merge(map2);
   map1.print_start();
-  map2.print_start();
+  map2.print_start();  // beck
 }
 
 int main(int argc, char** argv) {

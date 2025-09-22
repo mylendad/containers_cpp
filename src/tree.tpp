@@ -444,18 +444,18 @@ void s21::Tree<T>::erase(iterator pos) {
              z->left != this->tree_nil_) {  // есть только левый потомок
     x = z->left;
     transplant(z, z->left);
-  } else if (z->left != this->tree_nil_ &&
+  } else if (z->left == this->tree_nil_ &&
              z->right != this->tree_nil_) {  // когда есть 2 дочерних узла
-    pos++;
+    pos++;                                   // ??
     // y = pos.get_node();
     // y = *pos;
     y = pos.current_;
-    if (z->right != this->tree_nil_) {
-      y = TreeMinimum(z->right, this->tree_nil_);  // тут
+    // if (z->right != this->tree_nil_) {
+    //   y = TreeMinimum(z->right, this->tree_nil_);  // тут
 
-    } else {
-      y = z->p;  // вынести в TreeSuccessor
-    }
+    // } else {
+    //   y = z->p;  // вынести в pos++???
+    // }
 
     y_original_color = y->color;
     x = y->right;
@@ -506,7 +506,8 @@ void s21::Tree<T>::merge(Tree &other) {
   for (size_type i = 0; i < other.size_; i++) {
     if (!(this->find(iter.current_->item)).second) {
       result = this->insert(iter.current_->item);
-      // this->erase(iter); // че то с удалением сделать
+      iterator temp = iter;
+      other.erase(temp);  // beck
       iter++;
       // return;
     } else {
