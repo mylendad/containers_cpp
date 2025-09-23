@@ -365,10 +365,10 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
   x = this->tree_root_;
   while (x != this->tree_nil_ && flag == 0) {  // начинаем с корня
     y = x;
-    if ((z->item) < (x->item))  //
-      x = x->left;              // если < то идем влево от
+    if ((z->item.first) < (x->item.first))  //
+      x = x->left;                          // если < то идем влево от
     // корня
-    else if ((z->item) > (x->item))
+    else if ((z->item.first) > (x->item.first))
       x = x->right;  // если > или = идем вправо от корня
     else {
       iterator iter_1(x, this->tree_nil_);  // суем результат поиска в итератор
@@ -388,7 +388,7 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
       this->tree_root_->p = tree_nil_;
       this->tree_root_->right = tree_nil_;
       this->tree_root_->left = tree_nil_;
-      this->tree_root_->color = BLACK;  // vinesti
+      // this->tree_root_->color = BLACK;  // vinesti
 
     } else if ((z->item) < (y->item))  // устанавливаем зет на место потомка
       y->left = z;
@@ -444,18 +444,10 @@ void s21::Tree<T>::erase(iterator pos) {
              z->left != this->tree_nil_) {  // есть только левый потомок
     x = z->left;
     transplant(z, z->left);
-  } else if (z->left == this->tree_nil_ &&
+  } else if (z->left != this->tree_nil_ &&
              z->right != this->tree_nil_) {  // когда есть 2 дочерних узла
-    pos++;                                   // ??
-    // y = pos.get_node();
-    // y = *pos;
+    pos++;
     y = pos.current_;
-    // if (z->right != this->tree_nil_) {
-    //   y = TreeMinimum(z->right, this->tree_nil_);  // тут
-
-    // } else {
-    //   y = z->p;  // вынести в pos++???
-    // }
 
     y_original_color = y->color;
     x = y->right;
@@ -479,7 +471,11 @@ void s21::Tree<T>::erase(iterator pos) {
     // return;  // change
   }
   this->size_--;
-  if (y_original_color == BLACK && this->size_ > 1) delete_fixup(x);
+  std::cout << "erase: " << std::endl;
+  if (y_original_color == BLACK
+      //  && this->size_ > 1
+  )
+    delete_fixup(x);
 }
 
 template <typename T>
@@ -499,21 +495,23 @@ void s21::Tree<T>::swap(Tree &other) {
 // Map2: {3: Coconut}
 
 template <typename T>
-
 void s21::Tree<T>::merge(Tree &other) {
   std::pair<typename s21::Tree<T>::iterator, bool> result;
   iterator iter = other.begin();
-  for (size_type i = 0; i < other.size_; i++) {
-    if (!(this->find(iter.current_->item)).second) {
-      result = this->insert(iter.current_->item);
-      iterator temp = iter;
-      other.erase(temp);  // beck
-      iter++;
-      // return;
-    } else {
-      iter++;
-      // return;
-    }
+  std::cout << other.size_ << std::endl;
+  size_type size = other.size();
+  for (size_type i = 0; i < size; i++) {  // поменять размер
+    // while ((*iter) != (*other.end())) {
+    // if (!(this->find(iter.current_->item)).second) {
+    result = this->insert(iter.current_->item);
+    iterator temp = iter;
+    std::cout << "iter.current_->item: " << iter.current_->item.second
+              << std::endl;
+    iter++;
+    // std::cout << "result.second: " << result.second << std::endl;
+    if (result.second) other.erase(temp);  //
+    std::cout << "other.size_: " << other.size_ << std::endl;
+    temp = iter;
   }
 }
 
@@ -547,7 +545,7 @@ void s21::Tree<T>::delete_fixup(BaseNode *&x) {
 
     } else {
       BaseNode *w = x->p->right;
-      if (w->color == RED) {  // sega here what del last node
+      if (w->color == RED) {
         w->color = BLACK;
         x->p->color = RED;
         right_rotate(x->p);
@@ -664,8 +662,11 @@ typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
 
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::end() {
-  BaseNode *max = TreeMaximum(this->tree_root_, this->tree_nil_);
-
+  BaseNode *max;
+  if (this->size_ > 1)
+    max = TreeMaximum(this->tree_root_, this->tree_nil_);
+  else
+    max = this->tree_root_;
   iterator maximum = iterator(max, this->tree_nil_);
   return maximum;
 }
@@ -680,7 +681,7 @@ void s21::Tree<T>::clear() {
   }
   // iterator end(this->tree_root_, this->tree_nil_);  // sega
   // erase(end);
-  erase(begin());
+  // erase(begin());
   // erase(end());
 }
 
