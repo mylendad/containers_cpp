@@ -19,34 +19,39 @@ template <typename Key, typename Value>
 struct is_pair<std::pair<Key, Value>> : std::true_type {};
 
 template <typename T>
-inline constexpr bool is_pair_v = is_pair<T>::value;
+inline constexpr bool value_is_pair = is_pair<T>::value;
 
 template <typename T>
 class Tree {
  public:
   class TreeIterator;
 
-  typedef size_t size_type;
-  typedef size_type key_type;
-  typedef T value_type;
-  typedef value_type &reference;
-  typedef const value_type &const_reference;
-  // typedef TreeIterator iterator;
-  using iterator = TreeIterator;
-  typedef const key_type *const_iterator;
-  struct BaseNode;
+  using size_type = size_t;
 
- protected:
-  BaseNode *tree_nil_;
-  BaseNode *tree_root_;
-  size_type size_ = 0;
+  using key_type = size_type;
+
+  using value_type = T;
+
+  using reference = value_type &;
+
+  using const_reference = const value_type &;
+
+  using iterator = TreeIterator;
+
+  using const_iterator = const key_type *;
+
+  struct BaseNode;
 
  public:
   struct BaseNode {
     value_type item;
+
     bool color;
+
     BaseNode *right;
+
     BaseNode *left;
+
     BaseNode *p;
 
     BaseNode()
@@ -62,12 +67,97 @@ class Tree {
         : item(val), color(false), right(nullptr), left(nullptr), p(nullptr) {}
   };
 
+ public:
+  class TreeIterator {
+   public:
+    friend class Tree<T>;
+
+    TreeIterator();
+
+    TreeIterator(BaseNode *node, BaseNode *&nil);
+
+    TreeIterator(const TreeIterator &other);
+
+    TreeIterator(TreeIterator &&other) noexcept;
+
+    BaseNode *get_node() const { return current_; }
+
+    const TreeIterator &operator=(const TreeIterator &other);
+
+    reference operator*();
+
+    const reference operator*() const;
+
+    value_type *operator->();
+
+    const value_type *operator->() const;
+
+    BaseNode *TreeSuccessor(BaseNode *&x) const;
+
+    BaseNode *TreeDescendant(BaseNode *&x) const;
+
+    bool operator==(const TreeIterator &other) const;
+
+    bool operator!=(const TreeIterator &other) const;
+
+    TreeIterator &operator++();
+
+    TreeIterator operator++(int);
+
+    TreeIterator &operator--();
+
+    TreeIterator operator--(int);
+
+   private:
+    BaseNode *current_;
+
+    BaseNode *nil_;
+  };
+
+  // Map Member functions
+  Tree();
+
+  Tree(std::initializer_list<value_type> const &items);
+
+  Tree(const Tree &m);
+
+  Tree(Tree &&m);
+
+  ~Tree();
+
+  Tree &operator=(const Tree &other);
+
+  Tree &operator=(Tree &&other);
+
+  // Map Iterators
+  iterator begin();
+
+  iterator end();
+
+  bool empty();
+
+  // Map Capacity
+  size_type size();
+
+  size_type max_size();
+
+  // Map Modifiers
+  void clear();
+
+  void clear_support(BaseNode *node);
+
+  std::pair<iterator, bool> insert(const value_type &node);
+
+  void erase(iterator pos);
+
+  void swap(Tree &other);
+
+  void merge(Tree &other);
+
+  // Helpers Functions
   static BaseNode *TreeMinimum(BaseNode *node, BaseNode *nil);
+
   static BaseNode *TreeMaximum(BaseNode *node, BaseNode *nil);
-
-  // BaseNode *TreeSuccessor(BaseNode *&x) const;
-
-  // BaseNode *TreeDescendant(BaseNode *&x) const;
 
   void repainting_red_uncle_n_dad(BaseNode *&y, BaseNode *&z);
 
@@ -83,113 +173,22 @@ class Tree {
 
   void insert_fixup(BaseNode *&y, BaseNode *&z);
 
-  // std::pair<iterator, bool> simple_insert(const value_type &node);
-
   std::pair<Tree<T>::iterator, bool> find(T &obj);
-
-  std::pair<iterator, bool> insert(const value_type &node);
-
-  // std::pair<iterator, bool> insert(const Key &key, const T &obj);
 
   void transplant(BaseNode *&u, BaseNode *&v);
 
-  void erase(iterator pos);
-
-  void swap(Tree &other);
-
-  bool empty();
-
   void delete_fixup(BaseNode *&x);
 
-  iterator begin();
+  void print_tree(BaseNode *base_node, bool is_right, int depth);  // del
 
-  iterator end();
-
-  void print_tree(BaseNode *base_node, bool is_right, int depth);
-
-  void print_start();
-
- public:
-  class TreeIterator {
-   private:  // back
-    BaseNode *current_;
-    // Tree<T> *tree_;  //
-    BaseNode *nil_;
-
-   public:
-    friend class Tree<T>;
-    TreeIterator();
-
-    TreeIterator(BaseNode *node,
-                 // , Tree<T> *tree
-                 BaseNode *&nil);
-
-    TreeIterator(const TreeIterator &other);
-
-    TreeIterator(TreeIterator &&other) noexcept;
-
-    BaseNode *get_node() const { return current_; }
-
-    const TreeIterator &operator=(const TreeIterator &other);
-
-    value_type &operator*();
-
-    const value_type &operator*() const;
-
-    value_type *operator->();
-
-    const value_type *operator->() const;
-
-    // typename Tree<K, T>::TreeIterator &Tree<K,
-    // T>::TreeIterator::operator+(
-    //     const TreeIterator &other);
-
-    // operator BaseNode *() const { return current; }
-
-    // BaseNode *TreeMinimum(BaseNode *&node) const;
-
-    // BaseNode *TreeMaximum(BaseNode *&node) const;
-
-    BaseNode *TreeSuccessor(BaseNode *&x) const;
-
-    BaseNode *TreeDescendant(BaseNode *&x) const;
-
-    bool operator==(const TreeIterator &other) const;
-    bool operator!=(const TreeIterator &other) const;
-
-   public:
-    TreeIterator &operator++();
-
-    TreeIterator operator++(int);
-
-    TreeIterator &operator--();
-
-    TreeIterator operator--(int);
-  };
-
-  Tree &operator=(const Tree &other);
-
-  Tree &operator=(Tree &&other);
-
-  void merge(Tree &other);
-
-  size_type size();
-  // bool empty();
-  void clear();
-
-  size_type max_size();
-
-  Tree();  // default constructor, creates empty Tree
-  Tree(std::initializer_list<value_type> const &items);
-  Tree(const Tree &m);  // copy constructor
-  Tree(Tree &&m);       // moTe constructor
-  ~Tree();              // destructor
-                        // operator=(Tree &&m)
-                        // assignment operator oTerload for moTing object
+  void print_start();  // del
 
  protected:
-  bool is_zero(size_type value);
-  BaseNode *create_node(const value_type item);
+  BaseNode *tree_nil_;
+
+  BaseNode *tree_root_;
+
+  size_type tree_size_ = 0;
 };
 }  // namespace s21
 

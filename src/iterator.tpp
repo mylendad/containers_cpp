@@ -107,7 +107,7 @@ s21::Tree<T>::TreeIterator::operator=(const TreeIterator &other) {
 }
 
 template <typename T>
-typename s21::Tree<T>::value_type &s21::Tree<T>::TreeIterator::operator*() {
+typename s21::Tree<T>::reference s21::Tree<T>::TreeIterator::operator*() {
   if (current_ == nullptr || current_ == nil_) {
     throw std::out_of_range("Dereferencing end iterator");
   }
@@ -115,7 +115,7 @@ typename s21::Tree<T>::value_type &s21::Tree<T>::TreeIterator::operator*() {
 }
 
 template <typename T>
-const typename s21::Tree<T>::value_type &s21::Tree<T>::TreeIterator::operator*()
+const typename s21::Tree<T>::reference s21::Tree<T>::TreeIterator::operator*()
     const {
   if (current_ == nullptr || current_ == nil_) {
     throw std::out_of_range("Dereferencing end iterator");

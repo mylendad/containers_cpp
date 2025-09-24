@@ -132,45 +132,46 @@ TEST(TestEmptyMaxSizeClear, Size_map) {
   myMap.print_start();
 }
 
-// TEST(TestPrintEmptyTree, Size_map) {
-//   s21::Map<std::string, int> myMap;
-//   myMap.print_start();
-// }
+TEST(TestPrintEmptyTree, Size_map) {
+  s21::Map<std::string, int> myMap;
+  myMap.print_start();
+}
 
-// TEST(TestMerge, Size_map) {
-//   s21::Map<int, std::string> map1{{1, "Apple"}, {2, "Banana"}, {3,
-//   "Cherry"}}; s21::Map<int, std::string> map2{
-//       {3, "Coconut"}, {4, "Date"}, {5, "Elderberry"}};
+TEST(TestMerge, Size_map) {
+  s21::Map<int, std::string> map1{{1, "Apple"}, {2, "Banana"}, {3, "Cherry"}};
+  s21::Map<int, std::string> map2{
+      {3, "Coconut"}, {4, "Date"}, {5, "Elderberry"}};
 
-//   // map1.insert({1, "Apple"});
-//   // map1.insert({2, "Banana"});
-//   // map1.insert({3, "Cherry"});
+  // map1.insert({1, "Apple"});
+  // map1.insert({2, "Banana"});
+  // map1.insert({3, "Cherry"});
 
-//   // map2.insert({3, "Coconut"});
-//   // map2.insert({4, "Date"});
-//   // map2.insert({5, "Elderberry"});
+  // map2.insert({3, "Coconut"});
+  // map2.insert({4, "Date"});
+  // map2.insert({5, "Elderberry"});
 
-//   map1.merge(map2);
-//   map1.print_start();
-//   map2.print_start();  // beck
-// }
+  map1.merge(map2);
+  map1.print_start();
+  map2.print_start();  // beck
+  EXPECT_EQ((int)map1.size(), 5);
+}
 
-// TEST(TestTest, Size_map) {
-//   s21::Map<int, std::string> map1{{2, "Apple"}, {1, "Banana"}};
+TEST(TestTest, Size_map) {
+  s21::Map<int, std::string> map1{{2, "Apple"}, {1, "Banana"}};
 
-//   // map1.insert({1, "Apple"});
-//   // map1.insert({2, "Banana"});
-//   // map1.insert({3, "Cherry"});
+  // map1.insert({1, "Apple"});
+  // map1.insert({2, "Banana"});
+  // map1.insert({3, "Cherry"});
 
-//   // map2.insert({3, "Coconut"});
-//   // map2.insert({4, "Date"});
-//   // map2.insert({5, "Elderberry"});
+  // map2.insert({3, "Coconut"});
+  // map2.insert({4, "Date"});
+  // map2.insert({5, "Elderberry"});
 
-//   map1.print_start();
-//   map1.erase(map1.end());
-//   map1.print_start();
-//   EXPECT_EQ((int)map1.size(), 0);
-// }
+  map1.print_start();
+  map1.erase(map1.end());
+  map1.print_start();
+  EXPECT_EQ((int)map1.size(), 1);
+}
 
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
