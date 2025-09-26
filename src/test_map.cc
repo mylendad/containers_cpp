@@ -5,14 +5,14 @@
 #include "map.h"
 
 TEST(TestMap, Size_map) {
-  s21::Map<std::string, int> myMap{{"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3},
+  s21::map<std::string, int> myMap{{"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3},
                                    {"ключ04", 4}, {"ключ05", 5}, {"ключ06", 6},
                                    {"ключ07", 7}, {"ключ08", 8}, {"ключ09", 9},
                                    {"ключ10", 10}};
 
   myMap.print_start();
   // std::cout << "Size: " << myMap.size() << std::endl;
-  s21::Map<std::string, int>::iterator iter;
+  s21::map<std::string, int>::iterator iter;
 
   iter = myMap.begin();
   iter++;
@@ -40,7 +40,7 @@ TEST(TestMap, Size_map) {
   myMap.erase(iter);
 
   // std::cout << (int)myMap.size() << std::endl;
-  // s21::Map<std::string, int>::Node A = new Node;
+  // s21::map<std::string, int>::Node A = new Node;
   EXPECT_EQ((int)myMap.size(), 9);
   std::cout << "После удаления" << std::endl;
   myMap.print_start();
@@ -53,12 +53,12 @@ TEST(TestMap, Size_map) {
 }
 
 TEST(TestMapCopyMoveConstructor, Size_map) {
-  s21::Map<std::string, int> myMap = {
+  s21::map<std::string, int> myMap = {
       {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}};
 
   myMap.print_start();
 
-  s21::Map<std::string, int>
+  s21::map<std::string, int>
       myMap_1;  // object 0x1000000000000000: pointer being freed was not
   myMap_1 = myMap;
   // allocated
@@ -68,7 +68,7 @@ TEST(TestMapCopyMoveConstructor, Size_map) {
   myMap.print_start();
   myMap_1.print_start();
 
-  s21::Map<std::string, int> myMap_2(std::move(myMap_1));
+  s21::map<std::string, int> myMap_2(std::move(myMap_1));
 
   myMap_2.print_start();
   std::cout << "myMap_1: " << std::endl;
@@ -76,14 +76,14 @@ TEST(TestMapCopyMoveConstructor, Size_map) {
 }
 
 TEST(TestSwapAtConstructor, Size_map) {
-  s21::Map<std::string, int> myMap = {
+  s21::map<std::string, int> myMap = {
       {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4},
       {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8},
       {"ключ09", 9}, {"ключ10", 10}};
 
   // myMap.print_start();
 
-  s21::Map<std::string, int> myMap_1 = {
+  s21::map<std::string, int> myMap_1 = {
       {"ключ10", 1}, {"ключ09", 2}, {"ключ08", 3}, {"ключ07", 4},
       {"ключ06", 5}, {"ключ05", 6}, {"ключ04", 7}, {"ключ03", 8},
       {"ключ02", 9}, {"ключ01", 10}
@@ -110,7 +110,7 @@ TEST(TestSwapAtConstructor, Size_map) {
 }
 
 TEST(TestEmptyMaxSizeClear, Size_map) {
-  s21::Map<std::string, int> myMap = {
+  s21::map<std::string, int> myMap = {
       {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4},
       {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8},
       {"ключ09", 9}, {"ключ10", 10}};
@@ -124,7 +124,7 @@ TEST(TestEmptyMaxSizeClear, Size_map) {
 
   EXPECT_EQ(myMap.empty(), false);
 
-  EXPECT_EQ(myMap.max_size(), 256204778801521550);
+  EXPECT_EQ(myMap.max_size(), 18446744073709551615ULL);
 
   myMap.clear();
   myMap.print_start();
@@ -134,13 +134,13 @@ TEST(TestEmptyMaxSizeClear, Size_map) {
 }
 
 TEST(TestPrintEmptyTree, Size_map) {
-  s21::Map<std::string, int> myMap;
+  s21::map<std::string, int> myMap;
   myMap.print_start();
 }
 
 TEST(TestMerge, Size_map) {
-  s21::Map<int, std::string> map1{{1, "Apple"}, {2, "Banana"}, {3, "Cherry"}};
-  s21::Map<int, std::string> map2{
+  s21::map<int, std::string> map1{{1, "Apple"}, {2, "Banana"}, {3, "Cherry"}};
+  s21::map<int, std::string> map2{
       {3, "Coconut"}, {4, "Date"}, {5, "Elderberry"}};
 
   // map1.insert({1, "Apple"});
@@ -158,7 +158,7 @@ TEST(TestMerge, Size_map) {
 }
 
 TEST(TestTest, Size_map) {
-  s21::Map<int, std::string> map1{{2, "Apple"}, {1, "Banana"}};
+  s21::map<int, std::string> map1{{2, "Apple"}, {1, "Banana"}};
 
   // map1.insert({1, "Apple"});
   // map1.insert({2, "Banana"});
@@ -207,7 +207,7 @@ int main(int argc, char** argv) {
 //   DestructorTracker::destructor_count = 0;
 
 //   {
-//     s21::Map<int, std::string> m;
+//     s21::map<int, std::string> m;
 //     m.insert({1, "one"});
 //     m.insert({2, "two"});
 //     m.insert({3, "three"});
@@ -224,7 +224,7 @@ int main(int argc, char** argv) {
 //   const int num_elements = 5;
 
 //   {
-//     s21::Map<int, DestructorTracker> m;
+//     s21::map<int, DestructorTracker> m;
 //     for (int i = 0; i < num_elements; ++i) {
 //       m.insert({i, DestructorTracker(i)});
 //     }
@@ -237,8 +237,8 @@ int main(int argc, char** argv) {
 
 // TEST(MapDestructorTest, EmptyMapDestruction) {
 //   {
-//     s21::Map<int, std::string> empty_map;
-//     // Не должно быть никаких проблем с уничтожением пустой Map
+//     s21::map<int, std::string> empty_map;
+//     // Не должно быть никаких проблем с уничтожением пустой map
 //   }
 //   SUCCEED();
 // }
@@ -247,7 +247,7 @@ int main(int argc, char** argv) {
 //   const size_t large_size = 1000;
 
 //   {
-//     s21::Map<int, int> large_map;
+//     s21::map<int, int> large_map;
 //     for (size_t i = 0; i < large_size; ++i) {
 //       large_map.insert({i, i * 2});
 //     }
@@ -262,11 +262,11 @@ int main(int argc, char** argv) {
 //   DestructorTracker::destructor_count = 0;
 
 //   {
-//     s21::Map<int, DestructorTracker> source_map;
+//     s21::map<int, DestructorTracker> source_map;
 //     source_map.insert({1, DestructorTracker(1)});
 //     source_map.insert({2, DestructorTracker(2)});
 
-//     s21::Map<int, DestructorTracker> moved_map = std::move(source_map);
+//     s21::map<int, DestructorTracker> moved_map = std::move(source_map);
 
 //     // source_map теперь должен быть в valid empty state
 //     EXPECT_TRUE(source_map.empty());
@@ -282,11 +282,11 @@ int main(int argc, char** argv) {
 //   DestructorTracker::destructor_count = 0;
 
 //   {
-//     s21::Map<int, DestructorTracker> original;
+//     s21::map<int, DestructorTracker> original;
 //     original.insert({1, DestructorTracker(1)});
 //     original.insert({2, DestructorTracker(2)});
 
-//     s21::Map<int, DestructorTracker> copy = original;
+//     s21::map<int, DestructorTracker> copy = original;
 
 //     // Оба содержат копии элементов
 //     EXPECT_EQ(original.size(), 2);
@@ -300,16 +300,16 @@ int main(int argc, char** argv) {
 
 // TEST(MapDestructorTest, NestedMapDestruction) {
 //   {
-//     s21::Map<int, s21::Map<int, std::string>> nested_map;
+//     s21::map<int, s21::map<int, std::string>> nested_map;
 
-//     s21::Map<int, std::string> inner_map;
+//     s21::map<int, std::string> inner_map;
 //     inner_map.insert({1, "inner"});
 //     inner_map.insert({2, "values"});
 
 //     nested_map.insert({1, inner_map});
 //     nested_map.insert({2, inner_map});
 
-//     // Деструктор должен рекурсивно уничтожить все вложенные Map
+//     // Деструктор должен рекурсивно уничтожить все вложенные map
 //   }
 //   SUCCEED();
 // }
@@ -317,7 +317,7 @@ int main(int argc, char** argv) {
 // TEST(MapDestructorTest, StringValuesDestruction) {
 //   // Тест с std::string которые имеют свои деструкторы
 //   {
-//     s21::Map<int, std::string> string_map;
+//     s21::map<int, std::string> string_map;
 //     string_map.insert(
 //         {1, "very long string that should be properly deallocated"});
 //     string_map.insert({2, "another long string for testing destruction"});
@@ -335,11 +335,11 @@ int main(int argc, char** argv) {
 //     int* value2 = new int(84);
 
 //     {
-//       s21::Map<int, int*> pointer_map;
+//       s21::map<int, int*> pointer_map;
 //       pointer_map.insert({1, value1});
 //       pointer_map.insert({2, value2});
 
-//       // Деструктор Map не должен удалять сырые указатели!
+//       // Деструктор map не должен удалять сырые указатели!
 //     }
 
 //     // Проверяем, что указатели все еще валидны
@@ -354,7 +354,7 @@ int main(int argc, char** argv) {
 // TEST(MapDestructorTest, RepeatedDestruction) {
 //   // Многократное создание и уничтожение
 //   for (int i = 0; i < 10; ++i) {
-//     s21::Map<int, int> temp_map;
+//     s21::map<int, int> temp_map;
 //     for (int j = 0; j < 10; ++j) {
 //       temp_map.insert({j, j * i});
 //     }
@@ -372,7 +372,7 @@ int main(int argc, char** argv) {
 // //   };
 
 // //   {
-// //     s21::Map<std::string, int, CustomCompare> custom_map;
+// //     s21::map<std::string, int, CustomCompare> custom_map;
 // //     custom_map.insert({"short", 1});
 // //     custom_map.insert({"very long string", 2});
 // //     custom_map.insert({"medium", 3});
@@ -388,7 +388,7 @@ int main(int argc, char** argv) {
 //   const int elements_per_iteration = 50;
 
 //   for (int i = 0; i < iterations; ++i) {
-//     s21::Map<int, std::string> test_map;
+//     s21::map<int, std::string> test_map;
 //     for (int j = 0; j < elements_per_iteration; ++j) {
 //       test_map.insert({j, "test string number " + std::to_string(j)});
 //     }
