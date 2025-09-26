@@ -29,10 +29,28 @@ s21::Tree<T>::Tree(std::initializer_list<value_type> const &items) : Tree() {
   }
 }
 
+// template <typename T>
+// s21::Tree<T>::Tree(const Tree &m) {
+//   if (this == &m) return;
+//   if (this->tree_size_ != 0) this->clear();
+//   if (m.tree_root_ != m.tree_nil_)
+
+//   {
+//     const const_iterator iter = m.const_begin();
+//     while (*(iter) != *(m.const_end())) {
+//       this->insert(*iter);
+
+//       iter++;
+//     }
+//     this->insert(*iter);  // change?
+//   }
+// }
+
 template <typename T>
-s21::Tree<T>::Tree(const Tree &m) {
-  this->tree_root_ = m.tree_root_;
-  this->tree_nil_ = m.tree_nil_;
+s21::Tree<T>::Tree(const Tree &m) : Tree() {
+  if (m.tree_root_ != m.tree_nil_) {
+    copy_tree(m.tree_root_, m.tree_nil_);
+  }
   this->tree_size_ = m.tree_size_;
 }
 
@@ -41,35 +59,51 @@ s21::Tree<T>::Tree(Tree &&m) {
   this->tree_root_ = m.tree_root_;
   this->tree_nil_ = m.tree_nil_;
   this->tree_size_ = m.tree_size_;
-
   m.tree_root_ = nullptr;
   m.tree_nil_ = nullptr;
   m.tree_size_ = 0;
 }
 
 template <typename T>
-s21::Tree<T>::~Tree() {}  // написать
-
-template <typename T>
-
-s21::Tree<T> &s21::Tree<T>::operator=(const Tree<T> &other) {
-  // if del
-  this->tree_root_ = other.tree_root_;
-  this->tree_nil_ = other.tree_nil_;
-  this->tree_size_ = other.tree_size_;
-  return *this;
+s21::Tree<T>::~Tree() {
+  if (this->size() != 0) this->clear();
+  if (this->tree_nil_ != nullptr) delete this->tree_nil_;
 }
 
 template <typename T>
 
+s21::Tree<T> &s21::Tree<T>::operator=(Tree<T> &other) {
+  if (this == &other) return *this;
+  if (this->tree_size_ != 0) this->clear();
+  if (other.tree_root_ != other.tree_nil_)
+
+  {
+    iterator iter = other.begin();
+    while (*iter != *(other.end())) {
+      this->insert(*iter);
+
+      iter++;
+    }
+    this->insert(*iter);  // change?
+  }
+  return *this;
+}
+
+template <typename T>
 s21::Tree<T> &s21::Tree<T>::operator=(Tree<T> &&other) {
-  this->tree_root_ = other.tree_root_;  // вынести?
+  if (this == &other) return *this;
+
+  this->clear();
+  delete this->tree_nil_;
+
+  this->tree_root_ = other.tree_root_;
   this->tree_nil_ = other.tree_nil_;
   this->tree_size_ = other.tree_size_;
 
   other.tree_root_ = nullptr;
   other.tree_nil_ = nullptr;
   other.tree_size_ = 0;
+
   return *this;
 }
 
@@ -106,8 +140,8 @@ void s21::Tree<T>::left_descendants(BaseNode *&y, BaseNode *&z) {
 }
 
 template <typename T>
-void s21::Tree<T>::right_desdendants(BaseNode *&y, BaseNode *&z) {
-  // для правых потомков деда
+void s21::Tree<T>::right_desdendants(
+    BaseNode *&y, BaseNode *&z) {  // для правых потомков деда
   y = z->p->p->left;
   if (y != this->tree_nil_ && y->color == RED) {  // Случай 1
     repainting_red_uncle_n_dad(y, z);
@@ -138,7 +172,6 @@ void s21::Tree<T>::left_rotate(BaseNode *x) {
   y = x->right;
   if (y != nullptr) {
     x->right = y->left;
-
     if (y->left != this->tree_nil_) y->left->p = x;
     y->p = x->p;
   }
@@ -170,8 +203,7 @@ void s21::Tree<T>::right_rotate(BaseNode *y) {
     y->p->left = x;
   } else {
     y->p->right = x;
-  }
-  // ставим Y правым потомком X (или не так хз)
+  }  // ставим Y правым потомком X (или не так хз)
   if (x != nullptr) x->right = y;  // ставим Y правым отроком X
   y->p = x;                        // а родителем Y ставим X
 }
@@ -195,6 +227,22 @@ void s21::Tree<T>::insert_fixup(BaseNode *&y, BaseNode *&z) {
       }
     }
   }
+}
+
+template <typename T>
+void s21::Tree<T>::HasTwoDescedants(BaseNode *x, BaseNode *y, BaseNode *z) {
+  x = y->right;
+  if (y->p == z)
+    x->p = y;
+  else {
+    transplant(y, y->right);
+    y->right = z->right;
+    y->right->p = y;
+  }
+  transplant(z, y);
+  y->left = z->left;
+  y->left->p = y;
+  y->color = z->color;
 }
 
 template <typename T>
@@ -236,19 +284,13 @@ template <typename T>
 std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
     const value_type &node) {
   BaseNode *y;
-
-  // std::pair<typename s21::Tree<T>::iterator, bool> result;
-
-  // result.second = false;
   size_type size = this->tree_size_;
-  BaseNode *z;
-
-  z = new BaseNode(node);  // free make in destructor
+  BaseNode *z = new BaseNode(node);
 
   std::pair<typename s21::Tree<T>::iterator, bool> result =
-      std::make_pair(iterator(z, this->tree_nil_), false);
+      std::make_pair(iterator(this->tree_nil_, this->tree_nil_), false);
 
-  result = find(z->item);
+  if (tree_size_ != 0) result = find(z->item);
 
   if (result.second == false) {
     y = result.first.current_;
@@ -299,8 +341,6 @@ void s21::Tree<T>::erase(iterator pos) {
     return;
   }
   BaseNode *z = pos.current_;
-  // BaseNode *del = z;
-
   BaseNode *x;
   BaseNode *y = z;
   bool y_original_color = y->color;
@@ -317,23 +357,9 @@ void s21::Tree<T>::erase(iterator pos) {
                  this->tree_nil_) {  // когда есть 2 дочерних узла // вынести
     pos++;
     y = pos.current_;
-
     y_original_color = y->color;
-    x = y->right;
-    if (y->p == z)
-      x->p = y;
-    else {
-      transplant(y, y->right);
-      y->right = z->right;
-      y->right->p = y;
-    }
-    transplant(z, y);
-    y->left = z->left;
-    y->left->p = y;
-    y->color = z->color;
-  }  // вынести
-
-  else {
+    HasTwoDescedants(x, y, z);
+  } else {
     if (z == z->p->right)
       z->p->right = this->tree_nil_;
     else
@@ -346,7 +372,6 @@ void s21::Tree<T>::erase(iterator pos) {
 }
 
 template <typename T>
-
 void s21::Tree<T>::swap(Tree &other) {
   Tree temp(other);
   other = std::move(*this);
@@ -357,17 +382,67 @@ template <typename T>
 void s21::Tree<T>::merge(Tree &other) {
   std::pair<typename s21::Tree<T>::iterator, bool> result;
   iterator iter = other.begin();
-  // std::cout << other.tree_size_ << std::endl;
   size_type size = other.size();
   for (size_type i = 0; i < size; i++) {
     result = this->insert(iter.current_->item);
     iterator temp = iter;
-    // std::cout << "iter.current_->item: " << iter.current_->item.second
-    // << std::endl;
     iter++;
-    if (result.second) other.erase(temp);  //
-    // std::cout << "other.tree_size_: " << other.tree_size_ << std::endl;
+    if (result.second) other.erase(temp);
     temp = iter;
+  }
+}
+
+template <typename T>
+void s21::Tree<T>::son_is_left_descendants(BaseNode *x) {
+  BaseNode *w = x->p->right;
+  if (w->color == RED) {
+    w->color = BLACK;
+    x->p->color = RED;
+    left_rotate(x->p);
+    w = x->p->right;
+  }
+  if (w->left->color == BLACK && w->right->color == BLACK) {
+    w->color = RED;
+    x = x->p;
+  } else {
+    if (w->right->color == BLACK) {
+      w->left->color = BLACK;
+      w->color = RED;
+      right_rotate(w);
+      w = x->p->right;
+    }
+    w->color = x->p->color;
+    x->p->color = BLACK;
+    w->right->color = BLACK;
+    left_rotate(x->p);
+    x = this->tree_root_;
+  }
+}
+
+template <typename T>
+void s21::Tree<T>::son_is_right_descendants(BaseNode *x) {
+  BaseNode *w = x->p->right;
+  if (w->color == RED) {
+    w->color = BLACK;
+    x->p->color = RED;
+    right_rotate(x->p);
+    w = x->p->left;
+  }
+  if (w->right->color == BLACK && w->left->color == BLACK) {
+    w->color = RED;
+    x = x->p;
+  } else {
+    if (w->left->color == BLACK) {
+      w->right->color = BLACK;
+      w->color = RED;
+      left_rotate(w);
+      w = x->p->left;
+    }
+    w->color = x->p->color;
+    x->p->color = BLACK;
+    w->left->color = BLACK;
+    right_rotate(x->p);
+    x = this->tree_root_;
   }
 }
 
@@ -375,54 +450,55 @@ template <typename T>
 void s21::Tree<T>::delete_fixup(BaseNode *&x) {
   while (x != tree_root_ && x->color == BLACK) {
     if (x == x->p->left) {
-      BaseNode *w = x->p->right;
-      if (w->color == RED) {
-        w->color = BLACK;
-        x->p->color = RED;
-        left_rotate(x->p);
-        w = x->p->right;
-      }
-      if (w->left->color == BLACK && w->right->color == BLACK) {
-        w->color = RED;
-        x = x->p;
-      } else {
-        if (w->right->color == BLACK) {
-          w->left->color = BLACK;
-          w->color = RED;
-          right_rotate(w);
-          w = x->p->right;
-        }
-        w->color = x->p->color;
-        x->p->color = BLACK;
-        w->right->color = BLACK;
-        left_rotate(x->p);
-        x = this->tree_root_;
-      }
-
+      son_is_left_descendants(x);
+      // BaseNode *w = x->p->right;
+      // if (w->color == RED) {
+      //   w->color = BLACK;
+      //   x->p->color = RED;
+      //   left_rotate(x->p);
+      //   w = x->p->right;
+      // }
+      // if (w->left->color == BLACK && w->right->color == BLACK) {
+      //   w->color = RED;
+      //   x = x->p;
+      // } else {
+      //   if (w->right->color == BLACK) {
+      //     w->left->color = BLACK;
+      //     w->color = RED;
+      //     right_rotate(w);
+      //     w = x->p->right;
+      //   }
+      //   w->color = x->p->color;
+      //   x->p->color = BLACK;
+      //   w->right->color = BLACK;
+      //   left_rotate(x->p);
+      //   x = this->tree_root_;
+      // }
     } else {
-      BaseNode *w = x->p->right;
-      if (w->color == RED) {
-        w->color = BLACK;
-        x->p->color = RED;
-        right_rotate(x->p);
-        w = x->p->left;
-      }
-      if (w->right->color == BLACK && w->left->color == BLACK) {
-        w->color = RED;
-        x = x->p;
-      } else {
-        if (w->left->color == BLACK) {
-          w->right->color = BLACK;
-          w->color = RED;
-          left_rotate(w);
-          w = x->p->left;
-        }
-        w->color = x->p->color;
-        x->p->color = BLACK;
-        w->left->color = BLACK;
-        right_rotate(x->p);
-        x = this->tree_root_;
-      }
+      son_is_right_descendants(x);
+      // BaseNode *w = x->p->right;
+      // if (w->color == RED) {
+      //   w->color = BLACK;
+      //   x->p->color = RED;
+      //   right_rotate(x->p);
+      //   w = x->p->left;
+      // }
+      // if (w->right->color == BLACK && w->left->color == BLACK) {
+      //   w->color = RED;
+      //   x = x->p;
+      // } else {
+      //   if (w->left->color == BLACK) {
+      //     w->right->color = BLACK;
+      //     w->color = RED;
+      //     left_rotate(w);
+      //     w = x->p->left;
+      //   }
+      //   w->color = x->p->color;
+      //   x->p->color = BLACK;
+      //   w->left->color = BLACK;
+      //   right_rotate(x->p);
+      //   x = this->tree_root_;
+      // }
     }
   }
   x->color = BLACK;
@@ -431,13 +507,10 @@ void s21::Tree<T>::delete_fixup(BaseNode *&x) {
 template <typename T>
 void s21::Tree<T>::print_tree(BaseNode *base_node, bool is_right, int depth) {
   if (base_node == nullptr || base_node == tree_nil_) return;
-
   print_tree(base_node->right, true, depth + 1);
-
   for (int i = 0; i < depth; i++) {
     std::cout << "    ";
   }
-
   if (depth > 0) {
     if (is_right) {
       std::cout << "┌── ";
@@ -445,21 +518,17 @@ void s21::Tree<T>::print_tree(BaseNode *base_node, bool is_right, int depth) {
       std::cout << "└── ";
     }
   }
-
   if (base_node->color == RED) {
     std::cout << "\033[31m";
   } else {
     std::cout << "\033[37m";
   }
-
   std::cout << base_node->item.first << ":" << base_node->item.second;
 
   if (base_node == tree_root_) {
     std::cout << " (ROOT)";
   }
-
   std::cout << "\033[0m" << std::endl;
-
   print_tree(base_node->left, false, depth + 1);
 }
 
@@ -521,6 +590,28 @@ typename s21::Tree<T>::iterator s21::Tree<T>::end() {
   return maximum;
 }
 
+// template <typename T>
+// typename s21::Tree<T>::const_iterator s21::Tree<T>::const_begin() const {
+//   BaseNode *min;
+//   if (this->tree_size_ > 1)
+//     min = TreeMinimum(this->tree_root_, this->tree_nil_);
+//   else
+//     min = this->tree_root_;  // ???
+//   const_iterator minimum(min, this->tree_nil_);
+//   return minimum;
+// }
+
+// template <typename T>
+// typename s21::Tree<T>::const_iterator s21::Tree<T>::const_end() const {
+//   BaseNode *max;
+//   if (this->tree_size_ > 1)
+//     max = TreeMaximum(this->tree_root_, this->tree_nil_);
+//   else
+//     max = this->tree_root_;
+//   const const_iterator maximum(max, this->tree_nil_);
+//   return maximum;
+// }
+
 template <typename T>
 void s21::Tree<T>::clear() {
   clear_support(this->tree_root_);
@@ -537,7 +628,7 @@ void s21::Tree<T>::clear_support(BaseNode *node) {
   clear_support(node->left);
   clear_support(node->right);
 
-  delete node;
+  if (node != nullptr && node != this->tree_nil_) delete node;
 }
 
 template <typename T>
@@ -550,9 +641,24 @@ bool s21::Tree<T>::empty() {
 template <typename T>
 
 typename s21::Tree<T>::size_type s21::Tree<T>::max_size() {
-  size_type result = 256204778801521550;
+  size_type result = 256204778801521550;  // fix
   return result;
+}
+
+template <typename T>
+void s21::Tree<T>::copy_tree(BaseNode *source_node, BaseNode *source_nil) {
+  if (source_node == source_nil) return;
+
+  this->insert(source_node->item);
+
+  if (source_node->left != source_nil) {
+    copy_tree(source_node->left, source_nil);
+  }
+
+  if (source_node->right != source_nil) {
+    copy_tree(source_node->right, source_nil);
+  }
 }
 }  // namespace s21
 
-#endif  // MAP_TPP
+#endif  // TREE_TPP

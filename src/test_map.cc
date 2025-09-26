@@ -54,13 +54,14 @@ TEST(TestMap, Size_map) {
 
 TEST(TestMapCopyMoveConstructor, Size_map) {
   s21::Map<std::string, int> myMap = {
-      {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4},
-      {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8},
-      {"ключ09", 9}, {"ключ10", 10}};
+      {"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}};
 
-  // myMap.print_start();
+  myMap.print_start();
 
-  s21::Map<std::string, int> myMap_1 = myMap;
+  s21::Map<std::string, int>
+      myMap_1;  // object 0x1000000000000000: pointer being freed was not
+  myMap_1 = myMap;
+  // allocated
 
   EXPECT_EQ((int)myMap.size(), (int)myMap_1.size());
 
@@ -99,7 +100,7 @@ TEST(TestSwapAtConstructor, Size_map) {
   std::cout << "TestSwapmyMap_1: " << std::endl;
   myMap_1.print_start();
 
-  // myMap_1.insert_or_assign("ключ06", 666);  // вернуть
+  myMap_1.insert_or_assign("ключ06", 666);  // вернуть
   std::cout << "Testinsert_or_assign: После вставки: " << std::endl;
   myMap.at("ключ10") = 111;
   myMap_1["ключ11"] = 1112;
@@ -128,7 +129,7 @@ TEST(TestEmptyMaxSizeClear, Size_map) {
   myMap.clear();
   myMap.print_start();
 
-  EXPECT_EQ((int)myMap.size(), 0);  // -1 почему то
+  EXPECT_EQ((int)myMap.size(), 0);  // 10 почему то
   myMap.print_start();
 }
 

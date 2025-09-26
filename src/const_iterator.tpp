@@ -1,5 +1,5 @@
-#ifndef CONST_ITERATOR_TPP
-#define CONST_ITERATOR_TPP
+#ifndef ITERATOR_TPP
+#define ITERATOR_TPP
 
 #include <math.h>
 #include <string.h>
@@ -12,7 +12,7 @@
 namespace s21 {
 
 // template <typename T>
-// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeMinimum(
+// typename s21::Tree<T>::BaseNode *s21::Tree<T>::const_iterator::TreeMinimum(
 //     BaseNode *&node) const {
 //   BaseNode *x;
 //   BaseNode *min;
@@ -25,7 +25,7 @@ namespace s21 {
 // }
 
 // template <typename T>
-// typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeMaximum(
+// typename s21::Tree<T>::BaseNode *s21::Tree<T>::const_iterator::TreeMaximum(
 //     BaseNode *&node) const {
 //   BaseNode *x;
 //   BaseNode *max;
@@ -38,10 +38,10 @@ namespace s21 {
 // }
 
 template <typename T>
-typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeSuccessor(
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::const_iterator::TreeSuccessor(
 
-    BaseNode *&x) const {
-  BaseNode *y;
+    const BaseNode *&x) const {
+  const BaseNode *y;
   if (x->right != nil_) {
     return TreeMinimum(x->right, this->nil_);
   }
@@ -54,10 +54,10 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeSuccessor(
 }
 
 template <typename T>
-typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeDescendant(
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::const_iterator::TreeDescendant(
 
-    BaseNode *&x) const {
-  BaseNode *y;
+    const BaseNode *&x) const {
+  const BaseNode *y;
   if (x->left != nil_) {
     return TreeMaximum(x->left, this->nil_);
   }
@@ -70,29 +70,29 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeDescendant(
 }
 
 template <typename T>
-s21::Tree<T>::TreeIterator::TreeIterator()
+s21::Tree<T>::const_iterator::const_iterator()
     : current_(nullptr),
       nil_(nullptr)
 // , nil_(nullptr)
 {}
 
 // template <typename T>
-// s21::Tree<T>::TreeIterator::const_iterator()
+// s21::Tree<T>::const_iterator::const_iterator()
 //     : current_(nullptr),
 //       nil_(nullptr)
 // // , nil_(nullptr)
 // {}
 
 template <typename T>
-s21::Tree<T>::TreeIterator::TreeIterator(BaseNode *node,
-                                         //  Tree<T> *tree
-                                         BaseNode *&nil) {
+s21::Tree<T>::const_iterator::const_iterator(BaseNode *node,
+                                             //  Tree<T> *tree
+                                             const BaseNode *&nil) {
   this->current_ = node;
   this->nil_ = nil;
 }
 
 // template <typename T>
-// s21::Tree<T>::TreeIterator::const_iterator(BaseNode *node,
+// s21::Tree<T>::const_iterator::const_iterator(BaseNode *node,
 //                                            //  Tree<T> *tree
 //                                            BaseNode *&nil) {
 //   this->current_ = node;
@@ -100,20 +100,20 @@ s21::Tree<T>::TreeIterator::TreeIterator(BaseNode *node,
 // }
 
 template <typename T>
-s21::Tree<T>::TreeIterator::TreeIterator(const TreeIterator &other) {
+s21::Tree<T>::const_iterator::const_iterator(const const_iterator &other) {
   this->current_ = other.current_;
   this->nil_ = other.nil_;
 }
 
 template <typename T>
-s21::Tree<T>::TreeIterator::TreeIterator(TreeIterator &&other) noexcept
+s21::Tree<T>::const_iterator::const_iterator(const_iterator &&other) noexcept
     : current_(other.current_) {
   other.current_ = nullptr;
 }
 
 template <typename T>
-const typename s21::Tree<T>::TreeIterator &
-s21::Tree<T>::TreeIterator::operator=(const TreeIterator &other) {
+const typename s21::Tree<T>::const_iterator &
+s21::Tree<T>::const_iterator::operator=(const const_iterator &other) const {
   if (this != &other) {
     this->current_ = other.current_;
     this->nil_ = other.nil_;
@@ -122,15 +122,7 @@ s21::Tree<T>::TreeIterator::operator=(const TreeIterator &other) {
 }
 
 template <typename T>
-typename s21::Tree<T>::reference s21::Tree<T>::TreeIterator::operator*() {
-  if (current_ == nullptr || current_ == nil_) {
-    throw std::out_of_range("Dereferencing end iterator");
-  }
-  return current_->item;
-}
-
-template <typename T>
-const typename s21::Tree<T>::reference s21::Tree<T>::TreeIterator::operator*()
+const typename s21::Tree<T>::reference s21::Tree<T>::const_iterator::operator*()
     const {
   if (current_ == nullptr || current_ == nil_) {
     throw std::out_of_range("Dereferencing end iterator");
@@ -138,17 +130,19 @@ const typename s21::Tree<T>::reference s21::Tree<T>::TreeIterator::operator*()
   return current_->item;
 }
 
-template <typename T>
-typename s21::Tree<T>::value_type *s21::Tree<T>::TreeIterator::operator->() {
-  if (current_ == nullptr || current_ == nil_) {
-    throw std::out_of_range("Accessing end iterator");
-  }
-  return &(current_->item);
-}
+// template <typename T>
+// const typename s21::Tree<T>::reference
+// s21::Tree<T>::const_iterator::operator*()
+//     const {
+//   if (current_ == nullptr || current_ == nil_) {
+//     throw std::out_of_range("Dereferencing end iterator");
+//   }
+//   return current_->item;
+// }
 
 template <typename T>
 const typename s21::Tree<T>::value_type *
-s21::Tree<T>::TreeIterator::operator->() const {
+s21::Tree<T>::const_iterator::operator->() const {
   if (current_ == nullptr || current_ == nil_) {
     throw std::out_of_range("Accessing end iterator");
   }
@@ -156,8 +150,17 @@ s21::Tree<T>::TreeIterator::operator->() const {
 }
 
 // template <typename T>
-// const s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator=(
-//     const TreeIterator &other) {
+// const typename s21::Tree<T>::value_type *
+// s21::Tree<T>::const_iterator::operator->() {
+//   if (current_ == nullptr || current_ == nil_) {
+//     throw std::out_of_range("Accessing end iterator");
+//   }
+//   return &(current_->item);
+// }
+
+// template <typename T>
+// const s21::Tree<T>::const_iterator &s21::Tree<T>::const_iterator::operator=(
+//     const const_iterator &other) {
 //   if (this != &other) {
 //     this->current_ = other.current_;
 //     this->tree_ = other.tree_;
@@ -167,7 +170,8 @@ s21::Tree<T>::TreeIterator::operator->() const {
 
 template <typename T>
 
-typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator++() {
+typename s21::Tree<T>::const_iterator &
+s21::Tree<T>::const_iterator::operator++() const {
   this->current_ = TreeSuccessor(this->current_);
 
   // BaseNode *x = this->get_node();
@@ -196,8 +200,8 @@ typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator++() {
 
 template <typename T>
 // как это работает??
-typename s21::Tree<T>::TreeIterator s21::Tree<T>::TreeIterator::operator++(
-    int) {
+typename s21::Tree<T>::const_iterator s21::Tree<T>::const_iterator::operator++(
+    int) const {
   iterator temp = *this;
   ++(*this);
   return temp;
@@ -205,7 +209,8 @@ typename s21::Tree<T>::TreeIterator s21::Tree<T>::TreeIterator::operator++(
 
 template <typename T>
 
-typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator--() {
+const typename s21::Tree<T>::const_iterator &const
+s21::Tree<T>::const_iterator::operator--() const {
   this->current_ = TreeDescendant(this->current_);
 
   return *this;
@@ -213,8 +218,8 @@ typename s21::Tree<T>::TreeIterator &s21::Tree<T>::TreeIterator::operator--() {
 
 template <typename T>
 
-typename s21::Tree<T>::TreeIterator s21::Tree<T>::TreeIterator::operator--(
-    int) {
+const typename s21::Tree<T>::const_iterator
+s21::Tree<T>::const_iterator::operator--(int) const {
   iterator temp = *this;
   --(*this);
   return temp;

@@ -68,6 +68,17 @@ namespace s21 {
 //   }
 //   return result;
 // }
+template <typename Key, typename T>
+std::pair<typename s21::Map<Key, T>::iterator, bool>
+s21::Map<Key, T>::insert_or_assign(const Key& key, const T& obj) {
+  std::pair<typename s21::Map<Key, T>::iterator, bool> result =
+      insert(value_type(key, obj));
+  // Node *x;
+  if (result.second == false) {
+    result.first->second = obj;
+  }
+  return result;
+}
 
 template <typename Key, typename T>
 //

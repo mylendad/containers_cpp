@@ -26,6 +26,8 @@ class Tree {
  public:
   class TreeIterator;
 
+  class const_iterator;
+
   using size_type = size_t;
 
   using key_type = size_type;
@@ -38,7 +40,7 @@ class Tree {
 
   using iterator = TreeIterator;
 
-  using const_iterator = const key_type *;
+  // using const_iterator = const TreeIterator;
 
   struct BaseNode;
 
@@ -74,7 +76,11 @@ class Tree {
 
     TreeIterator();
 
+    // const_iterator();
+
     TreeIterator(BaseNode *node, BaseNode *&nil);
+
+    // const_iterator(BaseNode *node, BaseNode *&nil);
 
     TreeIterator(const TreeIterator &other);
 
@@ -96,9 +102,9 @@ class Tree {
 
     BaseNode *TreeDescendant(BaseNode *&x) const;
 
-    bool operator==(const TreeIterator &other) const;
+    // bool operator==(const TreeIterator &other) const;
 
-    bool operator!=(const TreeIterator &other) const;
+    // bool operator!=(const TreeIterator &other) const;
 
     TreeIterator &operator++();
 
@@ -114,6 +120,51 @@ class Tree {
     BaseNode *nil_;
   };
 
+  //  public:
+  //   class const_iterator {
+  //    public:
+  //     friend class Tree<T>;
+
+  //     const_iterator();
+
+  //     const_iterator(BaseNode *node, const BaseNode *&nil);
+
+  //     const_iterator(const const_iterator &other);
+
+  //     const_iterator(const_iterator &&other) noexcept;
+
+  //     const const_iterator &operator=(const const_iterator &other) const;
+
+  //     // const reference operator*();
+
+  //     const reference operator*() const;
+
+  //     //  const value_type *operator->() const ;
+
+  //     const value_type *operator->() const;
+
+  //     BaseNode *TreeSuccessor(const BaseNode *&x) const;
+
+  //     BaseNode *TreeDescendant(const BaseNode *&x) const;
+
+  //     // bool operator==(const TreeIterator &other) const;
+
+  //     // bool operator!=(const TreeIterator &other) const;
+
+  //     const_iterator &operator++() const;
+
+  //     const_iterator operator++(int) const;
+
+  //     const const_iterator &operator--() const;
+
+  //     const const_iterator operator--(int) const;
+
+  //    private:
+  //     const BaseNode *current_;
+
+  //     const BaseNode *nil_;
+  //   };
+
   // Map Member functions
   Tree();
 
@@ -125,7 +176,7 @@ class Tree {
 
   ~Tree();
 
-  Tree &operator=(const Tree &other);
+  Tree &operator=(Tree &other);
 
   Tree &operator=(Tree &&other);
 
@@ -133,6 +184,9 @@ class Tree {
   iterator begin();
 
   iterator end();
+
+  const_iterator const_begin() const;
+  const_iterator const_end() const;
 
   bool empty();
 
@@ -159,6 +213,8 @@ class Tree {
 
   static BaseNode *TreeMaximum(BaseNode *node, BaseNode *nil);
 
+  void HasTwoDescedants(BaseNode *x, BaseNode *y, BaseNode *z);
+
   void repainting_red_uncle_n_dad(BaseNode *&y, BaseNode *&z);
 
   void left_descendants(BaseNode *&y, BaseNode *&z);
@@ -166,6 +222,10 @@ class Tree {
   void right_desdendants(BaseNode *&y, BaseNode *&z);
 
   bool dad_is_left_son(BaseNode *&z);
+
+  void son_is_left_descendants(BaseNode *x);
+
+  void son_is_right_descendants(BaseNode *x);
 
   void left_rotate(BaseNode *x);
 
@@ -178,6 +238,8 @@ class Tree {
   void transplant(BaseNode *&u, BaseNode *&v);
 
   void delete_fixup(BaseNode *&x);
+
+  void copy_tree(BaseNode *source_node, BaseNode *source_nil);
 
   void print_tree(BaseNode *base_node, bool is_right, int depth);  // del
 
@@ -192,6 +254,7 @@ class Tree {
 };
 }  // namespace s21
 
+// #include "const_iterator.tpp"
 #include "iterator.tpp"
 #include "tree.tpp"
 
