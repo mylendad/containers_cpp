@@ -40,7 +40,7 @@ namespace s21 {
 template <typename T>
 typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeSuccessor(
 
-    BaseNode *&x) const {
+    BaseNode *&x) {
   BaseNode *y;
   if (x->right != nil_) {
     return TreeMinimum(x->right, this->nil_);
@@ -56,7 +56,7 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeSuccessor(
 template <typename T>
 typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeIterator::TreeDescendant(
 
-    BaseNode *&x) const {
+    BaseNode *&x) {
   BaseNode *y;
   if (x->left != nil_) {
     return TreeMaximum(x->left, this->nil_);

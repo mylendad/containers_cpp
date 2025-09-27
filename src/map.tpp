@@ -10,6 +10,11 @@
 namespace s21 {
 
 template <typename Key, typename T>
+s21::map<Key, T>::map(map&& m) {
+  *this = std::move(m);
+}
+
+template <typename Key, typename T>
 s21::map<Key, T>& s21::map<Key, T>::operator=(map& other) {
   Tree<std::pair<const Key, T>>::operator=(other);
   return *this;

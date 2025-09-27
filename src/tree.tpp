@@ -24,8 +24,14 @@ s21::Tree<T>::Tree() {
 
 template <typename T>
 s21::Tree<T>::Tree(std::initializer_list<value_type> const &items) : Tree() {
-  for (auto &item : items) {
-    this->insert(item);
+  try {
+    for (auto &item : items) {
+      this->insert(item);
+    }
+  } catch (const std::bad_alloc &e) {
+    this->clear();
+    delete this->tree_nil_;
+    throw;
   }
 }
 
@@ -58,12 +64,17 @@ s21::Tree<T>::Tree(const Tree &m) : Tree() {
 
 template <typename T>
 s21::Tree<T>::Tree(Tree &&m) {
+  std::cout << "s21::Tree<T>::Tree(Tree &&m)" << std::endl;
   this->tree_root_ = m.tree_root_;
   this->tree_nil_ = m.tree_nil_;
   this->tree_size_ = m.tree_size_;
-  m.tree_root_ = nullptr;
-  m.tree_nil_ = nullptr;
-  m.tree_size_ = 0;
+  if (m.tree_size_ != 0) {
+    delete m.tree_nil_;
+    m.clear();
+    m.tree_root_ = nullptr;
+    m.tree_nil_ = nullptr;
+    m.tree_size_ = 0;
+  }
 }
 
 template <typename T>
@@ -74,7 +85,7 @@ s21::Tree<T>::~Tree() {
 
 template <typename T>
 
-s21::Tree<T> &s21::Tree<T>::operator=(Tree<T> &other) {
+s21::Tree<T> &s21::Tree<T>::operator=(const Tree<T> &other) {
   if (this == &other) return *this;
   if (this->tree_size_ != 0) this->clear();
   if (other.tree_root_ != other.tree_nil_)
@@ -280,8 +291,8 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
   size_type size = this->tree_size_;
   BaseNode *z = new BaseNode(node);
 
-  std::pair<typename s21::Tree<T>::iterator, bool> result =
-      std::make_pair(iterator(this->tree_nil_, this->tree_nil_), false);
+  std::pair<typename s21::Tree<T>::iterator, bool> result = std::make_pair(
+      iterator(this->tree_nil_, this->tree_nil_), false);  // with first fix
 
   if (tree_size_ != 0) result = find(z->item);
 
@@ -308,6 +319,7 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
     result.second = true;
     this->tree_size_++;
   }
+  result.first = iterator(z, this->tree_nil_);
   if (size == this->tree_size_) result.second = false;
   return result;
 }
@@ -497,10 +509,11 @@ template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::end() {
   BaseNode *max;
   if (this->tree_size_ > 1)
-    max = TreeMaximum(this->tree_root_, this->tree_nil_);
+    max = (TreeMaximum(this->tree_root_, this->tree_nil_));
   else
     max = this->tree_root_;
-  iterator maximum = iterator(max, this->tree_nil_);
+  this->end_node_ = max->right;
+  iterator maximum = iterator(this->end_node_, this->tree_nil_);
   return maximum;
 }
 

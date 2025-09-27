@@ -71,8 +71,8 @@ class Tree {
     const reference operator*() const;
     value_type *operator->();
     const value_type *operator->() const;
-    BaseNode *TreeSuccessor(BaseNode *&x) const;
-    BaseNode *TreeDescendant(BaseNode *&x) const;
+    BaseNode *TreeSuccessor(BaseNode *&x);
+    BaseNode *TreeDescendant(BaseNode *&x);
     TreeIterator &operator++();
     TreeIterator operator++(int);
     TreeIterator &operator--();
@@ -88,7 +88,7 @@ class Tree {
   Tree(const Tree &m);
   Tree(Tree &&m);
   ~Tree();
-  Tree &operator=(Tree &other);
+  Tree &operator=(const Tree &other);
   Tree &operator=(Tree &&other);
 
   // Tree Iterators
@@ -132,6 +132,8 @@ class Tree {
  protected:
   BaseNode *tree_nil_;
   BaseNode *tree_root_;
+  BaseNode *end_node_;
+
   size_type tree_size_ = 0;
 };
 }  // namespace s21

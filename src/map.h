@@ -48,7 +48,7 @@ class map : public Tree<std::pair<const Key, T>> {
   map(std::initializer_list<value_type> const &items)
       : Tree<std::pair<const Key, T>>(items) {}
   map(const map &m) : Tree<std::pair<const Key, T>>(m) {};
-  map(map &&m) : Tree<std::pair<const Key, T>>(m) {};
+  map(map &&m);
   map &operator=(map &other);
   map &operator=(map &&other);
 
