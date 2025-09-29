@@ -62,25 +62,28 @@ class Tree {
    public:
     friend class Tree<T>;
     TreeIterator();
-    TreeIterator(BaseNode *node, BaseNode *&nil);
+    TreeIterator(BaseNode *node, BaseNode *&nil, BaseNode *&end_node);
     TreeIterator(const TreeIterator &other);
     TreeIterator(TreeIterator &&other) noexcept;
     BaseNode *get_node() const { return current_; }
     const TreeIterator &operator=(const TreeIterator &other);
+    bool operator==(const TreeIterator &other);
+    bool operator!=(const TreeIterator &other);
     reference operator*();
     const reference operator*() const;
     value_type *operator->();
     const value_type *operator->() const;
-    BaseNode *TreeSuccessor(BaseNode *&x);
-    BaseNode *TreeDescendant(BaseNode *&x);
+    BaseNode *TreeSuccessor(BaseNode *x);
+    BaseNode *TreeDescendant(BaseNode *x);
     TreeIterator &operator++();
     TreeIterator operator++(int);
-    TreeIterator &operator--();
+    TreeIterator operator--();
     TreeIterator operator--(int);
 
    private:
     BaseNode *current_;
     BaseNode *nil_;
+    BaseNode *end_node_;
   };
 
   Tree();
@@ -111,16 +114,16 @@ class Tree {
   // Helpers Functions
   static BaseNode *TreeMinimum(BaseNode *node, BaseNode *nil);
   static BaseNode *TreeMaximum(BaseNode *node, BaseNode *nil);
-  void HasTwoDescedants(BaseNode *x, BaseNode *y, BaseNode *z);
-  void repainting_red_uncle_n_dad(BaseNode *&y, BaseNode *&z);
-  void left_descendants(BaseNode *&y, BaseNode *&z);
-  void right_desdendants(BaseNode *&y, BaseNode *&z);
+  void HasTwoDescedants(BaseNode *&x, BaseNode *&y, BaseNode *z);
+  BaseNode *repainting_red_uncle_n_dad(BaseNode *&y, BaseNode *&z);
+  BaseNode *left_descendants(BaseNode *&y, BaseNode *&z);
+  BaseNode *right_desdendants(BaseNode *&y, BaseNode *&z);
   bool dad_is_left_son(BaseNode *&z);
   void son_is_left_descendants(BaseNode *x);
   void son_is_right_descendants(BaseNode *x);
   void left_rotate(BaseNode *x);
   void right_rotate(BaseNode *y);
-  void insert_fixup(BaseNode *&y, BaseNode *&z);
+  BaseNode *insert_fixup(BaseNode *&y, BaseNode *&z);
   std::pair<Tree<T>::iterator, bool> find(T &obj);
   void transplant(BaseNode *&u, BaseNode *&v);
   void delete_fixup(BaseNode *&x);

@@ -53,10 +53,21 @@ T& s21::map<Key, T>::at(const Key& key) {
 template <typename Key, typename T>
 T& s21::map<Key, T>::operator[](const Key& key) {
   std::pair<const Key, T> temp = {key, T()};
-  std::pair<iterator, bool> result = this->find(temp);
-  if (result.second == false) this->insert(key, T());
-  return result.first->second;
+  std::pair<iterator, bool> result =
+      this->find(temp);  // если не находит, в результат пишется отец!!! а temp
+                         // что там во втором аргументе?
+  if (result.second == false) {
+    result.first = this->end();
+    result = this->insert(temp);
+  }
+  return result.first->second;  // куда
 }
+
+// template <typename Key, typename T>
+// T& s21::map<Key, T>::operator[](const Key& key) {
+//   std::pair<iterator, bool> result = this->insert({key, T()});
+//   return result.first->second;
+// }
 
 template <typename Key, typename T>
 bool s21::map<Key, T>::contains(const Key& key) {

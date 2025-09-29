@@ -14,7 +14,8 @@ TEST(TestMap, Size_map) {
   // std::cout << "Size: " << myMap.size() << std::endl;
   s21::map<std::string, int>::iterator iter;
 
-  iter = myMap.begin();
+  iter = myMap.begin();  // срабатывает оператор перемещения а потом только
+                         // копирования и меняетсяя нил
   iter++;
   iter++;
   iter++;
@@ -311,8 +312,8 @@ TEST(map_constructor, case13) {
   s21::map<double, std::string> s21_map_res;
   s21_map_res = std::move(s21_map_ref);
 
-  EXPECT_EQ(s21_map_ref.size(), 0U);
-  EXPECT_EQ(s21_map_res.size(), 3U);
+  EXPECT_EQ(s21_map_ref.size(), 0);
+  EXPECT_EQ(s21_map_res.size(), 3);
 }
 
 TEST(map_constructor, case14) {
@@ -325,8 +326,8 @@ TEST(map_constructor, case14) {
   s21::map<std::string, int> s21_map_res;
   s21_map_res = std::move(s21_map_ref);
 
-  EXPECT_EQ(s21_map_ref.size(), 0U);
-  EXPECT_EQ(s21_map_res.size(), 3U);
+  EXPECT_EQ(s21_map_ref.size(), 0);
+  EXPECT_EQ(s21_map_res.size(), 3);
 }
 
 // TEST(map_constructor, case15) {
@@ -694,8 +695,10 @@ TEST(map_begin, case3) {
 
 TEST(map_begin, case4) {
   s21::map<int, double> s21_map;
+  // std::map<int, double> stl21_map;
 
   EXPECT_THROW(s21_map.begin(), std::out_of_range);  // зачем??
+  // EXPECT_THROW(stl21_map.begin(), std::out_of_range);  // зачем??
 }
 
 TEST(map_begin, case5) {
@@ -722,224 +725,221 @@ TEST(map_begin, case6) {
   EXPECT_EQ(min_value->second, 1);
 }
 
-TEST(map_end, case1) {
-  std::pair<int, double> pair1{9, 1.4};
-  std::pair<int, double> pair2{15, 1.456};
-  std::pair<int, double> pair3{7, 151.4};
-  std::pair<int, double> pair4{23, 2.77};
-  std::pair<int, double> pair5{2, 3.9};
+// TEST(map_end, case1) {
+//   std::pair<int, double> pair1{9, 1.4};
+//   std::pair<int, double> pair2{15, 1.456};
+//   std::pair<int, double> pair3{7, 151.4};
+//   std::pair<int, double> pair4{23, 2.77};
+//   std::pair<int, double> pair5{2, 3.9};
 
-  s21::map<int, double> s21_map = {pair1, pair2, pair3, pair4, pair5};
+//   s21::map<int, double> s21_map = {pair1, pair2, pair3, pair4, pair5};
 
-  auto max_value = s21_map.end();
+//   auto max_value = s21_map.end();
 
-  EXPECT_EQ(max_value->first, 23);
-}
+//   EXPECT_EQ(max_value->first, 23);
+// }
 
-TEST(map_end, case2) {
-  std::pair<double, std::string> pair1{11.4, "hello"};
-  std::pair<double, std::string> pair2{2.770001, "hee"};
-  std::pair<double, std::string> pair3{3.901, "hola"};
-  std::pair<double, std::string> pair4{11.400000001, "hi"};
-  std::pair<double, std::string> pair5{3.9, "hee-hee"};
+// TEST(map_end, case2) {
+//   std::pair<double, std::string> pair1{11.4, "hello"};
+//   std::pair<double, std::string> pair2{2.770001, "hee"};
+//   std::pair<double, std::string> pair3{3.901, "hola"};
+//   std::pair<double, std::string> pair4{11.400000001, "hi"};
+//   std::pair<double, std::string> pair5{3.9, "hee-hee"};
 
-  s21::map<double, std::string> s21_map = {pair1, pair2, pair3, pair4, pair5};
+//   s21::map<double, std::string> s21_map = {pair1, pair2, pair3, pair4,
+//   pair5};
 
-  auto max_value = s21_map.end();
+//   auto max_value = s21_map.end();
+//   max_value--;
 
-  EXPECT_EQ(max_value->first, 11.400000001);
-}
+//   EXPECT_EQ(max_value->first, 11.400000001);
+// }
 
-TEST(map_end, case3) {
-  std::pair<std::string, int> pair1{"hello", 1};
-  std::pair<std::string, int> pair2{"hi", 2};
-  std::pair<std::string, int> pair3{"hola-hola", 2};
-  std::pair<std::string, int> pair4{"hola", 3};
-  std::pair<std::string, int> pair5{"hello, there", 1};
+// TEST(map_end, case3) {
+//   std::pair<std::string, int> pair1{"hello", 1};
+//   std::pair<std::string, int> pair2{"hi", 2};
+//   std::pair<std::string, int> pair3{"hola-hola", 2};
+//   std::pair<std::string, int> pair4{"hola", 3};
+//   std::pair<std::string, int> pair5{"hello, there", 1};
 
-  s21::map<std::string, int> s21_map = {pair1, pair2, pair3, pair4, pair5};
+//   s21::map<std::string, int> s21_map = {pair1, pair2, pair3, pair4, pair5};
 
-  auto max_value = s21_map.end();
+//   auto max_value = s21_map.end();
 
-  EXPECT_EQ(max_value->first, "hola-hola");
-}
+//   EXPECT_EQ(max_value->first, "hola-hola");
+// }
 
-TEST(map_end, case4) {
-  s21::map<int, double> s21_map;
+// TEST(map_end, case4) {
+//   s21::map<int, double> s21_map;
 
-  EXPECT_THROW(s21_map.end(), std::out_of_range);  //???
-}
+//   EXPECT_THROW(s21_map.end(), std::out_of_range);  //???
+// }
 
-TEST(map_end, case5) {
-  std::pair<double, std::string> pair1{1.4, "hello"};
+// TEST(map_end, case5) {
+//   std::pair<double, std::string> pair1{1.4, "hello"};
 
-  s21::map<double, std::string> s21_map = {pair1, pair1};
+//   s21::map<double, std::string> s21_map = {pair1, pair1};
 
-  auto max_value = s21_map.end();
+//   auto max_value = s21_map.end();
 
-  EXPECT_EQ(max_value->first, 1.4);
-  EXPECT_EQ(max_value->second, "hello");
-}
+//   EXPECT_EQ(max_value->first, 1.4);
+//   EXPECT_EQ(max_value->second, "hello");
+// }
 
-TEST(map_end, case6) {
-  std::pair<std::string, int> pair1{"hello", 1};
-  std::pair<std::string, int> pair2{"hello", 2};
-  std::pair<std::string, int> pair3{"hello", 45};
+// TEST(map_end, case6) {
+//   std::pair<std::string, int> pair1{"hello", 1};
+//   std::pair<std::string, int> pair2{"hello", 2};
+//   std::pair<std::string, int> pair3{"hello", 45};
 
-  s21::map<std::string, int> s21_map = {pair1, pair2, pair3};
+//   s21::map<std::string, int> s21_map = {pair1, pair2, pair3};
 
-  auto max_value = s21_map.end();
+//   auto max_value = s21_map.end();
 
-  EXPECT_EQ(max_value->first, "hello");
-  EXPECT_EQ(max_value->second, 1);
-}
+//   EXPECT_EQ(max_value->first, "hello");
+//   EXPECT_EQ(max_value->second, 1);
+// }
 
-TEST(map_balance, case1) {
-  std::pair<int, double> pair1{1, 1.4};
-  std::pair<int, double> pair2{15, 1.456};
-  std::pair<int, double> pair3{5, 151.4};
+// TEST(map_balance, case1) {
+//   std::pair<int, double> pair1{1, 1.4};
+//   std::pair<int, double> pair2{15, 1.456};
+//   std::pair<int, double> pair3{5, 151.4};
 
-  s21::map<int, double> s21_map = {pair1, pair2, pair3};
+//   s21::map<int, double> s21_map = {pair1, pair2, pair3};
 
-  auto max_value = s21_map.end();
+//   auto max_value = s21_map.end();
 
-  EXPECT_EQ(max_value->first, 15);
-  EXPECT_EQ(s21_map.size(), 3U);
-}
+//   EXPECT_EQ(max_value->first, 15);
+//   EXPECT_EQ(s21_map.size(), 3U);
+// }
 
-TEST(map_balance, case2) {
-  std::pair<double, std::string> pair1{11.4, "hello"};
-  std::pair<double, std::string> pair2{2.770001, "hi"};
-  std::pair<double, std::string> pair3{3.901, "hola"};
+// TEST(map_balance, case2) {
+//   std::pair<double, std::string> pair1{11.4, "hello"};
+//   std::pair<double, std::string> pair2{2.770001, "hi"};
+//   std::pair<double, std::string> pair3{3.901, "hola"};
 
-  s21::map<double, std::string> s21_map = {pair1, pair2, pair3};
+//   s21::map<double, std::string> s21_map = {pair1, pair2, pair3};
 
-  auto min_value = s21_map.end();
+//   auto min_value = s21_map.end();
 
-  EXPECT_EQ(min_value->first, 11.4);
-  EXPECT_EQ(s21_map.size(), 3U);
-}
+//   EXPECT_EQ(min_value->first, 11.4);
+//   EXPECT_EQ(s21_map.size(), 3U);
+// }
 
-TEST(map_balance, case3) {
-  std::pair<std::string, int> pair1{"hello", 1};
-  std::pair<std::string, int> pair2{"hi", 2};
-  std::pair<std::string, int> pair3{"hola-hola", 2};
-  std::pair<std::string, int> pair4{"hola", 3};
-  std::pair<std::string, int> pair5{"hello, there", 1};
+// TEST(map_balance, case3) {
+//   std::pair<std::string, int> pair1{"hello", 1};
+//   std::pair<std::string, int> pair2{"hi", 2};
+//   std::pair<std::string, int> pair3{"hola-hola", 2};
+//   std::pair<std::string, int> pair4{"hola", 3};
+//   std::pair<std::string, int> pair5{"hello, there", 1};
 
-  s21::map<std::string, int> s21_map = {pair1, pair2, pair3, pair4, pair5};
+//   s21::map<std::string, int> s21_map = {pair1, pair2, pair3, pair4, pair5};
 
-  auto min_value = s21_map.end();
+//   auto min_value = s21_map.end();
 
-  EXPECT_EQ(min_value->first, "hola-hola");
-  EXPECT_EQ(s21_map.size(), 5U);
-}
+//   EXPECT_EQ(min_value->first, "hola-hola");
+//   EXPECT_EQ(s21_map.size(), 5U);
+// }
 
-TEST(map_balance, case4) {
-  std::pair<int, int> pair1{10, 10};
-  std::pair<int, int> pair2{5, 5};
-  std::pair<int, int> pair3{20, 20};
-  std::pair<int, int> pair4{30, 30};
-  std::pair<int, int> pair5{1543, 1543};
-
-  s21::map<int, int> s21_map = {pair1, pair2, pair3, pair4, pair5};
-
-  EXPECT_EQ(s21_map.end()->first, 1543);
-  EXPECT_EQ(s21_map.begin()->first, 5);
-  EXPECT_EQ(s21_map.size(), 5U);
-}
-
-TEST(map_balance, case5) {
-  std::pair<int, int> pair1{30, 30};
-  std::pair<int, int> pair2{5, 5};
-  std::pair<int, int> pair3{43, 43};
-  std::pair<int, int> pair4{1, 1};
-  std::pair<int, int> pair5{20, 20};
-  std::pair<int, int> pair6{40, 60};
-  std::pair<int, int> pair7{60, 60};
-  std::pair<int, int> pair8{35, 35};
-  std::pair<int, int> pair9{32, 32};
-
-  s21::map<int, int> s21_map = {pair1, pair2, pair3, pair4, pair5,
-                                pair6, pair7, pair8, pair9};
-
-  EXPECT_EQ(s21_map.end()->first, 60);
-  EXPECT_EQ(s21_map.begin()->first, 1);
-  EXPECT_EQ(s21_map.size(), 9U);
-}
-
-// TEST(map_erase, case1) {
+// TEST(map_balance, case4) {
 //   std::pair<int, int> pair1{10, 10};
 //   std::pair<int, int> pair2{5, 5};
-//   std::pair<int, int> pair3{15, 15};
-//   std::pair<int, int> pair4{4, 4};
-//   std::pair<int, int> pair5{18, 18};
-//   std::pair<int, int> pair6{13, 13};
-//   std::pair<int, int> pair7{16, 16};
+//   std::pair<int, int> pair3{20, 20};
+//   std::pair<int, int> pair4{30, 30};
+//   std::pair<int, int> pair5{1543, 1543};
 
-//   s21::map<int, int> s21_map = {pair1, pair2, pair3, pair4,
-//                                 pair5, pair6, pair7};
+//   s21::map<int, int> s21_map = {pair1, pair2, pair3, pair4, pair5};
 
-//   s21::map<int, int>::iterator it;
-//   it = s21_map.begin();
-//   it++;
-//   it++;
-//   it++;
-//   it++;
-//   s21_map.erase(it);  // 15?
-//   EXPECT_EQ(s21_map.begin()->first, 4);
-//   EXPECT_EQ(s21_map.end()->first, 18);
-//   EXPECT_EQ(s21_map.size(), 6U);
-
-//   it = s21_map.begin();  // 4
-//   s21_map.erase(it);
+//   EXPECT_EQ(s21_map.end()->first, 1543);
 //   EXPECT_EQ(s21_map.begin()->first, 5);
-//   EXPECT_EQ(s21_map.end()->first, 18);
-//   EXPECT_EQ(s21_map.size(), 5);
-
-//   it = s21_map.begin();  // 5
-//   try {
-//     it++;  // идет на след строку удаляет там все возвращается сюда на ИТ =
-//     10 it++;  // идет на след строку удаляет там все возвращается сюда на ИТ
-//     = 10
-
-//     // Exception has occurred.
-//     // EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
-//     s21_map.erase(it);  // провалиться
-
-//   } catch (const std::exception& e) {
-//     std::cerr << e.what() << '\n';
-//   }
-
-//   try {
-//     /* code */
-//     EXPECT_EQ(s21_map.begin()->first, 5);
-//   } catch (const std::exception& e) {
-//     std::cerr << e.what() << '\n';
-//   }
-
-//   EXPECT_EQ(s21_map.end()->first, 18);
-//   EXPECT_EQ(s21_map.size(), 4U);
-
-//   it = s21_map.end();
-//   s21_map.erase(it);
-//   EXPECT_EQ(s21_map.begin()->first, 5);
-//   EXPECT_EQ(s21_map.end()->first, 16);
-//   EXPECT_EQ(s21_map.size(), 3U);
-
-//   it = s21_map.begin();
-//   it++;
-//   s21_map.erase(it);
-
-//   it = s21_map.begin();
-//   it++;
-//   s21_map.erase(it);
-
-//   it = s21_map.begin();
-//   s21_map.erase(it);
-
-//   EXPECT_EQ(s21_map.size(), 0U);
+//   EXPECT_EQ(s21_map.size(), 5U);
 // }
+
+// TEST(map_balance, case5) {
+//   std::pair<int, int> pair1{30, 30};
+//   std::pair<int, int> pair2{5, 5};
+//   std::pair<int, int> pair3{43, 43};
+//   std::pair<int, int> pair4{1, 1};
+//   std::pair<int, int> pair5{20, 20};
+//   std::pair<int, int> pair6{40, 60};
+//   std::pair<int, int> pair7{60, 60};
+//   std::pair<int, int> pair8{35, 35};
+//   std::pair<int, int> pair9{32, 32};
+
+//   s21::map<int, int> s21_map = {pair1, pair2, pair3, pair4, pair5,
+//                                 pair6, pair7, pair8, pair9};
+
+//   EXPECT_EQ(s21_map.end()->first, 60);
+//   EXPECT_EQ(s21_map.begin()->first, 1);
+//   EXPECT_EQ(s21_map.size(), 9U);
+// }
+
+TEST(map_erase, case1) {
+  std::pair<int, int> pair1{10, 10};
+  std::pair<int, int> pair2{5, 5};
+  std::pair<int, int> pair3{15, 15};
+  std::pair<int, int> pair4{4, 4};
+  std::pair<int, int> pair5{18, 18};
+  std::pair<int, int> pair6{13, 13};
+  std::pair<int, int> pair7{16, 16};
+
+  s21::map<int, int> s21_map = {pair1, pair2, pair3, pair4,
+                                pair5, pair6, pair7};
+
+  s21::map<int, int>::iterator it;
+  it = s21_map.begin();
+  it++;               // 5
+  it++;               // 10
+  it++;               // 13
+  it++;               // 15
+  s21_map.erase(it);  // 15-
+  EXPECT_EQ(s21_map.begin()->first, 4);
+  // EXPECT_EQ(s21_map.end()->first, 18);
+  EXPECT_EQ(s21_map.size(), 6);
+
+  it = s21_map.begin();  // 4
+  s21_map.erase(it);     // 4-
+  EXPECT_EQ(s21_map.begin()->first, 5);
+  // EXPECT_EQ(s21_map.end()->first, 18);
+  EXPECT_EQ(s21_map.size(), 5);
+
+  it = s21_map.begin();  // 5
+                         // try {
+  it++;
+
+  // Exception has occurred.
+  // EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
+  s21_map.erase(it);  // 10 -
+
+  // } catch (const std::exception& e) {
+  //   std::cerr << e.what() << '\n';
+  // }
+
+  // try {
+  /* code */
+  EXPECT_EQ(s21_map.begin()->first, 5);
+  // } catch (const std::exception& e) {
+  //   std::cerr << e.what() << '\n';
+  // }
+
+  EXPECT_EQ(s21_map.size(), 4);
+
+  EXPECT_EQ(s21_map.begin()->first, 5);
+  // EXPECT_EQ(s21_map.end()->first, 16);
+  EXPECT_EQ(s21_map.size(), 4);
+
+  it = s21_map.begin();
+  it++;
+  s21_map.erase(it);
+
+  it = s21_map.begin();
+  it++;
+  s21_map.erase(it);
+
+  it = s21_map.begin();
+  s21_map.erase(it);
+
+  EXPECT_EQ(s21_map.size(), 1);
+}
 
 TEST(map_erase, case2) {
   std::pair<int, int> pair1{30, 30};
@@ -956,62 +956,6 @@ TEST(map_erase, case2) {
   EXPECT_EQ(s21_map.size(), 0U);
 }
 
-TEST(map_erase, case3) {
-  std::pair<std::string, int> pair1{"hello", 1};
-  std::pair<std::string, int> pair2{"hi", 2};
-  std::pair<std::string, int> pair3{"hola-hola", 2};
-  std::pair<std::string, int> pair4{"hola", 3};
-  std::pair<std::string, int> pair5{"hello, there", 1};
-
-  s21::map<std::string, int> s21_map = {pair1, pair2, pair3, pair4, pair5};
-
-  auto it = s21_map.end();
-  s21_map.erase(it);
-  EXPECT_EQ(s21_map.end()->first, "hola");
-  EXPECT_EQ(s21_map.size(), 4U);
-
-  it = s21_map.end();
-  s21_map.erase(it);  // зацикл
-  EXPECT_EQ(s21_map.end()->first, "hi");
-  EXPECT_EQ(s21_map.size(), 3U);
-
-  s21_map.insert(pair3);
-  s21_map.insert(pair4);
-  it = s21_map.end();
-  s21_map.erase(it);
-  EXPECT_EQ(s21_map.end()->first, "hola");
-  EXPECT_EQ(s21_map.size(), 4U);
-}
-
-TEST(map_erase, case4) {
-  std::pair<double, int> pair1{22.2, 1};
-  std::pair<double, int> pair2{12.4457, 2};
-  std::pair<double, int> pair3{56.84, 2};
-  std::pair<double, int> pair4{941.44, 3};
-  std::pair<double, int> pair5{44.48, 1};
-
-  s21::map<double, int> s21_map = {pair1, pair2, pair3, pair4, pair5};
-
-  auto it = s21_map.end();
-  it--;
-  s21_map.erase(it);
-  it = s21_map.end();
-  EXPECT_EQ(it->first, 941.44);
-  EXPECT_EQ(s21_map.size(), 4U);
-
-  it = s21_map.begin();
-  ++it;
-  ++it;
-  ++it;
-  s21_map.erase(it);
-  it = s21_map.begin();
-  ++it;
-  ++it;
-  ++it;
-  EXPECT_EQ(s21_map.end()->first, 44.48);
-  EXPECT_EQ(s21_map.size(), 3U);
-}
-
 TEST(map_erase, case5) {
   std::pair<double, int> pair1{22.2, 1};
   std::pair<double, int> pair2{44.48, 1};
@@ -1021,14 +965,62 @@ TEST(map_erase, case5) {
   s21::map<double, int> s21_map = {pair1, pair2, pair3, pair4};
 
   auto it = s21_map.begin();
-  it--;
-  s21_map.erase(it);
-  it = s21_map.begin();
+  EXPECT_THROW(it--, std::out_of_range);
+  s21_map.erase(it);     // {1.44, 3};
+  it = s21_map.begin();  // {12.4457, 2}
   ++it;
   ++it;
+  s21_map.print_start();
   EXPECT_EQ(it->first, 44.48);
   EXPECT_EQ(s21_map.size(), 3U);
 }
+
+// TEST(MapComparison, IteratorDecrementAndErase) {
+//   // Тестовые данные
+//   std::pair<double, int> pair1{22.2, 1};
+//   std::pair<double, int> pair2{44.48, 1};
+//   std::pair<double, int> pair3{12.4457, 2};
+//   std::pair<double, int> pair4{1.44, 3};
+
+//   // Ваша реализация
+//   s21::map<double, int> s21_map = {pair1, pair2, pair3, pair4};
+
+//   // Стандартная реализация
+//   std::map<double, int> std_map = {pair1, pair2, pair3, pair4};
+
+//   // Размеры должны совпадать перед операциями
+//   EXPECT_EQ(s21_map.size(), std_map.size());
+//   EXPECT_EQ(s21_map.size(), 4U);
+
+//   // Тест 1: Декремент от begin() и erase
+//   auto s21_it = s21_map.begin();
+//   auto std_it = std_map.begin();
+
+//   // Проверяем, что begin() совпадает
+//   EXPECT_DOUBLE_EQ(s21_it->first, std_it->first);
+//   EXPECT_EQ(s21_it->second, std_it->second);
+
+//   // Декремент от begin() - неопределенное поведение, но проверим
+//   // В std::map это может привести к UB, так что будем осторожны
+//   try {
+//     --s21_it;
+//     // Если не выброшено исключение, проверяем поведение
+//     s21_map.erase(s21_it);
+//   } catch (const std::exception& e) {
+//     // Ожидаемое поведение - исключение при декременте begin()
+//     SUCCEED();
+//   }
+
+//   try {
+//     --std_it;
+//     std_map.erase(std_it);
+//   } catch (const std::exception& e) {
+//     SUCCEED();
+//   }
+
+//   // После операций размеры должны совпадать
+//   EXPECT_EQ(s21_map.size(), std_map.size());
+// }
 
 TEST(map_erase, case6) {
   std::pair<double, int> pair1{22.2, 1};
@@ -1085,45 +1077,6 @@ TEST(map_erase, case8) {
   ++it;
   EXPECT_EQ(it->first, 22.2);
   EXPECT_EQ(s21_map.size(), 3U);
-}
-
-TEST(map_erase, case9) {
-  std::pair<double, int> pair1{22.2, 1};
-  std::pair<double, int> pair2{44.48, 1};
-  std::pair<double, int> pair3{12.4457, 2};
-  std::pair<double, int> pair4{32.45, 2};
-  std::pair<double, int> pair5{65.12, 3};
-  std::pair<double, int> pair6{66.32, 3};
-  std::pair<double, int> pair7{40.54, 3};
-  std::pair<double, int> pair8{6.4, 3};
-
-  s21::map<double, int> s21_map = {pair1, pair2, pair3, pair4,
-                                   pair5, pair6, pair7, pair8};
-
-  auto it = s21_map.end();
-  it--;
-  it--;
-  it--;
-  it--;
-  s21_map.erase(it);
-  it = s21_map.begin();
-  ++it;
-  ++it;
-  ++it;
-  EXPECT_EQ(it->first, 40.54);
-  EXPECT_EQ(s21_map.size(), 7U);
-}
-
-TEST(map_erase, case10) {
-  std::pair<double, int> pair1{22.2, 1};
-
-  s21::map<double, int> s21_map = {pair1};
-
-  auto it = s21_map.end();
-  it--;
-  ++it;
-  s21_map.erase(it);
-  EXPECT_EQ(s21_map.size(), 0U);
 }
 
 TEST(map_empty, case1) {
@@ -1332,21 +1285,24 @@ TEST(map_brackets, case1) {
 }
 
 TEST(map_brackets, case2) {
-  std::pair<int, double> pair1{9, 1.4};
-  std::pair<int, double> pair2{23, 2.77};
-  std::pair<int, double> pair3{8, 3.9};
+  std::pair<int, int> pair1{9, 14};
+  std::pair<int, int> pair2{23, 277};
+  std::pair<int, int> pair3{8, 39};
 
-  s21::map<int, double> s21_map_int = {pair1, pair2, pair3};
-  s21_map_int[78] = 78.0;
-  s21_map_int[88] = 88.0;
-  s21_map_int[108] = 108.0;
+  s21::map<int, int> s21_map_int = {pair1, pair2, pair3};
 
-  EXPECT_EQ(s21_map_int[9], 1.4);
-  EXPECT_EQ(s21_map_int[23], 2.77);
-  EXPECT_EQ(s21_map_int[8], 3.9);
-  EXPECT_EQ(s21_map_int[78], 78.0);
-  EXPECT_EQ(s21_map_int[88], 88.0);
-  EXPECT_EQ(s21_map_int[108], 108.0);
+  s21_map_int[78] = 78;
+  s21_map_int[88] = 88;
+  s21_map_int[108] = 108;
+
+  s21_map_int.print_start();
+
+  EXPECT_EQ(s21_map_int[9], 14);
+  EXPECT_EQ(s21_map_int[23], 277);
+  EXPECT_EQ(s21_map_int[8], 39);
+  EXPECT_EQ(s21_map_int[78], 78);
+  EXPECT_EQ(s21_map_int[88], 88);
+  EXPECT_EQ(s21_map_int[108], 108);
 
   std::pair<double, std::string> pair4{1.4, "hello"};
   std::pair<double, std::string> pair5{2.77, "hi"};
@@ -1519,6 +1475,404 @@ TEST(map_merge, case4) {
 //   EXPECT_EQ(emplace1[0].second, true);
 //   EXPECT_EQ(s21_map.size(), 2U);
 // }
+
+TEST(MapTests, DefaultConstructor1) {
+  s21::map<int, int> a;
+  EXPECT_EQ(a.size(), 0);
+  EXPECT_TRUE(a.empty());
+}
+
+TEST(MapTests, DefaultConstructor2) {
+  s21::map<int, char> a;
+  EXPECT_EQ(a.size(), 0);
+  EXPECT_TRUE(a.empty());
+}
+
+TEST(MapTests, DefaultConstructor3) {
+  s21::map<int, std::string> a;
+  EXPECT_EQ(a.size(), 0);
+  EXPECT_TRUE(a.empty());
+}
+
+TEST(MapTests, DefaultConstructor) {
+  s21::map<int, double> a;
+  EXPECT_EQ(a.size(), 0);
+  EXPECT_TRUE(a.empty());
+}
+
+TEST(MapTests, InitializerListConstructor1) {
+  s21::map<int, double> s21_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  std::map<int, double> std_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  EXPECT_EQ(s21_map.size(), std_map.size());
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, InitializerListConstructor3) {
+  s21::map<std::string, double> s21_map{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  std::map<std::string, double> std_map{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  EXPECT_EQ(s21_map.size(), std_map.size());
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, CopyConstructor1) {
+  s21::map<int, double> s21_other{
+      {1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  std::map<int, double> std_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  s21::map<int, double> s21_map(s21_other);
+
+  EXPECT_EQ(s21_map.size(), std_map.size());
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, CopyConstructor2) {
+  s21::map<std::string, double> s21_other{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  std::map<std::string, double> std_map{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  s21::map<std::string, double> s21_map(s21_other);
+
+  EXPECT_EQ(s21_map.size(), std_map.size());
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, MoveConstructor1) {
+  s21::map<int, double> s21_other{
+      {1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  std::map<int, double> std_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  s21::map<int, double> s21_map(std::move(s21_other));
+
+  EXPECT_EQ(s21_map.size(), std_map.size());
+  EXPECT_EQ(s21_other.size(), 0);
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, MoveConstructor2) {
+  s21::map<std::string, double> s21_other{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  std::map<std::string, double> std_map{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  s21::map<std::string, double> s21_map(std::move(s21_other));
+
+  EXPECT_EQ(s21_map.size(), std_map.size());
+  EXPECT_EQ(s21_other.size(), 0);
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, OperatorCopy) {
+  s21::map<int, double> s21_other{
+      {1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  std::map<int, double> std_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  s21::map<int, double> s21_map;
+  s21_map = s21_other;
+
+  EXPECT_EQ(s21_map.size(), std_map.size());
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, OperatorMove) {
+  s21::map<std::string, double> s21_other{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  std::map<std::string, double> std_map{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  s21::map<std::string, double> s21_map;
+  s21_map = std::move(s21_other);
+
+  EXPECT_EQ(s21_map.size(), std_map.size());
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, at1) {
+  s21::map<int, double> s21_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  std::map<int, double> std_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  EXPECT_EQ(s21_map.at(1), std_map.at(1));
+  EXPECT_EQ(s21_map.at(5), std_map.at(5));
+  EXPECT_EQ(s21_map.at(8), std_map.at(8));
+  EXPECT_EQ(s21_map.at(10), std_map.at(10));
+
+  EXPECT_THROW(s21_map.at(12), std::out_of_range);
+}
+
+TEST(MapTests, at2) {
+  s21::map<std::string, double> s21_map{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  std::map<std::string, double> std_map{
+      {"Lite", 12.5}, {"Spike", 3.33}, {"Fake", 1.2356}, {"Take", 22.22}};
+  EXPECT_EQ(s21_map.at("Lite"), std_map.at("Lite"));
+  EXPECT_EQ(s21_map.at("Spike"), std_map.at("Spike"));
+  EXPECT_EQ(s21_map.at("Fake"), std_map.at("Fake"));
+  EXPECT_EQ(s21_map.at("Take"), std_map.at("Take"));
+}
+
+TEST(MapTests, access_or_insert1) {
+  s21::map<int, double> s21_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  std::map<int, double> std_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  EXPECT_EQ(s21_map[1], std_map[1]);
+  EXPECT_EQ(s21_map[5], std_map[5]);
+  EXPECT_EQ(s21_map[8], std_map[8]);
+  EXPECT_EQ(s21_map[10], std_map[10]);
+}
+
+TEST(MapTests, access_or_insert2) {
+  s21::map<int, double> s21_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+  std::map<int, double> std_map{{1, 12.5}, {5, 3.33}, {8, 1.2356}, {10, 22.22}};
+
+  s21_map[15] = 122.222;
+  std_map[15] = 122.222;
+
+  s21_map[28] = 1.241245;
+  std_map[28] = 1.241245;
+
+  EXPECT_EQ(s21_map.size(), std_map.size());
+
+  auto s21_it = s21_map.begin();
+  auto std_it = std_map.begin();
+  for (; s21_it != s21_map.end(); ++s21_it, ++std_it) {
+    EXPECT_EQ(s21_it->first, std_it->first);
+    EXPECT_EQ(s21_it->second, std_it->second);
+  }
+}
+
+TEST(MapTests, empty) {
+  s21::map<int, int> s21_map;
+  EXPECT_TRUE(s21_map.empty());
+
+  s21_map.insert({2, 2});
+  EXPECT_FALSE(s21_map.empty());
+}
+
+TEST(MapTests, size) {
+  s21::map<int, int> s21_map;
+  EXPECT_EQ(s21_map.size(), 0);
+  s21_map.insert({2, 2});
+  EXPECT_EQ(s21_map.size(), 1);
+
+  s21_map.insert({5, 5});
+  EXPECT_EQ(s21_map.size(), 2);
+
+  s21_map.insert({8, 8});
+  EXPECT_EQ(s21_map.size(), 3);
+}
+
+TEST(MapTests, max_size) {
+  s21::map<int, int> s21_map;
+  std::map<int, int> std_map;
+
+  EXPECT_EQ(s21_map.max_size(), std_map.max_size());
+
+  s21_map[1] = 125;
+  std_map[1] = 125;
+  EXPECT_EQ(s21_map.max_size(), std_map.max_size());
+}
+
+TEST(MapTests, clear) {
+  s21::map<int, int> a{{5, 5}, {2, 2}, {4, 4}};
+  EXPECT_EQ(a.size(), 3);
+  a.clear();
+  EXPECT_EQ(a.size(), 0);
+  a.clear();
+  EXPECT_EQ(a.size(), 0);
+}
+
+TEST(MapTests, insert1) {
+  s21::map<int, int> a{{6, 6}, {2, 2}, {4, 4}};
+  EXPECT_EQ(a.size(), 3);
+
+  auto pair = a.insert({3, 3});
+  EXPECT_EQ(a.size(), 4);
+  EXPECT_EQ((pair.first)->first, 3);
+  EXPECT_TRUE(pair.second);
+
+  pair = a.insert({5, 5});
+  EXPECT_EQ(a.size(), 5);
+  EXPECT_EQ((pair.first)->first, 5);
+  EXPECT_TRUE(pair.second);
+
+  pair = a.insert({4, 3});
+  EXPECT_EQ(a.size(), 5);
+  EXPECT_EQ((pair.first)->first, 4);
+  EXPECT_FALSE(pair.second);
+}
+
+TEST(MapTests, insert2) {
+  s21::map<int, int> a{{6, 5}, {2, 2}, {4, 4}};
+  EXPECT_EQ(a.size(), 3);
+  // a.print_start();
+  auto pair = a.insert(3, 3);
+  EXPECT_EQ(a.size(), 4);
+  EXPECT_EQ(pair.first->first, 3);
+  EXPECT_TRUE(pair.second);
+  // a.print_start();
+  pair = a.insert(5, 5);
+  EXPECT_EQ(a.size(), 5);
+  EXPECT_EQ(pair.first->first, 5);
+  EXPECT_TRUE(pair.second);
+
+  // a.print_start();
+  pair = a.insert(4, 3);
+  EXPECT_EQ(a.size(), 5);
+  EXPECT_EQ(pair.first->first, 4);
+  EXPECT_EQ(pair.first->second, 4);  //
+  EXPECT_FALSE(pair.second);
+  // a.print_start();
+}
+
+TEST(MapTests, insert3) {
+  s21::map<int, int> a;
+  EXPECT_EQ(a.size(), 0);
+
+  auto pair = a.insert(3, 3);
+  EXPECT_EQ(a.size(), 1);
+  EXPECT_EQ(pair.first->first, 3);
+  EXPECT_TRUE(pair.second);
+}
+
+TEST(MapTests, insert_or_assign) {
+  s21::map<int, int> a{{21, 21}, {172, 172}, {1, 1},     {17, 17}, {199, 199},
+                       {42, 42}, {58, 58},   {322, 322}, {2, 2},   {88, 88}};
+
+  EXPECT_EQ((*a.begin()).second, 1);
+
+  auto pair = a.insert_or_assign(1, 25);
+  EXPECT_EQ(pair.first->first, 1);
+  EXPECT_EQ(pair.first->second, 25);
+  EXPECT_FALSE(pair.second);
+
+  pair = a.insert_or_assign(3, 3);
+  EXPECT_EQ(pair.first->first, 3);
+  EXPECT_EQ(pair.first->second, 3);
+  EXPECT_TRUE(pair.second);
+}
+
+TEST(MapTests, erase1) {
+  s21::map<int, int> a{{21, 21}, {172, 172}, {1, 1},     {17, 17}, {199, 199},
+                       {42, 42}, {58, 58},   {322, 322}, {2, 2},   {88, 88}};
+  std::cout << a.size() << std::endl;
+  EXPECT_EQ(a.size(), 10);
+  a.erase(a.begin());
+  EXPECT_EQ(a.size(), 9);
+  EXPECT_FALSE(a.contains(1));
+  a.erase(--a.end());
+  a.print_start();
+  EXPECT_EQ(a.size(), 8);
+  EXPECT_FALSE(a.contains(322));
+
+  a.erase(++a.begin());
+  EXPECT_EQ(a.size(), 7);
+  EXPECT_FALSE(a.contains(17));
+}
+
+TEST(MapTests, erase2) {
+  s21::map<int, int> a{{2, 2}, {1, 1}, {3, 3}};
+
+  a.erase(++a.begin());
+  EXPECT_EQ(a.size(), 2);
+  EXPECT_FALSE(a.contains(2));
+
+  a.erase(--a.end());
+  EXPECT_EQ(a.size(), 1);
+  EXPECT_FALSE(a.contains(3));
+
+  a.erase(a.begin());
+  EXPECT_EQ(a.size(), 0);
+  EXPECT_FALSE(a.contains(1));
+
+  a.erase(a.begin());
+  a.erase(a.end());
+}
+
+TEST(MapTests, MapSwap) {
+  s21::map<int, int> a{{2, 2}, {1, 1}, {3, 3}};
+  s21::map<int, int> b{{5, 5}, {12, 12}};
+
+  a.swap(b);
+  EXPECT_EQ(a.size(), 2);
+  EXPECT_EQ(b.size(), 3);
+}
+
+TEST(MapTests, MapMerge) {
+  s21::map<int, int> a{{2, 2}, {1, 1}, {3, 3}};
+  s21::map<int, int> b{{5, 5}, {12, 12}};
+  a.merge(b);
+  EXPECT_EQ(a.size(), 5);
+  EXPECT_EQ(b.size(), 0);
+
+  s21::map<int, int> c;
+  s21::map<int, int> d{{5, 5}, {12, 12}};
+  c.merge(d);
+  EXPECT_EQ(c.size(), 2);
+  EXPECT_EQ(d.size(), 0);
+
+  s21::map<int, int> e;
+  s21::map<int, int> f;
+  e.merge(f);
+  EXPECT_EQ(e.size(), 0);
+  EXPECT_EQ(f.size(), 0);
+
+  s21::map<int, int> g{{2, 2}, {1, 1}, {3, 3}};
+  s21::map<int, int> h{{3, 3}, {12, 12}};
+  g.merge(h);
+  EXPECT_EQ(g.size(), 4);
+  EXPECT_EQ(h.size(), 1);
+}
+
+TEST(MapTests, MapContains) {
+  s21::map<int, int> a{{2, 2}, {1, 1}, {3, 3}};
+
+  EXPECT_TRUE(a.contains(2));
+  EXPECT_TRUE(a.contains(1));
+  EXPECT_TRUE(a.contains(3));
+  EXPECT_FALSE(a.contains(4));
+}
 
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);

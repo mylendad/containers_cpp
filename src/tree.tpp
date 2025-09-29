@@ -112,45 +112,96 @@ s21::Tree<T> &s21::Tree<T>::operator=(Tree<T> &&other) {
 }
 
 template <typename T>
-void s21::Tree<T>::repainting_red_uncle_n_dad(BaseNode *&y, BaseNode *&z) {
+std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
+    const value_type &node) {
+  BaseNode *y;
+  size_type size = this->tree_size_;
+  BaseNode *z = new BaseNode(node);
+  BaseNode *insertable = z;
+  std::pair<typename s21::Tree<T>::iterator, bool> result = std::make_pair(
+      iterator(this->tree_nil_, this->tree_nil_, this->end_node_),
+      false);  // with first fix
+
+  if (tree_size_ > 0) result = this->find(z->item);
+
+  if (result.second == false) {
+    y = result.first.current_;
+
+    z->p = y;  // здесь на место листа ставим зэт , и
+               // родителем зэта узел находящийся выше
+
+    if (y == this->tree_nil_) {  // в цикл while (x != this->tree_nil_) не
+                                 // заходил значит дерево пустое
+      this->tree_root_ = z;      // дерево было пустым, делаем зэт корнем
+
+    } else if ((z->item) < (y->item))  // устанавливаем зет на место потомка
+      y->left = z;
+    else
+      y->right = z;
+    z->left = this->tree_nil_;
+    z->right = this->tree_nil_;
+    z->color = RED;
+    insertable = insert_fixup(y, z);
+    this->tree_root_->color = BLACK;
+
+    result.second = true;
+    this->tree_size_++;
+    result.first = iterator(
+        insertable, this->tree_nil_,
+        this->end_node_);  // исправить чтобы сюда сувался вставленный элемент
+  }
+
+  if (size == this->tree_size_) result.second = false;
+  return result;
+}
+
+template <typename T>
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::repainting_red_uncle_n_dad(
+    BaseNode *&y, BaseNode *&z) {
+  s21::Tree<T>::BaseNode *insertable = z;
   z->p->color = BLACK;   // перекрашиаем отца в черный
   y->color = BLACK;      // перекрашиаем дядю в черный
   z->p->p->color = RED;  // перекрашиаем деда в черный
   z = z->p->p;           // ставим зет на место деда
+  return insertable;
 }
 
 template <typename T>
-void s21::Tree<T>::left_descendants(BaseNode *&y, BaseNode *&z) {
-  {                                                 // для левого потомков деда
-    y = z->p->p->right;                             //  устанавливаем Y (дядя)
-    if (y != this->tree_nil_ && y->color == RED) {  // Случай 1 (красный
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::left_descendants(BaseNode *&y,
+                                                                BaseNode *&z) {
+  s21::Tree<T>::BaseNode *insertable = z;           // для левого потомков деда
+  y = z->p->p->right;                               //  устанавливаем Y (дядя)
+  if (y != this->tree_nil_ && y->color == RED) {    // Случай 1 (красный
                                                     // дядя)
-      repainting_red_uncle_n_dad(y, z);
-    } else {
-      if (z == z->p->right && z != this->tree_nil_) {  // Случай 2 (черный дядя
-                                                       // и зэт - правый сын)
-        z = z->p;                                      // двигаем зет наверх
-        left_rotate(z);
-      }
-      if (z->p != this->tree_nil_ &&
-          z->p->p !=
-              this->tree_nil_) {  // Случай 3 (черный дядя и зэт - левый сын)
-        z->p->color = BLACK;      // // перекрашиаем отца в черный
-        z->p->p->color = RED;     // // перекрашиаем деда в красный
-        right_rotate(z->p->p);
-      }
+    insertable = repainting_red_uncle_n_dad(y, z);  // тут меняется z
+  } else {
+    if (z == z->p->right && z != this->tree_nil_) {  // Случай 2 (черный дядя
+      insertable = z;
+      // и зэт - правый сын)
+      z = z->p;  // двигаем зет наверх
+      left_rotate(z);
+    }
+    if (z->p != this->tree_nil_ &&
+        z->p->p !=
+            this->tree_nil_) {  // Случай 3 (черный дядя и зэт - левый сын)
+      z->p->color = BLACK;      // // перекрашиаем отца в черный
+      z->p->p->color = RED;     // // перекрашиаем деда в красный
+      right_rotate(z->p->p);
     }
   }
+  return insertable;
 }
 
 template <typename T>
-void s21::Tree<T>::right_desdendants(
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::right_desdendants(
     BaseNode *&y, BaseNode *&z) {  // для правых потомков деда
+  s21::Tree<T>::BaseNode *insertable = z;
   y = z->p->p->left;
-  if (y != this->tree_nil_ && y->color == RED) {  // Случай 1
-    repainting_red_uncle_n_dad(y, z);
+  if (y != this->tree_nil_ && y->color == RED) {    // Случай 1
+    insertable = repainting_red_uncle_n_dad(y, z);  // тут меняется z
   } else {
     if (z == z->p->left && z != this->tree_nil_) {  // Случай 2
+      insertable = z;
       z = z->p;
       right_rotate(z);
     }
@@ -160,6 +211,7 @@ void s21::Tree<T>::right_desdendants(
       left_rotate(z->p->p);
     }
   }
+  return insertable;
 }
 
 template <typename T>
@@ -213,9 +265,10 @@ void s21::Tree<T>::right_rotate(BaseNode *y) {
 }
 
 template <typename T>
-void s21::Tree<T>::insert_fixup(BaseNode *&y, BaseNode *&z) {
-  if (z == nullptr) return;
-
+typename s21::Tree<T>::BaseNode *s21::Tree<T>::insert_fixup(BaseNode *&y,
+                                                            BaseNode *&z) {
+  if (z == nullptr) return z;
+  s21::Tree<T>::BaseNode *insertable = z;
   {
     while (z != this->tree_root_ && z->p != this->tree_nil_ &&
            z->p->color == RED &&
@@ -225,20 +278,39 @@ void s21::Tree<T>::insert_fixup(BaseNode *&y, BaseNode *&z) {
       // он не корень и значит у него есть з.п.п)
       if (dad_is_left_son(z)) {  // для левого потомков деда
 
-        left_descendants(y, z);
+        insertable = left_descendants(y, z);
       } else {
-        right_desdendants(y, z);
+        insertable = right_desdendants(y, z);
       }
     }
   }
+  return insertable;
 }
 
+// template <typename T>
+// void s21::Tree<T>::HasTwoDescedants(BaseNode *x, BaseNode *y, BaseNode *z) {
+//   x = y->right;
+//   if (y->p == z)
+//     x->p = y;
+//   else {
+//     transplant(y, y->right);
+//     y->right = z->right;
+//     y->right->p = y;
+//   }
+//   transplant(z, y);
+//   y->left = z->left;
+//   y->left->p = y;
+//   y->color = z->color;
+// }
+
 template <typename T>
-void s21::Tree<T>::HasTwoDescedants(BaseNode *x, BaseNode *y, BaseNode *z) {
-  x = y->right;
-  if (y->p == z)
+void s21::Tree<T>::HasTwoDescedants(BaseNode *&x, BaseNode *&y, BaseNode *z) {
+  // y уже должен быть преемником (следующий после z в порядке возрастания)
+  x = y->right;  // x - правый потомок преемника
+
+  if (y->p == z) {
     x->p = y;
-  else {
+  } else {
     transplant(y, y->right);
     y->right = z->right;
     y->right->p = y;
@@ -249,12 +321,34 @@ void s21::Tree<T>::HasTwoDescedants(BaseNode *x, BaseNode *y, BaseNode *z) {
   y->color = z->color;
 }
 
+// template <typename T>
+// void s21::Tree<T>::HasTwoDescedants(BaseNode *&x, BaseNode *&y, BaseNode *z)
+// {
+//   // y уже должен быть преемником (следующий после z в порядке возрастания)
+//   x = y->right;  // x - правый потомок преемника
+
+//   if (y->p != z) {
+//     transplant(y, y->right);
+//     y->right = z->right;
+//     if (y->right != tree_nil_) {
+//       y->right->p = y;
+//     }
+//   }
+
+//   transplant(z, y);
+//   y->left = z->left;
+//   if (y->left != tree_nil_) {
+//     y->left->p = y;
+//   }
+//   y->color = z->color;
+// }
+
 template <typename T>
 std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(T &obj) {
   BaseNode *x = this->tree_root_;
   BaseNode *y = this->tree_nil_;
   std::pair<typename s21::Tree<T>::iterator, bool> result =
-      std::make_pair(iterator(y, this->tree_nil_), false);
+      std::make_pair(iterator(y, this->tree_nil_, this->end_node_), false);
 
   if constexpr (value_is_pair<T>) {
     while (x != this->tree_nil_ && result.second == false) {
@@ -264,7 +358,8 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(T &obj) {
       } else if (obj.first > x->item.first) {
         x = x->right;
       } else {
-        result = std::make_pair(iterator(x, this->tree_nil_), true);
+        result =
+            std::make_pair(iterator(x, this->tree_nil_, this->end_node_), true);
       }
     }
   } else {
@@ -275,52 +370,14 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(T &obj) {
       } else if (obj > x->item) {
         x = x->right;
       } else {
-        result = std::make_pair(iterator(x, this->tree_nil_), true);
+        result =
+            std::make_pair(iterator(x, this->tree_nil_, this->end_node_), true);
       }
     }
   }
   if (result.second == false)
-    result = std::make_pair(iterator(y, this->tree_nil_), false);
-  return result;
-}
-
-template <typename T>
-std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
-    const value_type &node) {
-  BaseNode *y;
-  size_type size = this->tree_size_;
-  BaseNode *z = new BaseNode(node);
-
-  std::pair<typename s21::Tree<T>::iterator, bool> result = std::make_pair(
-      iterator(this->tree_nil_, this->tree_nil_), false);  // with first fix
-
-  if (tree_size_ != 0) result = find(z->item);
-
-  if (result.second == false) {
-    y = result.first.current_;
-
-    z->p = y;  // здесь на место листа ставим зэт , и
-               // родителем зэта узел находящийся выше
-
-    if (y == this->tree_nil_) {  // в цикл while (x != this->tree_nil_) не
-                                 // заходил значит дерево пустое
-      this->tree_root_ = z;      // дерево было пустым, делаем зэт корнем
-
-    } else if ((z->item) < (y->item))  // устанавливаем зет на место потомка
-      y->left = z;
-    else
-      y->right = z;
-    z->left = this->tree_nil_;
-    z->right = this->tree_nil_;
-    z->color = RED;
-    insert_fixup(y, z);
-    this->tree_root_->color = BLACK;
-
-    result.second = true;
-    this->tree_size_++;
-  }
-  result.first = iterator(z, this->tree_nil_);
-  if (size == this->tree_size_) result.second = false;
+    result =
+        std::make_pair(iterator(y, this->tree_nil_, this->end_node_), false);
   return result;
 }
 
@@ -338,41 +395,97 @@ void s21::Tree<T>::transplant(BaseNode *&u, BaseNode *&v) {
   v->p = u->p;  // ставим не место предка V предка U
 }
 
+// template <typename T>
+// void s21::Tree<T>::erase(iterator pos) {
+//   if (pos.current_ == this->tree_nil_ || pos.current_ == nullptr) {
+//     return;
+//   }
+
+//   if (this->tree_size_ == 1) {
+//     delete this->tree_root_;
+//     this->tree_root_ = this->tree_nil_;
+//     this->tree_size_ = 0;
+//     return;
+//   }
+
+//   BaseNode *z = pos.current_;
+//   // if (this->tree_size_ == 1) {
+//   //   this->tree_root_ = this->tree_nil_;
+//   //   this->tree_size_--;
+//   //   delete z;
+//   //   return;
+//   // }
+//   BaseNode *x;
+//   BaseNode *y = z;
+
+//   bool y_original_color = y->color;
+
+//   if (z->left == this->tree_nil_ &&
+//       z->right != this->tree_nil_) {  // у зет нет левого дочернего узла
+//     x = z->right;                     //
+//     transplant(z, z->right);  // переносим на место зет правый дочерний узел
+//   } else if (z->right == this->tree_nil_ &&
+//              z->left != this->tree_nil_) {  // есть только левый потомок
+//     x = z->left;
+//     transplant(z, z->left);
+//   } else if (z->left != this->tree_nil_ &&
+//              z->right !=
+//                  this->tree_nil_) {  // когда есть 2 дочерних узла // вынести
+//     pos++;
+//     y = pos.current_;
+//     y_original_color = y->color;
+//     HasTwoDescedants(x, y, z);
+//   } else {
+//     if (z == z->p->right)
+//       z->p->right = this->tree_nil_;
+
+//     else
+//       z->p->left = this->tree_nil_;
+//   }
+//   this->tree_size_--;
+
+//   if (y_original_color == BLACK) delete_fixup(x);
+//   delete z;
+// }
+
 template <typename T>
 void s21::Tree<T>::erase(iterator pos) {
-  if (this->tree_size_ == 1) {
-    this->tree_root_ = this->tree_nil_;
-    this->tree_size_--;
+  if (pos.current_ == this->tree_nil_ || pos.current_ == nullptr ||
+      pos.current_ == this->end_node_) {
     return;
   }
+
+  if (this->tree_size_ == 1) {
+    delete this->tree_root_;
+    this->tree_root_ = this->tree_nil_;
+    this->tree_size_ = 0;
+    return;
+  }
+
   BaseNode *z = pos.current_;
-  BaseNode *x;
   BaseNode *y = z;
+  BaseNode *x;
   bool y_original_color = y->color;
-  if (z->left == this->tree_nil_ &&
-      z->right != this->tree_nil_) {  // у зет нет левого дочернего узла
-    x = z->right;                     //
-    transplant(z, z->right);  // переносим на место зет правый дочерний узел
-  } else if (z->right == this->tree_nil_ &&
-             z->left != this->tree_nil_) {  // есть только левый потомок
+
+  if (z->left == this->tree_nil_) {
+    x = z->right;
+    transplant(z, z->right);
+  } else if (z->right == this->tree_nil_) {
     x = z->left;
     transplant(z, z->left);
-  } else if (z->left != this->tree_nil_ &&
-             z->right !=
-                 this->tree_nil_) {  // когда есть 2 дочерних узла // вынести
-    pos++;
-    y = pos.current_;
+  } else {
+    // Узел имеет двух потомков
+    y = TreeMinimum(z->right, this->tree_nil_);
     y_original_color = y->color;
     HasTwoDescedants(x, y, z);
-  } else {
-    if (z == z->p->right)
-      z->p->right = this->tree_nil_;
-    else
-      z->p->left = this->tree_nil_;
   }
+
   this->tree_size_--;
 
-  if (y_original_color == BLACK) delete_fixup(x);
+  if (y_original_color == BLACK) {
+    delete_fixup(x);
+  }
+
   delete z;
 }
 
@@ -496,24 +609,35 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(BaseNode *node,
 
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
+  if (this->tree_size_ < 1) {
+    // throw std::out_of_range("Tree is empty");
+    return iterator(this->tree_nil_, this->tree_nil_, this->end_node_);
+  }
   BaseNode *min;
   if (this->tree_size_ > 1)
     min = TreeMinimum(this->tree_root_, this->tree_nil_);
   else
     min = this->tree_root_;  // ???
-  iterator minimum = iterator(min, this->tree_nil_);
+  iterator minimum =
+      iterator(min, this->tree_nil_, this->end_node_);  // change nil???
   return minimum;
 }
 
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::end() {
+  if (this->tree_size_ < 1) {
+    // throw std::out_of_range("Tree is empty");
+    return iterator(this->tree_nil_, this->tree_nil_, this->end_node_);
+  }
   BaseNode *max;
   if (this->tree_size_ > 1)
     max = (TreeMaximum(this->tree_root_, this->tree_nil_));
   else
     max = this->tree_root_;
   this->end_node_ = max->right;
-  iterator maximum = iterator(this->end_node_, this->tree_nil_);
+  this->end_node_->p = max;
+  iterator maximum =
+      iterator(this->end_node_, this->tree_nil_, this->end_node_);
   return maximum;
 }
 
