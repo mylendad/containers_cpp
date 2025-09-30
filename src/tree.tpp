@@ -19,6 +19,9 @@ s21::Tree<T>::Tree() {
   tree_nil_->right = tree_nil_;
   tree_nil_->p = tree_nil_;
   tree_root_ = tree_nil_;
+  tree_root_->p = tree_nil_;
+  tree_root_->right = tree_nil_;
+  tree_root_->left = tree_nil_;
   tree_size_ = 0;
 }
 
@@ -34,23 +37,6 @@ s21::Tree<T>::Tree(std::initializer_list<value_type> const &items) : Tree() {
     throw;
   }
 }
-
-// template <typename T>
-// s21::Tree<T>::Tree(const Tree &m) {
-//   if (this == &m) return;
-//   if (this->tree_size_ != 0) this->clear();
-//   if (m.tree_root_ != m.tree_nil_)
-
-//   {
-//     const const_iterator iter = m.const_begin();
-//     while (*(iter) != *(m.const_end())) {
-//       this->insert(*iter);
-
-//       iter++;
-//     }
-//     this->insert(*iter);  // change?
-//   }
-// }
 
 template <typename T>
 s21::Tree<T>::Tree(const Tree &m) : Tree() {
@@ -146,9 +132,7 @@ std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::insert(
 
     result.second = true;
     this->tree_size_++;
-    result.first = iterator(
-        insertable, this->tree_nil_,
-        this->end_node_);  // исправить чтобы сюда сувался вставленный элемент
+    result.first = iterator(insertable, this->tree_nil_, this->end_node_);
   }
 
   if (size == this->tree_size_) result.second = false;
@@ -321,28 +305,6 @@ void s21::Tree<T>::HasTwoDescedants(BaseNode *&x, BaseNode *&y, BaseNode *z) {
   y->color = z->color;
 }
 
-// template <typename T>
-// void s21::Tree<T>::HasTwoDescedants(BaseNode *&x, BaseNode *&y, BaseNode *z)
-// {
-//   // y уже должен быть преемником (следующий после z в порядке возрастания)
-//   x = y->right;  // x - правый потомок преемника
-
-//   if (y->p != z) {
-//     transplant(y, y->right);
-//     y->right = z->right;
-//     if (y->right != tree_nil_) {
-//       y->right->p = y;
-//     }
-//   }
-
-//   transplant(z, y);
-//   y->left = z->left;
-//   if (y->left != tree_nil_) {
-//     y->left->p = y;
-//   }
-//   y->color = z->color;
-// }
-
 template <typename T>
 std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(T &obj) {
   BaseNode *x = this->tree_root_;
@@ -467,10 +429,10 @@ void s21::Tree<T>::erase(iterator pos) {
   BaseNode *x;
   bool y_original_color = y->color;
 
-  if (z->left == this->tree_nil_) {
+  if (z->left == this->tree_nil_) {  // у зет нет левого дочернего узла
     x = z->right;
-    transplant(z, z->right);
-  } else if (z->right == this->tree_nil_) {
+    transplant(z, z->right);  // переносим на место зет правый дочерний узел
+  } else if (z->right == this->tree_nil_) {  // есть только левый потомок
     x = z->left;
     transplant(z, z->left);
   } else {
@@ -610,8 +572,9 @@ typename s21::Tree<T>::BaseNode *s21::Tree<T>::TreeMaximum(BaseNode *node,
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
   if (this->tree_size_ < 1) {
-    // throw std::out_of_range("Tree is empty");
-    return iterator(this->tree_nil_, this->tree_nil_, this->end_node_);
+    throw std::out_of_range("Tree is empty");
+    // std::cout << "this->tree_size_ < 1" << std::endl;
+    // return iterator(this->tree_root_, this->tree_nil_, this->end_node_);
   }
   BaseNode *min;
   if (this->tree_size_ > 1)
@@ -626,8 +589,9 @@ typename s21::Tree<T>::iterator s21::Tree<T>::begin() {
 template <typename T>
 typename s21::Tree<T>::iterator s21::Tree<T>::end() {
   if (this->tree_size_ < 1) {
-    // throw std::out_of_range("Tree is empty");
-    return iterator(this->tree_nil_, this->tree_nil_, this->end_node_);
+    // std::cout << "this->tree_size_ < 1" << std::endl;
+    throw std::out_of_range("Tree is empty");
+    // return iterator(this->tree_root_, this->tree_nil_, this->end_node_);
   }
   BaseNode *max;
   if (this->tree_size_ > 1)
