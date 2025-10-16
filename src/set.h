@@ -60,6 +60,7 @@ namespace s21
         // Key &operator[](const Key &key);
 
         // Map Modifiers
+        // std::pair<iterator, bool> insert(const value_type &value);
         // using Tree<Key>::insert;
         // std::pair<iterator, bool> insert(const Key &key, const Key &obj);
         // std::pair<iterator, bool> insert_or_assign(const Key &key, const Key &obj);

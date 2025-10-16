@@ -6,6 +6,7 @@
 
 #include <initializer_list>
 #include <iostream>
+#include "set.h"
 
 namespace s21
 {
@@ -29,18 +30,17 @@ namespace s21
         return *this;
     }
 
-    template <typename Key>
-    std::pair<typename s21::set<Key>::iterator, bool> s21::set<Key>::insert(
-        const Key &key, const Key &obj)
-    {
-        return this->insert(value_type(key, obj));
-    }
+    // template <typename Key>
+    // std::pair<typename s21::set<Key>::iterator, bool> s21::set<Key>::insert(const value_type &value)
+    // {
+    //     return this->insert(value);
+    // }
 
     // template <typename Key>
     // std::pair<typename s21::set<Key>::iterator, bool>
     // s21::set<Key>::insert_or_assign(const Key &key, const Key &obj)
     // {
-    //     std::pair<typename s21::set<Key>::iterator, bool> result =
+    //     std::pair<typename s21rator, bool> result =
     //         insert(value_type(key, obj));
     //     if (result.second == false)
     //     {
@@ -71,7 +71,7 @@ namespace s21
     //         result.first = this->end();
     //         result = this->insert(temp);
     //     }
-    //     return result.first->second; // куда
+    //     return result.first->second; // кудаs
     // }
 
     // template <typename Key>
@@ -89,4 +89,4 @@ namespace s21
     }
 } // namespace s21
 
-#endif // SET_TPP
+#endif // SET_TPP::set<Key>::ite
