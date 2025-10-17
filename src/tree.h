@@ -96,6 +96,53 @@ namespace s21
       BaseNode *end_node_;
     };
 
+    //  public:
+    //   class const_iterator {
+    //    public:
+    //     friend class Tree<T>;
+
+    //     const_iterator();
+
+    //     const_iterator(BaseNode *node, const BaseNode *&nil);
+
+    //     const_iterator(const const_iterator &other);
+
+    //     const_iterator(const_iterator &&other) noexcept;
+
+    //     const const_iterator &operator=(const const_iterator &other) const;
+
+    //     // const reference operator*();
+
+    //     const reference operator*() const;
+
+    //     //  const value_type *operator->() const ;
+
+    //     const value_type *operator->() const;
+
+    //     BaseNode *TreeSuccessor(const BaseNode *&x) const;
+
+    //     BaseNode *TreeDescendant(const BaseNode *&x) const;
+
+    //     // bool operator==(const TreeIterator &other) const;
+
+    //     // bool operator!=(const TreeIterator &other) const;
+
+    //     const_iterator &operator++() const;
+
+    //     const_iterator operator++(int) const;
+
+    //     const const_iterator &operator--() const;
+
+    //     const const_iterator operator--(int) const;
+
+    //    private:
+    //     const BaseNode *current_;
+
+    //     const BaseNode *nil_;
+    //   };
+
+    // Map Member functions
+
     Tree();
     Tree(std::initializer_list<value_type> const &items);
     Tree(const Tree &m);
@@ -134,7 +181,7 @@ namespace s21
     void left_rotate(BaseNode *x);
     void right_rotate(BaseNode *y);
     BaseNode *insert_fixup(BaseNode *&y, BaseNode *&z);
-    std::pair<Tree<T>::iterator, bool> find(T &obj);
+    std::pair<Tree<T>::iterator, bool> find_node(const T &obj);
     void transplant(BaseNode *&u, BaseNode *&v);
     void delete_fixup(BaseNode *&x);
     void copy_tree(BaseNode *src_node, BaseNode *src_nil);

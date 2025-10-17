@@ -66,6 +66,7 @@ namespace s21
         // std::pair<iterator, bool> insert_or_assign(const Key &key, const Key &obj);
 
         // Map Lookup
+        iterator find(const Key &key);
         bool contains(const Key &key);
     };
 } // namespace s21

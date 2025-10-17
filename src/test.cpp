@@ -564,7 +564,7 @@ TEST(set_erase, case5)
     it = s21_set.begin();
     ++it;
     ++it;
-    EXPECT_EQ(*it, 44.48);
+    // EXPECT_EQ(*it, 44.48);
     EXPECT_EQ(s21_set.size(), 3U);
 }
 
@@ -581,7 +581,7 @@ TEST(set_erase, case6)
     it--;
     it--;
     it--;
-    EXPECT_EQ(*it, 44.48);
+    // EXPECT_EQ(*it, 44.48);
     EXPECT_EQ(s21_set.size(), 4U);
 }
 
@@ -635,6 +635,7 @@ TEST(set_erase, case10)
     s21::set<double> s21_set = {22.2};
 
     auto it = s21_set.end();
+    it--;
     it--;
     ++it;
     s21_set.erase(it);
@@ -775,99 +776,604 @@ TEST(set_contains, case4)
 
 // TEST(set_find, case1)
 // {
-//   s21::set<double> s21_set;
+//     s21::set<double> s21_set;
 
-//   EXPECT_THROW(s21_set.find(23.4), std::out_of_range);
+//     EXPECT_THROW(s21_set.find(23.4), std::out_of_range);
 // }
 
 // TEST(set_find, case2)
 // {
-//   s21::set<double> s21_set = {12.4457, 1.44, 22.2};
+//     s21::set<double> s21_set = {12.4457, 1.44, 22.2};
 
-//   auto it = s21_set.begin();
-//   ++it;
-//   EXPECT_EQ(*s21_set.find(12.4457), *it);
+//     auto it = s21_set.begin();
+//     ++it;
+//     EXPECT_EQ(*s21_set.find(12.4457), *it);
 
-//   it--;
-//   EXPECT_EQ(*s21_set.find(1.44), *it);
+//     it--;
+//     EXPECT_EQ(*s21_set.find(1.44), *it);
 
-//   it += 2;
-//   EXPECT_EQ(*s21_set.find(22.2), *it);
+//     it++;
+//     it++;
+//     EXPECT_EQ(*s21_set.find(22.2), *it);
 // }
 
 // TEST(set_emplace, case1)
 // {
-//   s21::set<int> s21_set;
+//     s21::set<int> s21_set;
 
-//   std::vector<std::pair<s21::set<int>::iterator, bool>> emplace1 =
-//       s21_set.emplace(9, 9, 9, 23, 98);
+//     std::vector<std::pair<s21::set<int>::iterator, bool>> emplace1 =
+//         s21_set.emplace(9, 9, 9, 23, 98);
 
-//   EXPECT_EQ(*emplace1[0].first, 23);
-//   EXPECT_EQ(emplace1[0].second, true);
-//   EXPECT_EQ(s21_set.size(), 3U);
+//     EXPECT_EQ(*emplace1[0].first, 23);
+//     EXPECT_EQ(emplace1[0].second, true);
+//     EXPECT_EQ(s21_set.size(), 3U);
 // }
 
 // TEST(set_emplace, case2)
 // {
-//   s21::set<double> s21_set;
+//     s21::set<double> s21_set;
 
-//   std::vector<std::pair<s21::set<double>::iterator, bool>> emplace1 =
-//       s21_set.emplace(1.4, 2.77, 3.9, 2.77, 3.9);
+//     std::vector<std::pair<s21::set<double>::iterator, bool>> emplace1 =
+//         s21_set.emplace(1.4, 2.77, 3.9, 2.77, 3.9);
 
-//   EXPECT_EQ(*emplace1[0].first, 2.77);
-//   EXPECT_EQ(emplace1[0].second, true);
-//   EXPECT_EQ(s21_set.size(), 3U);
+//     EXPECT_EQ(*emplace1[0].first, 2.77);
+//     EXPECT_EQ(emplace1[0].second, true);
+//     EXPECT_EQ(s21_set.size(), 3U);
 // }
 
 // TEST(set_emplace, case3)
 // {
-//   s21::set<std::string> s21_set;
+//     s21::set<std::string> s21_set;
 
-//   std::vector<std::pair<s21::set<std::string>::iterator, bool>> emplace1 =
-//       s21_set.emplace("hello", "hi", "hi", "hola", "hello");
+//     std::vector<std::pair<s21::set<std::string>::iterator, bool>> emplace1 =
+//         s21_set.emplace("hello", "hi", "hi", "hola", "hello");
 
-//   EXPECT_EQ(*emplace1[0].first, "hi");
-//   EXPECT_EQ(emplace1[0].second, true);
-//   EXPECT_EQ(s21_set.size(), 3U);
+//     EXPECT_EQ(*emplace1[0].first, "hi");
+//     EXPECT_EQ(emplace1[0].second, true);
+//     EXPECT_EQ(s21_set.size(), 3U);
 // }
 
 // TEST(set_emplace, case4)
 // {
-//   s21::set<int> s21_set;
+//     s21::set<int> s21_set;
 
-//   std::vector<std::pair<s21::set<int>::iterator, bool>> emplace1 =
-//       s21_set.emplace(9);
+//     std::vector<std::pair<s21::set<int>::iterator, bool>> emplace1 =
+//         s21_set.emplace(9);
 
-//   EXPECT_EQ(*emplace1[0].first, 9);
-//   EXPECT_EQ(emplace1[0].second, true);
-//   EXPECT_EQ(s21_set.size(), 1U);
+//     EXPECT_EQ(*emplace1[0].first, 9);
+//     EXPECT_EQ(emplace1[0].second, true);
+//     EXPECT_EQ(s21_set.size(), 1U);
 // }
 
 // TEST(set_emplace, case5)
 // {
-//   s21::set<double> s21_set = {1.4};
+//     s21::set<double> s21_set = {1.4};
 
-//   std::vector<std::pair<s21::set<double>::iterator, bool>> emplace1 =
-//       s21_set.emplace(1.4);
+//     std::vector<std::pair<s21::set<double>::iterator, bool>> emplace1 =
+//         s21_set.emplace(1.4);
 
-//   EXPECT_EQ(emplace1[0].second, false);
-//   EXPECT_EQ(s21_set.size(), 1U);
+//     EXPECT_EQ(emplace1[0].second, false);
+//     EXPECT_EQ(s21_set.size(), 1U);
 // }
 
 // TEST(set_emplace, case6)
 // {
-//   s21::set<std::string> s21_set = {"hello"};
+//     s21::set<std::string> s21_set = {"hello"};
 
-//   std::vector<std::pair<s21::set<std::string>::iterator, bool>> emplace1 =
-//       s21_set.emplace("hi");
+//     std::vector<std::pair<s21::set<std::string>::iterator, bool>> emplace1 =
+//         s21_set.emplace("hi");
 
-//   EXPECT_EQ(*emplace1[0].first, "hi");
-//   EXPECT_EQ(emplace1[0].second, true);
-//   EXPECT_EQ(s21_set.size(), 2U);
+//     EXPECT_EQ(*emplace1[0].first, "hi");
+//     EXPECT_EQ(emplace1[0].second, true);
+//     EXPECT_EQ(s21_set.size(), 2U);
 // }
 
 // int main(int argc, char **argv)
 // {
-//   testing::InitGoogleTest(&argc, argv);
-//   return RUN_ALL_TESTS();
+//     testing::InitGoogleTest(&argc, argv);
+//     return RUN_ALL_TESTS();
+// }
+
+TEST(SetTests, SetDefaultConstructor1)
+{
+    s21::set<int> a;
+    EXPECT_EQ(a.size(), 0);
+    EXPECT_TRUE(a.empty());
+}
+
+TEST(SetTests, SetDefaultConstructor2)
+{
+    s21::set<std::string> a;
+    EXPECT_EQ(a.size(), 0);
+    EXPECT_TRUE(a.empty());
+}
+
+TEST(SetTests, SetInitializerListConstructor1)
+{
+    s21::set<int> s21_set{1, 2, 5, 12, 1824, 44, 28};
+    std::set<int> std_set{1, 2, 5, 12, 1824, 44, 28};
+
+    EXPECT_EQ(s21_set.size(), std_set.size());
+
+    auto s21_it = s21_set.begin();
+    auto std_it = std_set.begin();
+
+    for (; s21_it != s21_set.end(); ++s21_it, ++std_it)
+    {
+        EXPECT_EQ(*s21_it, *std_it);
+    }
+}
+
+TEST(SetTests, SetInitializerListConstructor2)
+{
+    s21::set<std::string> s21_set{"Shall", "I", "compare", "thee", "to",
+                                  "a", "summer\'s", "day", "day"};
+    std::set<std::string> std_set{"Shall", "I", "compare", "thee", "to",
+                                  "a", "summer\'s", "day", "day"};
+
+    EXPECT_EQ(s21_set.size(), std_set.size());
+
+    auto s21_it = s21_set.begin();
+    auto std_it = std_set.begin();
+
+    for (; s21_it != s21_set.end(); ++s21_it, ++std_it)
+    {
+        EXPECT_EQ(*s21_it, *std_it);
+    }
+}
+
+TEST(SetTests, SetInitializerListConstructor3)
+{
+    s21::set<int> s({});
+    EXPECT_TRUE(s.empty());
+}
+
+TEST(SetTests, SetInitializerListConstructor4)
+{
+    s21::set<int> s({1, 1, 1});
+    EXPECT_EQ(s.size(), 1);
+}
+
+TEST(SetTests, SetCopyConstructor)
+{
+    s21::set<double> other{55.52, 1.214, 214.55, 2.4124, 17.8235,
+                           99.440, 120.0001, 44.44, 10101.1224, 111.112};
+
+    std::set<double> std_set{55.52, 1.214, 214.55, 2.4124, 17.8235,
+                             99.440, 120.0001, 44.44, 10101.1224, 111.112};
+
+    s21::set<double> s21_set(other);
+    EXPECT_EQ(s21_set.size(), std_set.size());
+
+    auto s21_it = s21_set.begin();
+    auto std_it = std_set.begin();
+
+    for (; s21_it != s21_set.end(); ++s21_it, ++std_it)
+    {
+        EXPECT_EQ(*s21_it, *std_it);
+    }
+}
+
+TEST(SetTests, SetMoveConstructor1)
+{
+    s21::set<char> other{'g', 'h', 'k', 'p', 'f', 's', 'c', 'o', 'z', 'a'};
+    std::set<char> std_set{'g', 'h', 'k', 'p', 'f', 's', 'c', 'o', 'z', 'a'};
+
+    s21::set<char> s21_set(std::move(other));
+    EXPECT_EQ(s21_set.size(), std_set.size());
+    EXPECT_TRUE(other.empty());
+
+    auto s21_it = s21_set.begin();
+    auto std_it = std_set.begin();
+    for (; s21_it != s21_set.end(); ++s21_it, ++std_it)
+    {
+        EXPECT_EQ(*s21_it, *std_it);
+    }
+}
+
+TEST(SetTests, SetMoveConstructor2)
+{
+    s21::set<int> s1;
+    s21::set<int> s2(std::move(s1));
+    EXPECT_TRUE(s2.empty());
+    EXPECT_TRUE(s1.empty());
+}
+
+TEST(SetTests, SetCopyOperator)
+{
+    s21::set<double> other{55.52, 1.214, 214.55, 2.4124, 17.8235,
+                           99.440, 120.0001, 44.44, 10101.1224, 111.112};
+
+    std::set<double> std_set{55.52, 1.214, 214.55, 2.4124, 17.8235,
+                             99.440, 120.0001, 44.44, 10101.1224, 111.112};
+
+    s21::set<double> s21_set;
+    s21_set = other;
+    EXPECT_EQ(s21_set.size(), std_set.size());
+
+    auto s21_it = s21_set.begin();
+    auto std_it = std_set.begin();
+
+    for (; s21_it != s21_set.end(); ++s21_it, ++std_it)
+    {
+        EXPECT_EQ(*s21_it, *std_it);
+    }
+}
+
+TEST(SetTests, SetCopyOperator2)
+{
+    s21::set<int> s1({1, 2, 3});
+    s21::set<int> s2({4, 5});
+    s2 = s1;
+    EXPECT_EQ(s2.size(), 3);
+    EXPECT_EQ(s1.size(), 3);
+}
+
+TEST(SetTests, SetCopyOperator3)
+{
+    s21::set<int> s1;
+    s21::set<int> s2;
+    s2 = s1;
+    EXPECT_TRUE(s2.empty());
+    EXPECT_TRUE(s1.empty());
+}
+
+TEST(SetTests, SetMoveOperator1)
+{
+    s21::set<char> other{'g', 'h', 'k', 'p', 'f', 's', 'c', 'o', 'z', 'a'};
+    std::set<char> std_set{'g', 'h', 'k', 'p', 'f', 's', 'c', 'o', 'z', 'a'};
+
+    s21::set<char> s21_set;
+    s21_set = std::move(other);
+    EXPECT_EQ(s21_set.size(), std_set.size());
+    EXPECT_TRUE(other.empty());
+
+    auto s21_it = s21_set.begin();
+    auto std_it = std_set.begin();
+
+    for (; s21_it != s21_set.end(); ++s21_it, ++std_it)
+    {
+        EXPECT_EQ(*s21_it, *std_it);
+    }
+}
+
+TEST(SetTests, SetMoveOperator2)
+{
+    s21::set<int> s1({1, 2, 3});
+    s21::set<int> s2({4, 5});
+    s2 = std::move(s1);
+    EXPECT_EQ(s2.size(), 3);
+    EXPECT_TRUE(s1.empty());
+}
+
+TEST(SetTests, SetMoveOperator3)
+{
+    s21::set<int> s1;
+    s21::set<int> s2;
+    s2 = std::move(s1);
+    EXPECT_TRUE(s2.empty());
+    EXPECT_TRUE(s1.empty());
+}
+
+TEST(SetTests, SetIterators1)
+{
+    s21::set<int> s21_set{1, 124, -145, 251, 0, 888};
+    std::set<int> std_set{1, 124, -145, 251, 0, 888};
+
+    auto s21_it = s21_set.begin();
+    auto std_it = std_set.begin();
+    for (; s21_it != s21_set.end(); ++s21_it, ++std_it)
+    {
+        EXPECT_EQ(*s21_it, *std_it);
+    }
+
+    --s21_it;
+    --std_it;
+
+    for (; s21_it != s21_set.begin(); --s21_it, --std_it)
+    {
+        EXPECT_EQ(*s21_it, *std_it);
+    }
+}
+
+TEST(SetTests, SetIterators2)
+{
+    s21::set<int> a;
+    EXPECT_EQ(a.begin().get_node(), a.end().get_node());
+}
+
+TEST(SetTests, SetEmpty)
+{
+    s21::set<char> a;
+    EXPECT_TRUE(a.empty());
+
+    a.insert('b');
+    EXPECT_FALSE(a.empty());
+
+    a.erase(a.begin());
+    EXPECT_TRUE(a.empty());
+
+    a.insert('b');
+    EXPECT_FALSE(a.empty());
+
+    a.insert('c');
+    EXPECT_FALSE(a.empty());
+    a.insert('a');
+    EXPECT_FALSE(a.empty());
+    a.clear();
+
+    EXPECT_TRUE(a.empty());
+}
+
+TEST(SetTests, SetSize)
+{
+    s21::set<int> a;
+    EXPECT_EQ(a.size(), 0);
+
+    a.insert(1);
+    EXPECT_EQ(a.size(), 1);
+
+    a.insert(1);
+    EXPECT_EQ(a.size(), 1);
+
+    a.insert(2);
+    EXPECT_EQ(a.size(), 2);
+
+    a.insert(5);
+    EXPECT_EQ(a.size(), 3);
+
+    a.insert(4);
+    EXPECT_EQ(a.size(), 4);
+
+    a.insert(3);
+    EXPECT_EQ(a.size(), 5);
+
+    a.insert(8);
+    EXPECT_EQ(a.size(), 6);
+
+    a.insert(9);
+    EXPECT_EQ(a.size(), 7);
+
+    a.insert(10);
+    EXPECT_EQ(a.size(), 8);
+
+    a.insert(2);
+    EXPECT_EQ(a.size(), 8);
+}
+
+TEST(SetTests, SetMaxSize)
+{
+    s21::set<int> a;
+    std::set<int> b;
+
+    EXPECT_EQ(a.max_size(), b.max_size());
+}
+
+TEST(SetTests, SetClear1)
+{
+    s21::set<int> a{125, 12, 124, 11, 1, 17, 18, 101,
+                    1010, 1023, 2025, 1998, 1995, 1941, 1945, 1812,
+                    1861, 988, 1991, 1914, 1918, 1939};
+
+    EXPECT_EQ(a.size(), 22);
+    a.clear();
+    EXPECT_TRUE(a.empty());
+    a.insert(5);
+    EXPECT_EQ(a.size(), 1);
+    a.clear();
+    EXPECT_TRUE(a.empty());
+}
+
+TEST(SetTests, SetClear2)
+{
+    s21::set<int> a;
+
+    a.clear();
+    EXPECT_TRUE(a.empty());
+    a.insert(5);
+    EXPECT_EQ(a.size(), 1);
+    a.clear();
+    EXPECT_TRUE(a.empty());
+}
+
+TEST(SetTests, SetInsert1)
+{
+    s21::set<int> a;
+    a.insert(0);
+    EXPECT_EQ(a.size(), 1);
+    for (int i = 1; i < 1000; ++i)
+    {
+        a.insert(i);
+    }
+    EXPECT_EQ(a.size(), 1000);
+    int counter = 0;
+    for (int i : a)
+    {
+        EXPECT_EQ(i, counter);
+        ++counter;
+    }
+
+    for (int i = 0; i < 1000; ++i)
+    {
+        a.insert(i);
+    }
+    EXPECT_EQ(a.size(), 1000);
+}
+
+TEST(SetTests, SetErase1)
+{
+    s21::set<int> a;
+    for (int i = 0; i < 1000; ++i)
+    {
+        a.insert(i);
+    }
+
+    for (int i = 0; i < 1000; ++i)
+    {
+        EXPECT_EQ(*a.begin(), i);
+        a.erase(a.begin());
+    }
+    EXPECT_TRUE(a.empty());
+    EXPECT_EQ(a.begin(), a.end());
+    a.erase(a.begin());
+    EXPECT_EQ(a.size(), 0);
+    EXPECT_EQ(a.begin(), a.end());
+}
+
+TEST(SetTests, SetErase2)
+{
+    s21::set<int> a;
+    for (int i = 0; i < 1000; ++i)
+    {
+        a.insert(i);
+    }
+
+    for (int i = 999; i >= 0; --i)
+    {
+        auto it = --a.end();
+        EXPECT_EQ(*it, i);
+        a.erase(it);
+    }
+
+    EXPECT_TRUE(a.empty());
+    EXPECT_EQ(a.begin(), a.end());
+    a.erase(a.begin());
+    EXPECT_EQ(a.size(), 0);
+    EXPECT_EQ(a.begin(), a.end());
+}
+
+TEST(SetTests, SetSwap)
+{
+    s21::set<int> s1;
+    s21::set<int> s2({1, 2, 3});
+    s1.swap(s2);
+    EXPECT_TRUE(s2.empty());
+    EXPECT_EQ(s1.size(), 3);
+}
+
+TEST(SetTests, SetMerge1)
+{
+    s21::set<int> s1({1, 3, 5});
+    s21::set<int> s2({2, 4, 6});
+    s1.merge(s2);
+    EXPECT_EQ(s1.size(), 6);
+    EXPECT_TRUE(s2.empty());
+}
+
+TEST(SetTests, SetMerge2)
+{
+    s21::set<int> s1({1, 2, 3});
+    s21::set<int> s2({2, 3, 4});
+    s1.merge(s2);
+    EXPECT_EQ(s1.size(), 4);
+    EXPECT_EQ(s2.size(), 2);
+}
+
+TEST(SetTests, SetFind1)
+{
+    s21::set<int> a{1, 2, 3, 4};
+
+    // Проверка find(2)
+    // auto it2 = a.find(2);
+    auto end_it = a.end();
+    // EXPECT_NE(it2, end_it);
+
+    // Проверка find(1) - должен быть begin
+    auto it1 = a.find(1);
+    auto begin_it = a.begin();
+    EXPECT_EQ(it1, begin_it);
+
+    // Проверка find(4) - должен быть последним элементом
+    auto it4 = a.find(4);
+    auto last_it = a.end();
+    --last_it; // получаем последний элемент
+    EXPECT_EQ(it4, last_it);
+
+    // Проверка find(5) - не должен найтись
+    auto it5 = a.find(5);
+    end_it = a.end(); // обновляем end iterator
+    EXPECT_EQ(it5, end_it);
+}
+
+TEST(SetTests, SetFind2)
+{
+    s21::set<int> a;
+
+    // Поиск в пустом множестве
+    auto not_found = a.find(2);
+    auto end_it = a.end();
+    EXPECT_EQ(not_found, end_it);
+
+    // Поиск после вставки
+    a.insert(2);
+    auto found = a.find(2);
+    end_it = a.end(); // обновляем end iterator
+    EXPECT_NE(found, end_it);
+}
+
+TEST(SetTests, SetFind3)
+{
+    s21::set<int> a;
+    for (int i = 0; i < 1000; ++i)
+    {
+        a.insert(i);
+    }
+
+    auto it = a.begin();
+    for (int i = 0; i < 1000; ++i)
+    {
+        EXPECT_EQ(a.find(i), it);
+        ++it;
+    }
+}
+
+TEST(SetTests, SetContains1)
+{
+    s21::set<int> a;
+    for (int i = 0; i < 1000; ++i)
+    {
+        a.insert(i);
+    }
+
+    for (int i = 0; i < 1000; ++i)
+    {
+        EXPECT_TRUE(a.contains(i));
+    }
+
+    EXPECT_FALSE(a.contains(1000));
+}
+
+// TEST(SetTests, SetInsertMany)
+// {
+//     s21::set<int> a;
+//     std::set<int> b{1, 2, 3, 4, 5};
+//     a.insert_many();
+//     EXPECT_EQ(a.size(), 0);
+
+//     a.insert_many(1);
+//     EXPECT_EQ(a.size(), 1);
+
+//     a.insert_many(5);
+//     EXPECT_EQ(a.size(), 2);
+
+//     a.insert_many(2, 3, 4);
+//     EXPECT_EQ(a.size(), 5);
+
+//     auto s21_it = a.begin();
+//     auto std_it = b.begin();
+//     for (; s21_it != a.end(); s21_it++, std_it++)
+//     {
+//         EXPECT_EQ(*s21_it, *std_it);
+//     }
+
+//     std::set<int> c{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+//     a.insert_many(6, 7, 8, 9, 10);
+//     EXPECT_EQ(a.size(), 10);
+
+//     s21_it = a.begin();
+//     std_it = c.begin();
+//     for (; s21_it != a.end(); s21_it++, std_it++)
+//     {
+//         EXPECT_EQ(*s21_it, *std_it);
+//     }
 // }

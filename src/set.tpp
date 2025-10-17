@@ -30,11 +30,15 @@ namespace s21
         return *this;
     }
 
-    // template <typename Key>
-    // std::pair<typename s21::set<Key>::iterator, bool> s21::set<Key>::insert(const value_type &value)
-    // {
-    //     return this->insert(value);
-    // }
+    template <typename Key>
+    s21::set<Key>::iterator s21::set<Key>::find(const Key &key)
+    {
+        // Node node = Node();
+        std::pair<typename s21::set<Key>::iterator, bool> result =
+            // std::make_pair(iterator(node, this->tree_nil_, this->end_node_), false);
+            result = this->find_node(key);
+        return result.first;
+    }
 
     // template <typename Key>
     // std::pair<typename s21::set<Key>::iterator, bool>
@@ -53,7 +57,7 @@ namespace s21
     // Key &s21::set<Key>::at(const Key &key)
     // {
     //     std::<Key>temp = {key, Key()};
-    //     std::pair<iterator, bool> result = this->find(temp);
+    //     std::pair<iterator, bool> result = this->find_node(temp);
     //     if (result.second == false)
     //         throw std::out_of_range("Key not exist.");
     //     return result.first->second;
@@ -64,7 +68,7 @@ namespace s21
     // {
     //     Key temp = {key, Key()};
     //     std::pair<iterator, bool> result =
-    //         this->find(temp); // если не находит, в результат пишется отец!!! а temp
+    //         this->find_node(temp); // если не находит, в результат пишется отец!!! а temp
     //                           // что там во втором аргументе?
     //     if (result.second == false)
     //     {
@@ -84,7 +88,7 @@ namespace s21
     bool s21::set<Key>::contains(const Key &key)
     {
         Key temp = {key};
-        std::pair<iterator, bool> result = this->find(temp);
+        std::pair<iterator, bool> result = this->find_node(temp);
         return result.second;
     }
 } // namespace s21

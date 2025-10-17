@@ -131,7 +131,7 @@ namespace s21
         false); // with first fix
 
     if (tree_size_ > 0)
-      result = this->find(z->item);
+      result = this->find_node(z->item);
 
     if (result.second == false)
     {
@@ -373,7 +373,7 @@ namespace s21
   }
 
   template <typename T>
-  std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find(T &obj)
+  std::pair<typename s21::Tree<T>::iterator, bool> s21::Tree<T>::find_node(const T &obj)
   {
     BaseNode *x = this->tree_root_;
     BaseNode *y = this->tree_nil_;
@@ -763,7 +763,7 @@ namespace s21
   template <typename T>
   typename s21::Tree<T>::size_type s21::Tree<T>::max_size()
   {
-    return std::numeric_limits<unsigned long>::max();
+    return std::numeric_limits<size_t>::max() / sizeof(BaseNode);
   }
 
   template <typename T>

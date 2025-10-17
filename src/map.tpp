@@ -54,7 +54,7 @@ namespace s21
   T &s21::map<Key, T>::at(const Key &key)
   {
     std::pair<const Key, T> temp = {key, T()};
-    std::pair<iterator, bool> result = this->find(temp);
+    std::pair<iterator, bool> result = this->find_node(temp);
     if (result.second == false)
       throw std::out_of_range("Key not exist.");
     return result.first->second;
@@ -65,8 +65,8 @@ namespace s21
   {
     std::pair<const Key, T> temp = {key, T()};
     std::pair<iterator, bool> result =
-        this->find(temp); // если не находит, в результат пишется отец!!! а temp
-                          // что там во втором аргументе?
+        this->find_node(temp); // если не находит, в результат пишется отец!!! а temp
+                               // что там во втором аргументе?
     if (result.second == false)
     {
       result.first = this->end();
@@ -85,7 +85,7 @@ namespace s21
   bool s21::map<Key, T>::contains(const Key &key)
   {
     std::pair<const Key, T> temp = {key, T()};
-    std::pair<iterator, bool> result = this->find(temp);
+    std::pair<iterator, bool> result = this->find_node(temp);
     return result.second;
   }
 } // namespace s21
