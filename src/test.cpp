@@ -1829,7 +1829,7 @@ TEST(SetTests, SetInsertMany)
 
   auto s21_it = a.begin();
   auto std_it = b.begin();
-  for (; s21_it != a.end(); s21_it++, std_it++)
+  for (; s21_it != a.end(); ++s21_it, ++std_it)
   {
     EXPECT_EQ(*s21_it, *std_it);
   }
@@ -1840,7 +1840,7 @@ TEST(SetTests, SetInsertMany)
 
   s21_it = a.begin();
   std_it = c.begin();
-  for (; s21_it != a.end(); s21_it++, std_it++)
+  for (; s21_it != a.end(); ++s21_it, ++std_it)
   {
     EXPECT_EQ(*s21_it, *std_it);
   }

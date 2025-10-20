@@ -1961,6 +1961,44 @@ TEST(MapTests, MapContains)
     EXPECT_FALSE(a.contains(4));
 }
 
+TEST(MapTests, MapInsertMany)
+{
+    s21::map<int, int> a;
+    s21::map<int, int> b{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}, {8, 8}, {9, 9}};
+
+    a.insert_many();
+    EXPECT_TRUE(a.empty());
+
+    a.insert_many(std::pair<int, int>(1, 1));
+    EXPECT_EQ(a.size(), 1);
+
+    auto res = a.insert_many(std::pair<int, int>(2, 2), std::pair<int, int>(3, 3),
+                             std::pair<int, int>(4, 4));
+    EXPECT_EQ(a.size(), 4);
+
+    for (auto i : res)
+    {
+        EXPECT_TRUE(i.second);
+    }
+
+    res = a.insert_many(std::pair<int, int>(5, 5), std::pair<int, int>(6, 6),
+                        std::pair<int, int>(7, 7), std::pair<int, int>(8, 8),
+                        std::pair<int, int>(9, 9));
+
+    EXPECT_EQ(a.size(), 9);
+    for (auto i : res)
+    {
+        EXPECT_TRUE(i.second);
+    }
+
+    auto it_a = a.begin(), it_b = b.begin();
+
+    for (; it_a != a.end(); ++it_a, ++it_b)
+    {
+        EXPECT_EQ(*it_a, *it_b);
+    }
+}
+
 // int main(int argc, char** argv) {
 //   testing::InitGoogleTest(&argc, argv);
 //   return RUN_ALL_TESTS();

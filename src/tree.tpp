@@ -162,23 +162,29 @@ namespace s21
 
     if (size == this->tree_size_)
       result.second = false;
-    return result
+    return result;
   }
 
-  template <typename... Args>
+  // template <typename T>
+  // template <typename... Args>
+  // typename std::vector<std::pair<typename s21::Tree<T>::iterator, bool>> s21::Tree<T>::insert_many(Args &&...args)
+  // {
+  //   std::vector<std::pair<iterator, bool>> results;
+  //   results.reserve(sizeof...(Args));
+
+  //   (results.push_back(this->insert(std::forward<Args>(args))), ...);
+
+  //   return results;
+  // }
+
   template <typename T>
-  typename std::vector<std::pair<typename s21::Tree<T>::iterator, bool>> s21::Tree<T>::insert_many(Args &&...args)
+  template <typename... Args>
+  std::vector<std::pair<typename s21::Tree<T>::iterator, bool>> s21::Tree<T>::insert_many(Args &&...args)
   {
     std::vector<std::pair<iterator, bool>> results;
-    // results.reserve(sizeof...(Args));
-    // Лямбда для обработки каждого элемента
-    auto process = [&](auto &&arg)
-    {
-      results.push_back(this->insert_(std::forward<decltype(arg)>(arg)));
-    };
+    results.reserve(sizeof...(Args));
 
-    // Применяем к каждому аргументу
-    (process(std::forward<Args>(args)), ...);
+    (results.push_back(this->insert(std::forward<Args>(args))), ...);
 
     return results;
   }

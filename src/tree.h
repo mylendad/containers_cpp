@@ -89,7 +89,7 @@ namespace s21
       BaseNode *TreeDescendant(BaseNode *x);
       TreeIterator &operator++();
       TreeIterator operator++(int);
-      TreeIterator operator--();
+      TreeIterator &operator--();
       TreeIterator operator--(int);
 
     private:
@@ -166,7 +166,8 @@ namespace s21
     void clear();
     void clear_support(BaseNode *node);
     std::pair<iterator, bool> insert(const value_type &value);
-    // vector<std::pair<iterator, bool>> insert_many(Args &&...args);
+    template <typename... Args>
+    std::vector<std::pair<iterator, bool>> insert_many(Args &&...args);
     void erase(iterator pos);
     void swap(Tree &other);
     void merge(Tree &other);
