@@ -6,11 +6,11 @@
 
 TEST(TestMap, Size_map)
 {
-    s21::map<std::string, int> myMap{{"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4}, {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8}, {"ключ09", 9}, {"ключ10", 10}};
+    s21::map<std::string, int, false> myMap{{"ключ01", 1}, {"ключ02", 2}, {"ключ03", 3}, {"ключ04", 4}, {"ключ05", 5}, {"ключ06", 6}, {"ключ07", 7}, {"ключ08", 8}, {"ключ09", 9}, {"ключ10", 10}};
 
-    myMap.print_start();
+    // myMap.print_start();
     // std::cout << "Size: " << myMap.size() << std::endl;
-    s21::map<std::string, int>::iterator iter;
+    s21::map<std::string, int, false>::iterator iter;
 
     iter = myMap.begin(); // срабатывает оператор перемещения а потом только
                           // копирования и меняетсяя нил
@@ -427,7 +427,7 @@ TEST(map_insert, case2)
     std::pair<double, std::string> pair4{2.77, "hi"};
     std::pair<double, std::string> pair5{3.9, "hola"};
 
-    s21::map<double, std::string> s21_map;
+    s21::map<double, std::string, false> s21_map;
 
     std::pair<s21::map<double, std::string>::iterator, bool> insert1 =
         s21_map.insert(pair1);

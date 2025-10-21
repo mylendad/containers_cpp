@@ -10,38 +10,17 @@
 
 namespace s21
 {
-
-  template <typename Key, typename T>
-  s21::map<Key, T>::map(map &&m)
-  {
-    *this = std::move(m);
-  }
-
-  template <typename Key, typename T>
-  s21::map<Key, T> &s21::map<Key, T>::operator=(map &other)
-  {
-    Tree<std::pair<const Key, T>>::operator=(other);
-    return *this;
-  }
-  template <typename Key, typename T>
-  s21::map<Key, T> &s21::map<Key, T>::operator=(map &&other)
-  {
-    Tree<std::pair<const Key, T>>::operator=(std::move(other));
-    return *this;
-  }
-
-  template <typename Key, typename T>
-  std::pair<typename s21::map<Key, T>::iterator, bool> s21::map<Key, T>::insert(
-      const Key &key, const T &obj)
+  template <typename Key, typename T, bool AllowDuplicate>
+  typename std::pair<typename s21::Tree<std::pair<const Key, T>, AllowDuplicate>::iterator, bool> map<Key, T, AllowDuplicate>::insert(const Key &key, const T &obj)
   {
     return this->insert(value_type(key, obj));
   }
 
-  template <typename Key, typename T>
-  std::pair<typename s21::map<Key, T>::iterator, bool>
-  s21::map<Key, T>::insert_or_assign(const Key &key, const T &obj)
+  template <typename Key, typename T, bool AllowDuplicate>
+  std::pair<typename map<Key, T, AllowDuplicate>::iterator, bool>
+  map<Key, T, AllowDuplicate>::insert_or_assign(const Key &key, const T &obj)
   {
-    std::pair<typename s21::map<Key, T>::iterator, bool> result =
+    std::pair<typename s21::map<Key, T, AllowDuplicate>::iterator, bool> result =
         insert(value_type(key, obj));
     if (result.second == false)
     {
@@ -50,8 +29,8 @@ namespace s21
     return result;
   }
 
-  template <typename Key, typename T>
-  T &s21::map<Key, T>::at(const Key &key)
+  template <typename Key, typename T, bool AllowDuplicate>
+  T &s21::map<Key, T, AllowDuplicate>::at(const Key &key)
   {
     std::pair<const Key, T> temp = {key, T()};
     std::pair<iterator, bool> result = this->find_node(temp);
@@ -60,8 +39,8 @@ namespace s21
     return result.first->second;
   }
 
-  template <typename Key, typename T>
-  T &s21::map<Key, T>::operator[](const Key &key)
+  template <typename Key, typename T, bool AllowDuplicate>
+  T &s21::map<Key, T, AllowDuplicate>::operator[](const Key &key)
   {
     std::pair<const Key, T> temp = {key, T()};
     std::pair<iterator, bool> result =
@@ -75,14 +54,14 @@ namespace s21
     return result.first->second; // куда
   }
 
-  // template <typename Key, typename T>
-  // T& s21::map<Key, T>::operator[](const Key& key) {
+  // template <typename Key, typename T, bool AllowDuplicate>
+  // T& s21::map<Key, T,AllowDuplicate>::operator[](const Key& key) {
   //   std::pair<iterator, bool> result = this->insert({key, T()});
   //   return result.first->second;
   // }
 
-  template <typename Key, typename T>
-  bool s21::map<Key, T>::contains(const Key &key)
+  template <typename Key, typename T, bool AllowDuplicate>
+  bool s21::map<Key, T, AllowDuplicate>::contains(const Key &key)
   {
     std::pair<const Key, T> temp = {key, T()};
     std::pair<iterator, bool> result = this->find_node(temp);

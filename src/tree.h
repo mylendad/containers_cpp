@@ -29,7 +29,7 @@ namespace s21
   template <typename T>
   inline constexpr bool value_is_pair = is_pair<T>::value;
 
-  template <typename T>
+  template <typename T, bool AllowDuplicate = false>
   class Tree
   {
   public:
@@ -72,7 +72,7 @@ namespace s21
     class TreeIterator
     {
     public:
-      friend class Tree<T>;
+      friend class Tree<T, false>;
       TreeIterator();
       TreeIterator(BaseNode *node, BaseNode *&nil, BaseNode *&end_node);
       TreeIterator(const TreeIterator &other);
@@ -143,7 +143,7 @@ namespace s21
     //     const BaseNode *nil_;
     //   };
 
-    // Map Member functions
+    // Tree Member functions
 
     Tree();
     Tree(std::initializer_list<value_type> const &items);
@@ -185,7 +185,7 @@ namespace s21
     void left_rotate(BaseNode *x);
     void right_rotate(BaseNode *y);
     BaseNode *insert_fixup(BaseNode *&y, BaseNode *&z);
-    std::pair<Tree<T>::iterator, bool> find_node(const T &obj);
+    std::pair<Tree<T, AllowDuplicate>::iterator, bool> find_node(const T &obj);
     void transplant(BaseNode *&u, BaseNode *&v);
     void delete_fixup(BaseNode *&x);
     void copy_tree(BaseNode *src_node, BaseNode *src_nil);
