@@ -127,22 +127,30 @@ s21::tree<T, AllowDuplicate>::TreeIterator::operator++(int) {
 template <typename T, int AllowDuplicate>
 typename s21::tree<T, AllowDuplicate>::TreeIterator&
 s21::tree<T, AllowDuplicate>::TreeIterator::operator--() {
-  // iterator result = *this;
-  if (this->current_ == this->end_node_) {
-    // result = iterator(this->end_node_->p, this->nil_, this->end_node_);
-    *this = iterator(this->end_node_->p, this->nil_, this->end_node_);
-  }
-  // else if (*this == (this->begin()))
+  //   // iterator result = *this;
+  //   if (this->current_ == this->end_node_) {
+  //     // result = iterator(this->end_node_->p, this->nil_, this->end_node_);
+  //     *this = iterator(this->end_node_->p, this->nil_, this->end_node_);
+  //   }
+  //   // else if (*this == (this->begin()))
+  //   //   return *this;
+  //   // return iterator(this->end_node_->p, this->nil_, this->end_node_);
+  //   else {
+  //     if (TreeDescendant(this->current_) == this->nil_) {
+  //       return *this;  // change
+  //       // throw std::out_of_range("Going beyond the tree");
+  //     }
+  //     this->current_ = TreeDescendant(this->current_);
+  //   }
+  //   // std::cout << this->current_->item << std::endl;
   //   return *this;
-  // return iterator(this->end_node_->p, this->nil_, this->end_node_);
-  else {
-    if (TreeDescendant(this->current_) == this->nil_) {
-      return *this;  // change
-      // throw std::out_of_range("Going beyond the tree");
-    }
-    this->current_ = TreeDescendant(this->current_);
-  }
-  // std::cout << this->current_->item << std::endl;
+  // }
+  if (this->current_ == this->end_node_ ||
+      TreeDescendant(this->current_) == this->nil_)
+    return *this;  // change
+
+  return *this;
+  this->current_ = TreeDescendant(this->current_);
   return *this;
 }
 
@@ -166,7 +174,7 @@ s21::tree<T, AllowDuplicate>::TreeIterator::TreeSuccessor(BaseNode* x) {
   BaseNode* current = x;
 
   if (current->right != nil_) {
-    return treeMinimum(current->right, this->nil_);
+    return TreeMinimum(current->right, this->nil_);
   }
   y = current->p;
   while (y != nil_ && current == y->right) {
@@ -184,7 +192,7 @@ s21::tree<T, AllowDuplicate>::TreeIterator::TreeDescendant(
   BaseNode* y;
   BaseNode* current = x;
   if (x->left != nil_) {
-    return treeMaximum(current->left, this->nil_);
+    return TreeMaximum(current->left, this->nil_);
   }
   y = current->p;
   while (y != nil_ && current == y->left) {

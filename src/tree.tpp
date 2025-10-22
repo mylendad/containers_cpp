@@ -73,7 +73,7 @@ s21::tree<T, AllowDuplicate>::~tree() {
 
 template <typename T, int AllowDuplicate>
 
-s21::tree<T, AllowDuplicate>& s21::tree<T, AllowDuplicate>::operator=(
+tree<T, AllowDuplicate>& tree<T, AllowDuplicate>::operator=(
     const tree<T, AllowDuplicate>& other) {
   if (this == &other) return *this;
   if (this->tree_size_ != 0) this->clear();
@@ -115,7 +115,7 @@ s21::tree<T, AllowDuplicate>::insert(const value_type& value) {
 
   if (tree_size_ > 0) result = this->find_node(z->item);
 
-  if (result.second == false) {
+  if (result.second == false || AllowDuplicate == Multiset) {
     y = result.first.current_;
 
     z->p = y;  // здесь на место листа ставим зэт , и
@@ -315,41 +315,60 @@ void s21::tree<T, AllowDuplicate>::HasTwoDescedants(BaseNode*& x, BaseNode*& y,
 }
 
 template <typename T, int AllowDuplicate>
-std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool>
-s21::tree<T, AllowDuplicate>::find_node(const T& obj) {
+std::pair<typename tree<T, AllowDuplicate>::iterator, bool>
+tree<T, AllowDuplicate>::find_node(const T& obj) {
   BaseNode* x = this->tree_root_;
   BaseNode* y = this->tree_nil_;
-  std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool> result =
-      std::make_pair(iterator(y, this->tree_nil_, this->end_node_), false);
+  bool flag = false;
+  std::pair<typename tree<T, AllowDuplicate>::iterator, bool> result =
+      std::make_pair(iterator(y, this->tree_nil_, this->end_node_), flag);
 
   if constexpr (value_is_pair<T>) {
-    while (x != this->tree_nil_ && result.second == false) {
+    // if (AllowDuplicate == Map) {
+    while (x != this->tree_nil_ && result.second == flag) {  // change condition
       y = x;
       if (obj.first < x->item.first) {
         x = x->left;
       } else if (obj.first > x->item.first) {
         x = x->right;
       } else {
-        result =
-            std::make_pair(iterator(x, this->tree_nil_, this->end_node_), true);
+        flag = true;
+        if (AllowDuplicate == Multiset) {
+          x = x->right;
+
+          // result = std::make_pair(iterator(x, this->tree_nil_,
+          // this->end_node_),
+          //                         true);
+        } else {
+          result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
+                                  true);
+        }
       }
     }
   } else {
-    while (x != this->tree_nil_ && result.second == false) {
+    while (x != this->tree_nil_ && result.second == flag) {
       y = x;
       if (obj < x->item) {
         x = x->left;
       } else if (obj > x->item) {
         x = x->right;
       } else {
-        result =
-            std::make_pair(iterator(x, this->tree_nil_, this->end_node_), true);
+        flag = true;
+        if (AllowDuplicate == Multiset) {
+          x = x->right;
+          // result = std::make_pair(iterator(x, this->tree_nil_,
+          // this->end_node_),
+          //                         true);
+        } else {
+          result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
+                                  true);
+        }
       }
     }
   }
   if (result.second == false)
     result =
-        std::make_pair(iterator(y, this->tree_nil_, this->end_node_), false);
+        std::make_pair(iterator(y, this->tree_nil_, this->end_node_), flag);
   return result;
 }
 

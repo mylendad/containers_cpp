@@ -19,13 +19,13 @@ set<Key, AllowDuplicate>::set(set&& m) {
 template <typename Key, int AllowDuplicate>
 s21::set<Key, AllowDuplicate>& s21::set<Key, AllowDuplicate>::operator=(
     set& other) {
-  Tree<Key>::operator=(other);
+  tree<Key, AllowDuplicate>::operator=(other);
   return *this;
 }
 template <typename Key, int AllowDuplicate>
 s21::set<Key, AllowDuplicate>& s21::set<Key, AllowDuplicate>::operator=(
     set&& other) {
-  Tree<Key>::operator=(std::move(other));
+  tree<Key, AllowDuplicate>::operator=(std::move(other));
   return *this;
 }
 

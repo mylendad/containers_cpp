@@ -16,7 +16,7 @@ class set : public tree<Key, AllowDuplicate> {
   //   class SetIterator;
 
   // set Member type
-  using iterator = typename tree<Key, AllowDuplicate>::treeIterator;
+  using iterator = typename tree<Key, AllowDuplicate>::TreeIterator;
   using typename tree<Key, AllowDuplicate>::size_type;
   using value_type = Key;
   using reference = value_type&;
@@ -32,11 +32,11 @@ class set : public tree<Key, AllowDuplicate> {
   };
 
   //  public:
-  //   class SetIterator : public tree<Key, AllowDuplicate>::treeIterator {
+  //   class SetIterator : public tree<Key, AllowDuplicate>::TreeIterator {
   //    public:
-  //     SetIterator() : tree<Key, AllowDuplicate>::treeIterator() {}
+  //     SetIterator() : tree<Key, AllowDuplicate>::TreeIterator() {}
   //     SetIterator(Node* node, Node*& nil)
-  //         : tree<Key, AllowDuplicate>::treeIterator(node) {}
+  //         : tree<Key, AllowDuplicate>::TreeIterator(node) {}
 
   //    private:
   //     s21::set<Key, AllowDuplicate>::Node* current_;
