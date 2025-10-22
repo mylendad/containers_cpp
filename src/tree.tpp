@@ -325,7 +325,7 @@ tree<T, AllowDuplicate>::find_node(const T& obj) {
 
   if constexpr (value_is_pair<T>) {
     // if (AllowDuplicate == Map) {
-    while (x != this->tree_nil_ && result.second == flag) {  // change condition
+    while (x != this->tree_nil_) {  // change condition
       y = x;
       if (obj.first < x->item.first) {
         x = x->left;
@@ -342,11 +342,12 @@ tree<T, AllowDuplicate>::find_node(const T& obj) {
         } else {
           result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
                                   true);
+          return result;
         }
       }
     }
   } else {
-    while (x != this->tree_nil_ && result.second == flag) {
+    while (x != this->tree_nil_) {
       y = x;
       if (obj < x->item) {
         x = x->left;
@@ -362,6 +363,7 @@ tree<T, AllowDuplicate>::find_node(const T& obj) {
         } else {
           result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
                                   true);
+          return result;
         }
       }
     }
