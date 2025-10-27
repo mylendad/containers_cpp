@@ -346,7 +346,7 @@ TEST(MultisetTests, MultisetInsert1)
         EXPECT_EQ(*s21_it, *std_it);
     }
 
-    EXPECT_EQ(a.insert(19191), 19191);
+    EXPECT_EQ(a.insert(19191).first.get_node()->item, 19191);
 }
 
 TEST(MultisetTests, MultisetErase1)
@@ -490,22 +490,21 @@ TEST(MultisetTests, MultisetMerge4)
     EXPECT_TRUE(b.empty());
 }
 
-// TEST(MultisetTests, MultisetCount1)
-// {
-//     s21::multiset<int> a{5, 5, 5, 3, 12, 5, 5, 55, 3, 5};
-//     EXPECT_EQ(a.count(5), 6);
-//     EXPECT_EQ(a.count(3), 2);
-//     EXPECT_EQ(a.count(12), 1);
-//     EXPECT_EQ(a.count(55), 1);
-//     EXPECT_EQ(a.count(122), 0);
-// }
+TEST(MultisetTests, MultisetCount1)
+{
+    s21::multiset<int> a{5, 5, 5, 3, 12, 5, 5, 55, 3, 5};
+    EXPECT_EQ(a.count(5), 6);
+    EXPECT_EQ(a.count(3), 2);
+    EXPECT_EQ(a.count(12), 1);
+    EXPECT_EQ(a.count(122), 0);
+}
 
-// TEST(MultisetTests, MultisetCount2)
-// {
-//     s21::multiset<int> a;
-//     EXPECT_EQ(a.count(5), 0);
-//     EXPECT_EQ(a.count(3), 0);
-// }
+TEST(MultisetTests, MultisetCount2)
+{
+    s21::multiset<int> a;
+    EXPECT_EQ(a.count(5), 0);
+    EXPECT_EQ(a.count(3), 0);
+}
 
 TEST(MultisetTests, MultisetFind1)
 {
@@ -619,28 +618,29 @@ TEST(MultisetTests, MultisetContains2)
 //     EXPECT_EQ(it, a.end());
 // }
 
-// TEST(MultisetTests, MultisetUpperBound1)
-// {
-//     s21::multiset<int> a{5, 12, 5, 124, 22, 11, 5, 252, 1, 5, 25, 4, 2, 3};
+TEST(MultisetTests, MultisetUpperBound1)
+{
+    s21::multiset<int> a{5, 12, 5, 124, 22, 11, 5, 252, 1, 5, 25, 4, 2, 3};
+    a.print_start();
+    auto it = a.upper_bound(5);
+    EXPECT_EQ(*it, 11);
+    --it;
+    EXPECT_EQ(*(it), 5);
 
-//     auto it = a.upper_bound(5);
-//     EXPECT_EQ(*it, 11);
-//     EXPECT_EQ(*(--it), 5);
+    it = a.upper_bound(6);
+    EXPECT_EQ(*it, 11);
 
-//     it = a.upper_bound(6);
-//     EXPECT_EQ(*it, 11);
+    it = a.upper_bound(252);
+    EXPECT_EQ(it, a.end());
+}
 
-//     it = a.upper_bound(252);
-//     EXPECT_EQ(it, a.end());
-// }
+TEST(MultisetTests, MultisetUpperBound2)
+{
+    s21::multiset<int> a;
 
-// TEST(MultisetTests, MultisetUpperBound2)
-// {
-//     s21::multiset<int> a;
-
-//     auto it = a.upper_bound(5);
-//     EXPECT_EQ(it, a.end());
-// }
+    auto it = a.upper_bound(5);
+    EXPECT_EQ(it, a.end());
+}
 
 // TEST(MultisetTests, MultisetInsertMany1)
 // {

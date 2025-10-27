@@ -9,731 +9,892 @@
 
 #include "tree.h"
 
-namespace s21 {
+namespace s21
+{
 
-template <typename T, int AllowDuplicate>
-s21::tree<T, AllowDuplicate>::tree() {
-  tree_nil_ = new BaseNode();
-  tree_nil_->color = BLACK;
-  tree_nil_->left = tree_nil_;
-  tree_nil_->right = tree_nil_;
-  tree_nil_->p = tree_nil_;
-  tree_root_ = tree_nil_;
-  tree_root_->p = tree_nil_;
-  tree_root_->right = tree_nil_;
-  tree_root_->left = tree_nil_;
-  tree_size_ = 0;
-}
+  template <typename T, int AllowDuplicate>
+  s21::tree<T, AllowDuplicate>::tree()
+  {
+    tree_nil_ = new BaseNode();
+    tree_nil_->color = BLACK;
+    tree_nil_->left = tree_nil_;
+    tree_nil_->right = tree_nil_;
+    tree_nil_->p = tree_nil_;
+    tree_root_ = tree_nil_;
+    tree_root_->p = tree_nil_;
+    tree_root_->right = tree_nil_;
+    tree_root_->left = tree_nil_;
+    tree_size_ = 0;
+  }
 
-template <typename T, int AllowDuplicate>
-s21::tree<T, AllowDuplicate>::tree(
-    std::initializer_list<value_type> const& items)
-    : tree() {
-  try {
-    for (auto& item : items) {
-      this->insert(item);
+  template <typename T, int AllowDuplicate>
+  s21::tree<T, AllowDuplicate>::tree(
+      std::initializer_list<value_type> const &items)
+      : tree()
+  {
+    try
+    {
+      for (auto &item : items)
+      {
+        this->insert(item);
+      }
     }
-  } catch (...) {
+    catch (...)
+    {
+      this->clear();
+      delete this->tree_nil_;
+      throw;
+    }
+  }
+
+  template <typename T, int AllowDuplicate>
+  s21::tree<T, AllowDuplicate>::tree(const tree &m) : tree()
+  {
+    if (this == &m)
+      return;
+    if (this->tree_size_ != 0)
+      this->clear();
+    if (m.tree_root_ != m.tree_nil_)
+    {
+      copy_tree(m.tree_root_, m.tree_nil_);
+    }
+    this->tree_size_ = m.tree_size_;
+  }
+
+  template <typename T, int AllowDuplicate>
+  s21::tree<T, AllowDuplicate>::tree(tree &&m)
+  {
+    // std::cout << "s21::tree<T, AllowDuplicate>::tree(tree &&m)" << std::endl;
+    this->tree_root_ = m.tree_root_;
+    this->tree_nil_ = m.tree_nil_;
+    this->tree_size_ = m.tree_size_;
+    if (m.tree_size_ != 0)
+    {
+      delete m.tree_nil_;
+      m.clear();
+      m.tree_root_ = nullptr;
+      m.tree_nil_ = nullptr;
+      m.tree_size_ = 0;
+    }
+  }
+
+  template <typename T, int AllowDuplicate>
+  s21::tree<T, AllowDuplicate>::~tree()
+  {
+    if (this->size() != 0)
+      this->clear();
+    if (this->tree_nil_ != nullptr)
+      delete this->tree_nil_;
+  }
+
+  template <typename T, int AllowDuplicate>
+
+  tree<T, AllowDuplicate> &tree<T, AllowDuplicate>::operator=(
+      const tree<T, AllowDuplicate> &other)
+  {
+    if (this == &other)
+      return *this;
+    if (this->tree_size_ != 0)
+      this->clear();
+    if (other.tree_root_ != other.tree_nil_)
+      copy_tree(other.tree_root_, other.tree_nil_);
+    return *this;
+  }
+
+  template <typename T, int AllowDuplicate>
+  s21::tree<T, AllowDuplicate> &s21::tree<T, AllowDuplicate>::operator=(
+      tree<T, AllowDuplicate> &&other)
+  {
+    if (this == &other)
+      return *this;
+
     this->clear();
     delete this->tree_nil_;
-    throw;
+
+    this->tree_root_ = other.tree_root_;
+    this->tree_nil_ = other.tree_nil_;
+    this->tree_size_ = other.tree_size_;
+
+    other.tree_root_ = nullptr;
+    other.tree_nil_ = nullptr;
+    other.tree_size_ = 0;
+
+    return *this;
   }
-}
 
-template <typename T, int AllowDuplicate>
-s21::tree<T, AllowDuplicate>::tree(const tree& m) : tree() {
-  if (this == &m) return;
-  if (this->tree_size_ != 0) this->clear();
-  if (m.tree_root_ != m.tree_nil_) {
-    copy_tree(m.tree_root_, m.tree_nil_);
+  template <typename T, int AllowDuplicate>
+  std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool>
+  s21::tree<T, AllowDuplicate>::insert(const value_type &value)
+  {
+    BaseNode *y;
+    size_type size = this->tree_size_;
+    BaseNode *z = new BaseNode(value);
+    BaseNode *insertable = z;
+    std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool> result =
+        std::make_pair(
+            iterator(this->tree_nil_, this->tree_nil_, this->end_node_),
+            false); // with first fix
+
+    if (tree_size_ > 0)
+      result = this->find_node(z->item);
+
+    if (result.second == false || AllowDuplicate == Multiset)
+    {
+      y = result.first.current_;
+
+      z->p = y; // здесь на место листа ставим зэт , и
+                // родителем зэта узел находящийся выше
+
+      if (y == this->tree_nil_)
+      {                       // в цикл while (x != this->tree_nil_) не
+                              // заходил значит дерево пустое
+        this->tree_root_ = z; // дерево было пустым, делаем зэт корнем
+      }
+      else if ((z->item) < (y->item)) // устанавливаем зет на место потомка
+        y->left = z;
+      else
+        y->right = z;
+      z->left = this->tree_nil_;
+      z->right = this->tree_nil_;
+      z->color = RED;
+      insertable = insert_fixup(y, z);
+      this->tree_root_->color = BLACK;
+
+      result.second = true;
+      this->tree_size_++;
+      result.first = iterator(insertable, this->tree_nil_, this->end_node_);
+    }
+
+    if (size == this->tree_size_)
+      result.second = false;
+    return result;
   }
-  this->tree_size_ = m.tree_size_;
-}
 
-template <typename T, int AllowDuplicate>
-s21::tree<T, AllowDuplicate>::tree(tree&& m) {
-  // std::cout << "s21::tree<T, AllowDuplicate>::tree(tree &&m)" << std::endl;
-  this->tree_root_ = m.tree_root_;
-  this->tree_nil_ = m.tree_nil_;
-  this->tree_size_ = m.tree_size_;
-  if (m.tree_size_ != 0) {
-    delete m.tree_nil_;
-    m.clear();
-    m.tree_root_ = nullptr;
-    m.tree_nil_ = nullptr;
-    m.tree_size_ = 0;
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::BaseNode *
+  s21::tree<T, AllowDuplicate>::repainting_red_uncle_n_dad(BaseNode *&y,
+                                                           BaseNode *&z)
+  {
+    s21::tree<T, AllowDuplicate>::BaseNode *insertable = z;
+    z->p->color = BLACK;  // перекрашиаем отца в черный
+    y->color = BLACK;     // перекрашиаем дядю в черный
+    z->p->p->color = RED; // перекрашиаем деда в черный
+    z = z->p->p;          // ставим зет на место деда
+    return insertable;
   }
-}
 
-template <typename T, int AllowDuplicate>
-s21::tree<T, AllowDuplicate>::~tree() {
-  if (this->size() != 0) this->clear();
-  if (this->tree_nil_ != nullptr) delete this->tree_nil_;
-}
-
-template <typename T, int AllowDuplicate>
-
-tree<T, AllowDuplicate>& tree<T, AllowDuplicate>::operator=(
-    const tree<T, AllowDuplicate>& other) {
-  if (this == &other) return *this;
-  if (this->tree_size_ != 0) this->clear();
-  if (other.tree_root_ != other.tree_nil_)
-    copy_tree(other.tree_root_, other.tree_nil_);
-  return *this;
-}
-
-template <typename T, int AllowDuplicate>
-s21::tree<T, AllowDuplicate>& s21::tree<T, AllowDuplicate>::operator=(
-    tree<T, AllowDuplicate>&& other) {
-  if (this == &other) return *this;
-
-  this->clear();
-  delete this->tree_nil_;
-
-  this->tree_root_ = other.tree_root_;
-  this->tree_nil_ = other.tree_nil_;
-  this->tree_size_ = other.tree_size_;
-
-  other.tree_root_ = nullptr;
-  other.tree_nil_ = nullptr;
-  other.tree_size_ = 0;
-
-  return *this;
-}
-
-template <typename T, int AllowDuplicate>
-std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool>
-s21::tree<T, AllowDuplicate>::insert(const value_type& value) {
-  BaseNode* y;
-  size_type size = this->tree_size_;
-  BaseNode* z = new BaseNode(value);
-  BaseNode* insertable = z;
-  std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool> result =
-      std::make_pair(
-          iterator(this->tree_nil_, this->tree_nil_, this->end_node_),
-          false);  // with first fix
-
-  if (tree_size_ > 0) result = this->find_node(z->item);
-
-  if (result.second == false || AllowDuplicate == Multiset) {
-    y = result.first.current_;
-
-    z->p = y;  // здесь на место листа ставим зэт , и
-               // родителем зэта узел находящийся выше
-
-    if (y == this->tree_nil_) {        // в цикл while (x != this->tree_nil_) не
-                                       // заходил значит дерево пустое
-      this->tree_root_ = z;            // дерево было пустым, делаем зэт корнем
-    } else if ((z->item) < (y->item))  // устанавливаем зет на место потомка
-      y->left = z;
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::BaseNode *
+  s21::tree<T, AllowDuplicate>::left_descendants(BaseNode *&y, BaseNode *&z)
+  {
+    s21::tree<T, AllowDuplicate>::BaseNode *insertable =
+        z;              // для левого потомков деда
+    y = z->p->p->right; //  устанавливаем Y (дядя)
+    if (y != this->tree_nil_ && y->color == RED)
+    {                                                // Случай 1 (красный
+                                                     // дядя)
+      insertable = repainting_red_uncle_n_dad(y, z); // тут меняется z
+    }
     else
-      y->right = z;
-    z->left = this->tree_nil_;
-    z->right = this->tree_nil_;
-    z->color = RED;
-    insertable = insert_fixup(y, z);
-    this->tree_root_->color = BLACK;
-
-    result.second = true;
-    this->tree_size_++;
-    result.first = iterator(insertable, this->tree_nil_, this->end_node_);
-  }
-
-  if (size == this->tree_size_) result.second = false;
-  return result;
-}
-
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::BaseNode*
-s21::tree<T, AllowDuplicate>::repainting_red_uncle_n_dad(BaseNode*& y,
-                                                         BaseNode*& z) {
-  s21::tree<T, AllowDuplicate>::BaseNode* insertable = z;
-  z->p->color = BLACK;   // перекрашиаем отца в черный
-  y->color = BLACK;      // перекрашиаем дядю в черный
-  z->p->p->color = RED;  // перекрашиаем деда в черный
-  z = z->p->p;           // ставим зет на место деда
-  return insertable;
-}
-
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::BaseNode*
-s21::tree<T, AllowDuplicate>::left_descendants(BaseNode*& y, BaseNode*& z) {
-  s21::tree<T, AllowDuplicate>::BaseNode* insertable =
-      z;                                            // для левого потомков деда
-  y = z->p->p->right;                               //  устанавливаем Y (дядя)
-  if (y != this->tree_nil_ && y->color == RED) {    // Случай 1 (красный
-                                                    // дядя)
-    insertable = repainting_red_uncle_n_dad(y, z);  // тут меняется z
-  } else {
-    if (z == z->p->right && z != this->tree_nil_) {  // Случай 2 (черный дядя
-      insertable = z;
-      // и зэт - правый сын)
-      z = z->p;  // двигаем зет наверх
-      left_rotate(z);
-    }
-    if (z->p != this->tree_nil_ &&
-        z->p->p !=
-            this->tree_nil_) {  // Случай 3 (черный дядя и зэт - левый сын)
-      z->p->color = BLACK;      // // перекрашиаем отца в черный
-      z->p->p->color = RED;     // // перекрашиаем деда в красный
-      right_rotate(z->p->p);
-    }
-  }
-  return insertable;
-}
-
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::BaseNode*
-s21::tree<T, AllowDuplicate>::right_desdendants(
-    BaseNode*& y, BaseNode*& z) {  // для правых потомков деда
-  s21::tree<T, AllowDuplicate>::BaseNode* insertable = z;
-  y = z->p->p->left;
-  if (y != this->tree_nil_ && y->color == RED) {    // Случай 1
-    insertable = repainting_red_uncle_n_dad(y, z);  // тут меняется z
-  } else {
-    if (z == z->p->left && z != this->tree_nil_) {  // Случай 2
-      insertable = z;
-      z = z->p;
-      right_rotate(z);
-    }
-    if (z->p != this->tree_nil_ && z->p->p != this->tree_nil_) {  // Случай 3
-      z->p->color = BLACK;
-      z->p->p->color = RED;
-      left_rotate(z->p->p);
-    }
-  }
-  return insertable;
-}
-
-template <typename T, int AllowDuplicate>
-bool s21::tree<T, AllowDuplicate>::dad_is_left_son(BaseNode*& z) {
-  bool result = false;
-  if (z->p == z->p->p->left) result = true;
-  return result;
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::left_rotate(BaseNode* x) {
-  BaseNode* y;
-
-  y = x->right;
-  if (y != nullptr) {
-    x->right = y->left;
-    if (y->left != this->tree_nil_) y->left->p = x;
-    y->p = x->p;
-  }
-  if (x->p == this->tree_nil_) {
-    if (y != nullptr && y != tree_nil_) this->tree_root_ = y;
-  } else if (x == x->p->left)
-    x->p->left = y;
-  else
-    x->p->right = y;
-  if (y != nullptr) y->left = x;
-  x->p = y;
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::right_rotate(BaseNode* y) {
-  BaseNode* x;
-  x = y->left;
-  if (x != nullptr) {
-    y->left = x->right;
-    if (x->right != this->tree_nil_) x->right->p = y;
-    x->p = y->p;
-  }
-  if (y->p == this->tree_nil_) {
-    // корнем
-    if (x != nullptr && x != tree_nil_) this->tree_root_ = x;
-  }  // то делаем корнем X
-  else if (y == y->p->left) {
-    // если Y все еще равен правому потомку Y
-    y->p->left = x;
-  } else {
-    y->p->right = x;
-  }  // ставим Y правым потомком X (или не так хз)
-  if (x != nullptr) x->right = y;  // ставим Y правым отроком X
-  y->p = x;                        // а родителем Y ставим X
-}
-
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::BaseNode*
-s21::tree<T, AllowDuplicate>::insert_fixup(BaseNode*& y, BaseNode*& z) {
-  if (z == nullptr) return z;
-  s21::tree<T, AllowDuplicate>::BaseNode* insertable = z;
-  {
-    while (z != this->tree_root_ && z->p != this->tree_nil_ &&
-           z->p->color == RED &&
-           z->p->p != this->tree_nil_) {  // пока родитель не станет черным
-      // (то что з.п красный
-      //       значит
-      // он не корень и значит у него есть з.п.п)
-      if (dad_is_left_son(z)) {  // для левого потомков деда
-
-        insertable = left_descendants(y, z);
-      } else {
-        insertable = right_desdendants(y, z);
+    {
+      if (z == z->p->right && z != this->tree_nil_)
+      { // Случай 2 (черный дядя
+        insertable = z;
+        // и зэт - правый сын)
+        z = z->p; // двигаем зет наверх
+        left_rotate(z);
+      }
+      if (z->p != this->tree_nil_ &&
+          z->p->p !=
+              this->tree_nil_)
+      {                       // Случай 3 (черный дядя и зэт - левый сын)
+        z->p->color = BLACK;  // // перекрашиаем отца в черный
+        z->p->p->color = RED; // // перекрашиаем деда в красный
+        right_rotate(z->p->p);
       }
     }
+    return insertable;
   }
-  return insertable;
-}
 
-// template <typename T,bool AllowDuplicate>
-// void s21::tree<T, AllowDuplicate>::HasTwoDescedants(BaseNode *x, BaseNode *y,
-// BaseNode *z) {
-//   x = y->right;
-//   if (y->p == z)
-//     x->p = y;
-//   else {
-//     transplant(y, y->right);
-//     y->right = z->right;
-//     y->right->p = y;
-//   }
-//   transplant(z, y);
-//   y->left = z->left;
-//   y->left->p = y;
-//   y->color = z->color;
-// }
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::BaseNode *
+  s21::tree<T, AllowDuplicate>::right_desdendants(
+      BaseNode *&y, BaseNode *&z)
+  { // для правых потомков деда
+    s21::tree<T, AllowDuplicate>::BaseNode *insertable = z;
+    y = z->p->p->left;
+    if (y != this->tree_nil_ && y->color == RED)
+    {                                                // Случай 1
+      insertable = repainting_red_uncle_n_dad(y, z); // тут меняется z
+    }
+    else
+    {
+      if (z == z->p->left && z != this->tree_nil_)
+      { // Случай 2
+        insertable = z;
+        z = z->p;
+        right_rotate(z);
+      }
+      if (z->p != this->tree_nil_ && z->p->p != this->tree_nil_)
+      { // Случай 3
+        z->p->color = BLACK;
+        z->p->p->color = RED;
+        left_rotate(z->p->p);
+      }
+    }
+    return insertable;
+  }
 
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::HasTwoDescedants(BaseNode*& x, BaseNode*& y,
-                                                    BaseNode* z) {
-  // y уже должен быть преемником (следующий после z в порядке возрастания)
-  x = y->right;  // x - правый потомок преемника
+  template <typename T, int AllowDuplicate>
+  bool s21::tree<T, AllowDuplicate>::dad_is_left_son(BaseNode *&z)
+  {
+    bool result = false;
+    if (z->p == z->p->p->left)
+      result = true;
+    return result;
+  }
 
-  if (y->p == z) {
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::left_rotate(BaseNode *x)
+  {
+    BaseNode *y;
+
+    y = x->right;
+    if (y != nullptr)
+    {
+      x->right = y->left;
+      if (y->left != this->tree_nil_)
+        y->left->p = x;
+      y->p = x->p;
+    }
+    if (x->p == this->tree_nil_)
+    {
+      if (y != nullptr && y != tree_nil_)
+        this->tree_root_ = y;
+    }
+    else if (x == x->p->left)
+      x->p->left = y;
+    else
+      x->p->right = y;
+    if (y != nullptr)
+      y->left = x;
     x->p = y;
-  } else {
-    transplant(y, y->right);
-    y->right = z->right;
-    y->right->p = y;
   }
-  transplant(z, y);
-  y->left = z->left;
-  y->left->p = y;
-  y->color = z->color;
-}
 
-template <typename T, int AllowDuplicate>
-std::pair<typename tree<T, AllowDuplicate>::iterator, bool>
-tree<T, AllowDuplicate>::find_node(const T& obj) {
-  BaseNode* x = this->tree_root_;
-  BaseNode* y = this->tree_nil_;
-  bool flag = false;
-  std::pair<typename tree<T, AllowDuplicate>::iterator, bool> result =
-      std::make_pair(iterator(y, this->tree_nil_, this->end_node_), flag);
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::right_rotate(BaseNode *y)
+  {
+    BaseNode *x;
+    x = y->left;
+    if (x != nullptr)
+    {
+      y->left = x->right;
+      if (x->right != this->tree_nil_)
+        x->right->p = y;
+      x->p = y->p;
+    }
+    if (y->p == this->tree_nil_)
+    {
+      // корнем
+      if (x != nullptr && x != tree_nil_)
+        this->tree_root_ = x;
+    } // то делаем корнем X
+    else if (y == y->p->left)
+    {
+      // если Y все еще равен правому потомку Y
+      y->p->left = x;
+    }
+    else
+    {
+      y->p->right = x;
+    } // ставим Y правым потомком X (или не так хз)
+    if (x != nullptr)
+      x->right = y; // ставим Y правым отроком X
+    y->p = x;       // а родителем Y ставим X
+  }
 
-  if constexpr (value_is_pair<T>) {
-    // if (AllowDuplicate == Map) {
-    while (x != this->tree_nil_) {  // change condition
-      y = x;
-      if (obj.first < x->item.first) {
-        x = x->left;
-      } else if (obj.first > x->item.first) {
-        x = x->right;
-      } else {
-        flag = true;
-        if (AllowDuplicate == Multiset) {
-          x = x->right;
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::BaseNode *
+  s21::tree<T, AllowDuplicate>::insert_fixup(BaseNode *&y, BaseNode *&z)
+  {
+    if (z == nullptr)
+      return z;
+    s21::tree<T, AllowDuplicate>::BaseNode *insertable = z;
+    {
+      while (z != this->tree_root_ && z->p != this->tree_nil_ &&
+             z->p->color == RED &&
+             z->p->p != this->tree_nil_)
+      { // пока родитель не станет черным
+        // (то что з.п красный
+        //       значит
+        // он не корень и значит у него есть з.п.п)
+        if (dad_is_left_son(z))
+        { // для левого потомков деда
 
-          // result = std::make_pair(iterator(x, this->tree_nil_,
-          // this->end_node_),
-          //                         true);
-        } else {
-          result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
-                                  true);
-          return result;
+          insertable = left_descendants(y, z);
+        }
+        else
+        {
+          insertable = right_desdendants(y, z);
         }
       }
     }
-  } else {
-    while (x != this->tree_nil_) {
-      y = x;
-      if (obj < x->item) {
-        x = x->left;
-      } else if (obj > x->item) {
-        x = x->right;
-      } else {
-        flag = true;
-        if (AllowDuplicate == Multiset) {
+    return insertable;
+  }
+
+  // template <typename T,bool AllowDuplicate>
+  // void s21::tree<T, AllowDuplicate>::HasTwoDescedants(BaseNode *x, BaseNode *y,
+  // BaseNode *z) {
+  //   x = y->right;
+  //   if (y->p == z)
+  //     x->p = y;
+  //   else {
+  //     transplant(y, y->right);
+  //     y->right = z->right;
+  //     y->right->p = y;
+  //   }
+  //   transplant(z, y);
+  //   y->left = z->left;
+  //   y->left->p = y;
+  //   y->color = z->color;
+  // }
+
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::HasTwoDescedants(BaseNode *&x, BaseNode *&y,
+                                                      BaseNode *z)
+  {
+    // y уже должен быть преемником (следующий после z в порядке возрастания)
+    x = y->right; // x - правый потомок преемника
+
+    if (y->p == z)
+    {
+      x->p = y;
+    }
+    else
+    {
+      transplant(y, y->right);
+      y->right = z->right;
+      y->right->p = y;
+    }
+    transplant(z, y);
+    y->left = z->left;
+    y->left->p = y;
+    y->color = z->color;
+  }
+
+  template <typename T, int AllowDuplicate>
+  std::pair<typename tree<T, AllowDuplicate>::iterator, bool>
+  tree<T, AllowDuplicate>::find_node(const T &obj)
+  {
+    BaseNode *x = this->tree_root_;
+    BaseNode *y = this->tree_nil_;
+    bool flag = false;
+    BaseNode *res = this->tree_nil_;
+    std::pair<typename tree<T, AllowDuplicate>::iterator, bool> result =
+        std::make_pair(iterator(res, this->tree_nil_, this->end_node_), flag);
+
+    if constexpr (value_is_pair<T>)
+    {
+      // if (AllowDuplicate == Map) {
+      while (x != this->tree_nil_)
+      { // change condition
+        y = x;
+        if (obj.first < x->item.first)
+        {
+          x = x->left;
+        }
+        else if (obj.first > x->item.first)
+        {
           x = x->right;
-          // result = std::make_pair(iterator(x, this->tree_nil_,
-          // this->end_node_),
-          //                         true);
-        } else {
-          result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
-                                  true);
-          return result;
+        }
+        else
+        {
+          flag = true;
+          if (AllowDuplicate == Multiset)
+          {
+            res = x;
+            x = x->right;
+
+            // result = std::make_pair(iterator(x, this->tree_nil_,
+            // this->end_node_),
+            //                         true);
+          }
+          else
+          {
+            result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
+                                    true);
+            return result;
+          }
         }
       }
     }
+    else
+    {
+      while (x != this->tree_nil_)
+      {
+        y = x;
+        if (obj < x->item)
+        {
+          x = x->left;
+        }
+        else if (obj > x->item)
+        {
+          x = x->right;
+        }
+        else
+        {
+          flag = true;
+          if (AllowDuplicate == Multiset)
+          {
+            res = x;
+            x = x->right;
+            // result = std::make_pair(iterator(x, this->tree_nil_,
+            // this->end_node_),
+            //                         true);
+          }
+          else
+          {
+            result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
+                                    true);
+            return result;
+          }
+        }
+      }
+    }
+    if (result.second == false)
+      result =
+          std::make_pair(iterator(y, this->tree_nil_, this->end_node_), flag);
+    else if (AllowDuplicate == Multiset)
+      result =
+          std::make_pair(iterator(res, this->tree_nil_, this->end_node_), flag);
+    return result;
   }
-  if (result.second == false)
-    result =
-        std::make_pair(iterator(y, this->tree_nil_, this->end_node_), flag);
-  return result;
-}
 
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::transplant(BaseNode*& u, BaseNode*& v) {
-  if (u->p == this->tree_nil_)  // проверяем, если U является корнем,
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::transplant(BaseNode *&u, BaseNode *&v)
   {
-    this->tree_root_ = v;      // делаем V корнем
-  } else if (u == u->p->left)  // если U левый потомок
+    if (u->p == this->tree_nil_) // проверяем, если U является корнем,
+    {
+      this->tree_root_ = v; // делаем V корнем
+    }
+    else if (u == u->p->left) // если U левый потомок
+    {
+      u->p->left = v; // ставим V вместо U
+    }
+    else
+    {
+      u->p->right = v; // если U правый потомок ставим V вместо u.p.right
+    }
+    v->p = u->p; // ставим не место предка V предка U
+  }
+
+  // template <typename T,bool AllowDuplicate>
+  // void s21::tree<T, AllowDuplicate>::erase(iterator pos) {
+  //   if (pos.current_ == this->tree_nil_ || pos.current_ == nullptr) {
+  //     return;
+  //   }
+
+  //   if (this->tree_size_ == 1) {
+  //     delete this->tree_root_;
+  //     this->tree_root_ = this->tree_nil_;
+  //     this->tree_size_ = 0;
+  //     return;
+  //   }
+
+  //   BaseNode *z = pos.current_;
+  //   // if (this->tree_size_ == 1) {
+  //   //   this->tree_root_ = this->tree_nil_;
+  //   //   this->tree_size_--;
+  //   //   delete z;
+  //   //   return;
+  //   // }
+  //   BaseNode *x;
+  //   BaseNode *y = z;
+
+  //   bool y_original_color = y->color;
+
+  //   if (z->left == this->tree_nil_ &&
+  //       z->right != this->tree_nil_) {  // у зет нет левого дочернего узла
+  //     x = z->right;                     //
+  //     transplant(z, z->right);  // переносим на место зет правый дочерний узел
+  //   } else if (z->right == this->tree_nil_ &&
+  //              z->left != this->tree_nil_) {  // есть только левый потомок
+  //     x = z->left;
+  //     transplant(z, z->left);
+  //   } else if (z->left != this->tree_nil_ &&
+  //              z->right !=
+  //                  this->tree_nil_) {  // когда есть 2 дочерних узла // вынести
+  //     pos++;
+  //     y = pos.current_;
+  //     y_original_color = y->color;
+  //     HasTwoDescedants(x, y, z);
+  //   } else {
+  //     if (z == z->p->right)
+  //       z->p->right = this->tree_nil_;
+
+  //     else
+  //       z->p->left = this->tree_nil_;
+  //   }
+  //   this->tree_size_--;
+
+  //   if (y_original_color == BLACK) delete_fixup(x);
+  //   delete z;
+  // }
+
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::erase(iterator pos)
   {
-    u->p->left = v;  // ставим V вместо U
-  } else {
-    u->p->right = v;  // если U правый потомок ставим V вместо u.p.right
-  }
-  v->p = u->p;  // ставим не место предка V предка U
-}
+    if (pos.current_ == this->tree_nil_ || pos.current_ == nullptr)
+    {
+      return;
+    }
 
-// template <typename T,bool AllowDuplicate>
-// void s21::tree<T, AllowDuplicate>::erase(iterator pos) {
-//   if (pos.current_ == this->tree_nil_ || pos.current_ == nullptr) {
-//     return;
-//   }
+    if (this->tree_size_ == 1)
+    {
+      delete this->tree_root_;
+      this->tree_root_ = this->tree_nil_;
+      this->tree_size_ = 0;
+      return;
+    }
 
-//   if (this->tree_size_ == 1) {
-//     delete this->tree_root_;
-//     this->tree_root_ = this->tree_nil_;
-//     this->tree_size_ = 0;
-//     return;
-//   }
+    BaseNode *z = pos.current_;
+    BaseNode *y = z;
+    BaseNode *x;
+    bool y_original_color = y->color;
 
-//   BaseNode *z = pos.current_;
-//   // if (this->tree_size_ == 1) {
-//   //   this->tree_root_ = this->tree_nil_;
-//   //   this->tree_size_--;
-//   //   delete z;
-//   //   return;
-//   // }
-//   BaseNode *x;
-//   BaseNode *y = z;
+    if (z->left == this->tree_nil_)
+    { // у зет нет левого дочернего узла
+      x = z->right;
+      transplant(z, z->right); // переносим на место зет правый дочерний узел
+    }
+    else if (z->right == this->tree_nil_)
+    { // есть только левый потомок
+      x = z->left;
+      transplant(z, z->left);
+    }
+    else
+    {
+      // Узел имеет двух потомков
+      y = TreeMinimum(z->right, this->tree_nil_);
+      y_original_color = y->color;
+      HasTwoDescedants(x, y, z);
+    }
 
-//   bool y_original_color = y->color;
+    this->tree_size_--;
 
-//   if (z->left == this->tree_nil_ &&
-//       z->right != this->tree_nil_) {  // у зет нет левого дочернего узла
-//     x = z->right;                     //
-//     transplant(z, z->right);  // переносим на место зет правый дочерний узел
-//   } else if (z->right == this->tree_nil_ &&
-//              z->left != this->tree_nil_) {  // есть только левый потомок
-//     x = z->left;
-//     transplant(z, z->left);
-//   } else if (z->left != this->tree_nil_ &&
-//              z->right !=
-//                  this->tree_nil_) {  // когда есть 2 дочерних узла // вынести
-//     pos++;
-//     y = pos.current_;
-//     y_original_color = y->color;
-//     HasTwoDescedants(x, y, z);
-//   } else {
-//     if (z == z->p->right)
-//       z->p->right = this->tree_nil_;
+    if (y_original_color == BLACK)
+    {
+      delete_fixup(x);
+    }
 
-//     else
-//       z->p->left = this->tree_nil_;
-//   }
-//   this->tree_size_--;
-
-//   if (y_original_color == BLACK) delete_fixup(x);
-//   delete z;
-// }
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::erase(iterator pos) {
-  if (pos.current_ == this->tree_nil_ || pos.current_ == nullptr) {
-    return;
+    delete z;
   }
 
-  if (this->tree_size_ == 1) {
-    delete this->tree_root_;
-    this->tree_root_ = this->tree_nil_;
-    this->tree_size_ = 0;
-    return;
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::swap(tree &other)
+  {
+    tree temp(other);
+    other = std::move(*this);
+    *this = std::move(temp);
   }
 
-  BaseNode* z = pos.current_;
-  BaseNode* y = z;
-  BaseNode* x;
-  bool y_original_color = y->color;
-
-  if (z->left == this->tree_nil_) {  // у зет нет левого дочернего узла
-    x = z->right;
-    transplant(z, z->right);  // переносим на место зет правый дочерний узел
-  } else if (z->right == this->tree_nil_) {  // есть только левый потомок
-    x = z->left;
-    transplant(z, z->left);
-  } else {
-    // Узел имеет двух потомков
-    y = TreeMinimum(z->right, this->tree_nil_);
-    y_original_color = y->color;
-    HasTwoDescedants(x, y, z);
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::merge(tree &other)
+  {
+    std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool> result;
+    iterator iter = other.begin();
+    size_type size = other.size();
+    for (size_type i = 0; i < size; i++)
+    {
+      result = this->insert(iter.current_->item);
+      iterator temp = iter;
+      iter++;
+      if (result.second)
+        other.erase(temp);
+      temp = iter;
+    }
   }
 
-  this->tree_size_--;
-
-  if (y_original_color == BLACK) {
-    delete_fixup(x);
-  }
-
-  delete z;
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::swap(tree& other) {
-  tree temp(other);
-  other = std::move(*this);
-  *this = std::move(temp);
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::merge(tree& other) {
-  std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool> result;
-  iterator iter = other.begin();
-  size_type size = other.size();
-  for (size_type i = 0; i < size; i++) {
-    result = this->insert(iter.current_->item);
-    iterator temp = iter;
-    iter++;
-    if (result.second) other.erase(temp);
-    temp = iter;
-  }
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::son_is_left_descendants(BaseNode* x) {
-  BaseNode* w = x->p->right;
-  if (w->color == RED) {
-    w->color = BLACK;
-    x->p->color = RED;
-    left_rotate(x->p);
-    w = x->p->right;
-  }
-  if (w->left->color == BLACK && w->right->color == BLACK) {
-    w->color = RED;
-    x = x->p;
-  } else {
-    if (w->right->color == BLACK) {
-      w->left->color = BLACK;
-      w->color = RED;
-      right_rotate(w);
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::son_is_left_descendants(BaseNode *x)
+  {
+    BaseNode *w = x->p->right;
+    if (w->color == RED)
+    {
+      w->color = BLACK;
+      x->p->color = RED;
+      left_rotate(x->p);
       w = x->p->right;
     }
-    w->color = x->p->color;
-    x->p->color = BLACK;
-    w->right->color = BLACK;
-    left_rotate(x->p);
-    x = this->tree_root_;
-  }
-  x->color = BLACK;
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::son_is_right_descendants(BaseNode* x) {
-  BaseNode* w = x->p->right;
-  if (w->color == RED) {
-    w->color = BLACK;
-    x->p->color = RED;
-    right_rotate(x->p);
-    w = x->p->left;
-  }
-  if (w->right->color == BLACK && w->left->color == BLACK) {
-    w->color = RED;
-    x = x->p;
-  } else {
-    if (w->left->color == BLACK) {
-      w->right->color = BLACK;
+    if (w->left->color == BLACK && w->right->color == BLACK)
+    {
       w->color = RED;
-      left_rotate(w);
+      x = x->p;
+    }
+    else
+    {
+      if (w->right->color == BLACK)
+      {
+        w->left->color = BLACK;
+        w->color = RED;
+        right_rotate(w);
+        w = x->p->right;
+      }
+      w->color = x->p->color;
+      x->p->color = BLACK;
+      w->right->color = BLACK;
+      left_rotate(x->p);
+      x = this->tree_root_;
+    }
+    x->color = BLACK;
+  }
+
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::son_is_right_descendants(BaseNode *x)
+  {
+    BaseNode *w = x->p->right;
+    if (w->color == RED)
+    {
+      w->color = BLACK;
+      x->p->color = RED;
+      right_rotate(x->p);
       w = x->p->left;
     }
-    w->color = x->p->color;
-    x->p->color = BLACK;
-    w->left->color = BLACK;
-    right_rotate(x->p);
-    x = this->tree_root_;
+    if (w->right->color == BLACK && w->left->color == BLACK)
+    {
+      w->color = RED;
+      x = x->p;
+    }
+    else
+    {
+      if (w->left->color == BLACK)
+      {
+        w->right->color = BLACK;
+        w->color = RED;
+        left_rotate(w);
+        w = x->p->left;
+      }
+      w->color = x->p->color;
+      x->p->color = BLACK;
+      w->left->color = BLACK;
+      right_rotate(x->p);
+      x = this->tree_root_;
+    }
+    x->color = BLACK;
   }
-  x->color = BLACK;
-}
 
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::delete_fixup(BaseNode*& x) {
-  while (x != tree_root_ && x->color == BLACK) {
-    if (x == x->p->left) {
-      son_is_left_descendants(x);
-    } else {
-      son_is_right_descendants(x);
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::delete_fixup(BaseNode *&x)
+  {
+    while (x != tree_root_ && x->color == BLACK)
+    {
+      if (x == x->p->left)
+      {
+        son_is_left_descendants(x);
+      }
+      else
+      {
+        son_is_right_descendants(x);
+      }
+    }
+    x->color = BLACK;
+  }
+
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::size_type
+  s21::tree<T, AllowDuplicate>::size()
+  {
+    return this->tree_size_;
+  }
+
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::BaseNode *
+  s21::tree<T, AllowDuplicate>::TreeMinimum(BaseNode *node, BaseNode *nil)
+  {
+    BaseNode *x = node;
+    BaseNode *min = nil;
+    while (x != nil)
+    {
+      min = x;
+      x = x->left;
+    }
+    return min;
+  }
+
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::BaseNode *
+  s21::tree<T, AllowDuplicate>::TreeMaximum(BaseNode *node, BaseNode *nil)
+  {
+    BaseNode *x = node;
+    BaseNode *max = nil;
+    while (x != nil)
+    {
+      max = x;
+      x = x->right;
+    }
+    return max;
+  }
+
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::iterator
+  s21::tree<T, AllowDuplicate>::begin()
+  {
+    // if (this->tree_size_ < 1) {
+    //   // return iterator(this->tree_nil_, this->tree_nil_, this->end_node_);
+    //   throw std::out_of_range("tree is empty");
+    //   // std::cout << "this->tree_size_ < 1" << std::endl;
+    //   // return iterator(this->tree_root_, this->tree_nil_, this->end_node_);
+    // }
+    BaseNode *min;
+    if (this->tree_size_ > 1)
+      min = TreeMinimum(this->tree_root_, this->tree_nil_);
+    else
+      min = this->tree_root_; // ???
+    iterator minimum =
+        iterator(min, this->tree_nil_, this->end_node_); // change nil???
+    return minimum;
+  }
+
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::iterator
+  s21::tree<T, AllowDuplicate>::end()
+  {
+    // if (this->tree_size_ < 1) {
+    //   // return iterator(this->tree_nil_, this->tree_nil_, this->end_node_);
+    //   // std::cout << "this->tree_size_ < 1" << std::endl;
+    //   throw std::out_of_range("tree is empty");
+    //   // return iterator(this->tree_root_, this->tree_nil_, this->end_node_);
+    // }
+    BaseNode *max;
+    if (this->tree_size_ > 1)
+      max = (TreeMaximum(this->tree_root_, this->tree_nil_));
+    else
+      max = this->tree_root_;
+    this->end_node_ = max->right;
+    this->end_node_->p = max;
+    iterator maximum =
+        iterator(this->end_node_, this->tree_nil_, this->end_node_);
+    return maximum;
+  }
+
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::clear()
+  {
+    clear_support(this->tree_root_);
+    this->tree_root_ = this->tree_nil_;
+    this->tree_size_ = 0;
+  }
+
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::clear_support(BaseNode *node)
+  {
+    if (node == this->tree_nil_)
+      return;
+
+    clear_support(node->left);
+    clear_support(node->right);
+    if (node != nullptr && node != this->tree_nil_)
+      delete node;
+  }
+
+  template <typename T, int AllowDuplicate>
+  bool s21::tree<T, AllowDuplicate>::empty()
+  {
+    bool result = false;
+    if (this->tree_size_ == 0)
+      result = true;
+    return result;
+  }
+
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::size_type
+  s21::tree<T, AllowDuplicate>::max_size()
+  {
+    return std::numeric_limits<size_t>::max() / sizeof(BaseNode);
+  }
+
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::copy_tree(BaseNode *src_node,
+                                               BaseNode *src_nil)
+  {
+    if (src_node == src_nil)
+      return;
+
+    this->insert(src_node->item);
+    if (src_node->left != src_nil)
+    {
+      copy_tree(src_node->left, src_nil);
+    }
+    if (src_node->right != src_nil)
+    {
+      copy_tree(src_node->right, src_nil);
     }
   }
-  x->color = BLACK;
-}
 
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::size_type
-s21::tree<T, AllowDuplicate>::size() {
-  return this->tree_size_;
-}
+  template <typename T, int AllowDuplicate>
+  template <typename... Args>
+  std::vector<std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool>>
+  tree<T, AllowDuplicate>::insert_many(Args &&...args)
+  {
+    std::vector<std::pair<iterator, bool>> results;
+    results.reserve(sizeof...(Args));
 
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::BaseNode*
-s21::tree<T, AllowDuplicate>::TreeMinimum(BaseNode* node, BaseNode* nil) {
-  BaseNode* x = node;
-  BaseNode* min = nil;
-  while (x != nil) {
-    min = x;
-    x = x->left;
+    (results.push_back(this->insert(std::forward<Args>(args))), ...);
+
+    return results;
   }
-  return min;
-}
 
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::BaseNode*
-s21::tree<T, AllowDuplicate>::TreeMaximum(BaseNode* node, BaseNode* nil) {
-  BaseNode* x = node;
-  BaseNode* max = nil;
-  while (x != nil) {
-    max = x;
-    x = x->right;
-  }
-  return max;
-}
-
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::iterator
-s21::tree<T, AllowDuplicate>::begin() {
-  // if (this->tree_size_ < 1) {
-  //   // return iterator(this->tree_nil_, this->tree_nil_, this->end_node_);
-  //   throw std::out_of_range("tree is empty");
-  //   // std::cout << "this->tree_size_ < 1" << std::endl;
-  //   // return iterator(this->tree_root_, this->tree_nil_, this->end_node_);
-  // }
-  BaseNode* min;
-  if (this->tree_size_ > 1)
-    min = TreeMinimum(this->tree_root_, this->tree_nil_);
-  else
-    min = this->tree_root_;  // ???
-  iterator minimum =
-      iterator(min, this->tree_nil_, this->end_node_);  // change nil???
-  return minimum;
-}
-
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::iterator
-s21::tree<T, AllowDuplicate>::end() {
-  // if (this->tree_size_ < 1) {
-  //   // return iterator(this->tree_nil_, this->tree_nil_, this->end_node_);
-  //   // std::cout << "this->tree_size_ < 1" << std::endl;
-  //   throw std::out_of_range("tree is empty");
-  //   // return iterator(this->tree_root_, this->tree_nil_, this->end_node_);
-  // }
-  BaseNode* max;
-  if (this->tree_size_ > 1)
-    max = (TreeMaximum(this->tree_root_, this->tree_nil_));
-  else
-    max = this->tree_root_;
-  this->end_node_ = max->right;
-  this->end_node_->p = max;
-  iterator maximum =
-      iterator(this->end_node_, this->tree_nil_, this->end_node_);
-  return maximum;
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::clear() {
-  clear_support(this->tree_root_);
-  this->tree_root_ = this->tree_nil_;
-  this->tree_size_ = 0;
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::clear_support(BaseNode* node) {
-  if (node == this->tree_nil_) return;
-
-  clear_support(node->left);
-  clear_support(node->right);
-  if (node != nullptr && node != this->tree_nil_) delete node;
-}
-
-template <typename T, int AllowDuplicate>
-bool s21::tree<T, AllowDuplicate>::empty() {
-  bool result = false;
-  if (this->tree_size_ == 0) result = true;
-  return result;
-}
-
-template <typename T, int AllowDuplicate>
-typename s21::tree<T, AllowDuplicate>::size_type
-s21::tree<T, AllowDuplicate>::max_size() {
-  return std::numeric_limits<size_t>::max() / sizeof(BaseNode);
-}
-
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::copy_tree(BaseNode* src_node,
-                                             BaseNode* src_nil) {
-  if (src_node == src_nil) return;
-
-  this->insert(src_node->item);
-  if (src_node->left != src_nil) {
-    copy_tree(src_node->left, src_nil);
-  }
-  if (src_node->right != src_nil) {
-    copy_tree(src_node->right, src_nil);
-  }
-}
-
-template <typename T, int AllowDuplicate>
-template <typename... Args>
-std::vector<std::pair<typename s21::tree<T, AllowDuplicate>::iterator, bool>>
-tree<T, AllowDuplicate>::insert_many(Args&&... args) {
-  std::vector<std::pair<iterator, bool>> results;
-  results.reserve(sizeof...(Args));
-
-  (results.push_back(this->insert(std::forward<Args>(args))), ...);
-
-  return results;
-}
-
-template <typename T, int AllowDuplicate>
-void tree<T, AllowDuplicate>::print_tree(BaseNode* base_node, bool is_right,
-                                         int depth) {
-  if (base_node == nullptr || base_node == tree_nil_) return;
-  print_tree(base_node->right, true, depth + 1);
-  for (int i = 0; i < depth; i++) {
-    std::cout << "    ";
-  }
-  if (depth > 0) {
-    if (is_right) {
-      std::cout << "┌── ";
-    } else {
-      std::cout << "└── ";
+  template <typename T, int AllowDuplicate>
+  void tree<T, AllowDuplicate>::print_tree(BaseNode *base_node, bool is_right,
+                                           int depth)
+  {
+    if (base_node == nullptr || base_node == tree_nil_)
+      return;
+    print_tree(base_node->right, true, depth + 1);
+    for (int i = 0; i < depth; i++)
+    {
+      std::cout << "    ";
     }
+    if (depth > 0)
+    {
+      if (is_right)
+      {
+        std::cout << "┌── ";
+      }
+      else
+      {
+        std::cout << "└── ";
+      }
+    }
+    if (base_node->color == RED)
+    {
+      std::cout << "\033[31m";
+    }
+    else
+    {
+      std::cout << "\033[37m";
+    }
+    if constexpr (value_is_pair<T>)
+      std::cout << base_node->item.first << ":" << base_node->item.second;
+    else
+      std::cout << base_node->item;
+
+    if (base_node == tree_root_)
+    {
+      std::cout << " (ROOT)";
+    }
+    std::cout << "\033[0m" << std::endl;
+    print_tree(base_node->left, false, depth + 1);
   }
-  if (base_node->color == RED) {
-    std::cout << "\033[31m";
-  } else {
-    std::cout << "\033[37m";
+
+  template <typename T, int AllowDuplicate>
+  void s21::tree<T, AllowDuplicate>::print_start()
+  {
+    std::cout << "=== tree Structure ===" << std::endl;
+    print_tree(tree_root_, false, 0);
+    std::cout << "======================" << std::endl;
   }
-  if constexpr (value_is_pair<T>)
-    std::cout << base_node->item.first << ":" << base_node->item.second;
-  else
-    std::cout << base_node->item;
 
-  if (base_node == tree_root_) {
-    std::cout << " (ROOT)";
-  }
-  std::cout << "\033[0m" << std::endl;
-  print_tree(base_node->left, false, depth + 1);
-}
+} // namespace s21
 
-template <typename T, int AllowDuplicate>
-void s21::tree<T, AllowDuplicate>::print_start() {
-  std::cout << "=== tree Structure ===" << std::endl;
-  print_tree(tree_root_, false, 0);
-  std::cout << "======================" << std::endl;
-}
-
-}  // namespace s21
-
-#endif  // TREE_TPP
+#endif // TREE_TPP
