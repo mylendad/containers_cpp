@@ -94,6 +94,13 @@ namespace s21
             size_type count = this->count(key);
             return result -= count;
         }
+
+        std::pair<iterator, iterator> equal_range(const Key &key)
+        {
+            iterator first = this->lower_bound(key);
+            iterator second = this->upper_bound(key);
+            return std::pair<iterator, iterator>(first, second);
+        }
     };
 } // namespace s21
 

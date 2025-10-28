@@ -39,10 +39,10 @@ namespace s21
   {
     // Node node = Node();
     std::pair<typename s21::multiset<Key, AllowDuplicate>::iterator, bool>
-        result =
-            // std::make_pair(iterator(node, this->tree_nil_, this->end_node_),
-            // false);
-        result = this->find_node(key);
+        result = this->end();
+    // std::make_pair(iterator(node, this->tree_nil_, this->end_node_),
+    // false);
+    result = this->find_node(key); // переделать так как find_node вставляет
     return result.first;
   }
 

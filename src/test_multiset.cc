@@ -558,36 +558,36 @@ TEST(MultisetTests, MultisetContains2)
     EXPECT_FALSE(a.contains('h'));
 }
 
-// TEST(MultisetTests, MultisetEqualRange1)
-// {
-//     s21::multiset<char> a{'a', 'z', 'b', 'y', 'c', 'x', 'd', 'w', 'e', 'v',
-//                           'a', 'z', 'b', 'c', 'x', 'd', 'w', 'e', 'v'};
+TEST(MultisetTests, MultisetEqualRange1)
+{
+    s21::multiset<char> a{'a', 'z', 'b', 'y', 'c', 'x', 'd', 'w', 'e', 'v',
+                          'a', 'z', 'b', 'c', 'x', 'd', 'w', 'e', 'v'};
 
-//     auto it = a.equal_range('a');
-//     EXPECT_EQ(it.first, a.find('a'));
-//     EXPECT_EQ(it.second, ++(++a.find('a')));
+    auto it = a.equal_range('a');
+    EXPECT_EQ(it.first, a.find('a'));
+    EXPECT_EQ(it.second, ++(++a.find('a')));
 
-//     it = a.equal_range('z');
-//     EXPECT_EQ(it.first, a.find('z'));
-//     EXPECT_EQ(it.second, a.end());
+    it = a.equal_range('z');
+    EXPECT_EQ(it.first, a.find('z'));
+    EXPECT_EQ(it.second, a.end());
 
-//     it = a.equal_range('y');
-//     EXPECT_EQ(it.first, a.find('y'));
-//     EXPECT_EQ(it.second, a.find('z'));
+    it = a.equal_range('y');
+    EXPECT_EQ(it.first, a.find('y'));
+    EXPECT_EQ(it.second, a.find('z'));
 
-//     it = a.equal_range('h');
-//     EXPECT_EQ(it.first, a.end());
-//     EXPECT_EQ(it.second, a.end());
-// }
+    it = a.equal_range('h');
+    EXPECT_EQ(it.first, a.end());
+    EXPECT_EQ(it.second, a.end());
+}
 
-// TEST(MultisetTests, MultisetEqualRange2)
-// {
-//     s21::multiset<char> a;
+TEST(MultisetTests, MultisetEqualRange2)
+{
+    s21::multiset<char> a;
 
-//     auto it = a.equal_range('h');
-//     EXPECT_EQ(it.first, a.end());
-//     EXPECT_EQ(it.second, a.end());
-// }
+    auto it = a.equal_range('h');
+    EXPECT_EQ(it.first, a.end());
+    EXPECT_EQ(it.second, a.end());
+}
 
 TEST(MultisetTests, MultisetLowerBound1)
 {
