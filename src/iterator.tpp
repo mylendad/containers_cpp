@@ -147,6 +147,26 @@ namespace s21
   }
 
   template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::TreeIterator &s21::tree<T, AllowDuplicate>::TreeIterator::operator+=(size_type offset)
+  {
+    for (size_type i = 0; i < offset; i++)
+    {
+      ++(*this);
+    }
+    return *this;
+  }
+
+  template <typename T, int AllowDuplicate>
+  typename s21::tree<T, AllowDuplicate>::TreeIterator &s21::tree<T, AllowDuplicate>::TreeIterator::operator-=(size_type offset)
+  {
+    for (size_type i = 0; i < offset; i++)
+    {
+      --(*this);
+    }
+    return *this;
+  }
+
+  template <typename T, int AllowDuplicate>
   typename s21::tree<T, AllowDuplicate>::TreeIterator &
   s21::tree<T, AllowDuplicate>::TreeIterator::operator--()
   {

@@ -589,34 +589,34 @@ TEST(MultisetTests, MultisetContains2)
 //     EXPECT_EQ(it.second, a.end());
 // }
 
-// TEST(MultisetTests, MultisetLowerBound1)
-// {
-//     s21::multiset<int> a{5, 12, 5, 124, 22, 11, 5, 252, 1, 5, 25, 4, 2, 3};
+TEST(MultisetTests, MultisetLowerBound1)
+{
+    s21::multiset<int> a{5, 12, 5, 124, 22, 11, 5, 252, 1, 5, 25, 4, 2, 3};
 
-//     auto it = a.lower_bound(5);
-//     EXPECT_EQ(*it, 5);
-//     EXPECT_EQ(*(++it), 5);
-//     EXPECT_EQ(*(++it), 5);
-//     EXPECT_EQ(*(++it), 5);
-//     EXPECT_EQ(*(++it), 11);
+    auto it = a.lower_bound(5);
+    EXPECT_EQ(*it, 5);
+    EXPECT_EQ(*(++it), 5);
+    EXPECT_EQ(*(++it), 5);
+    EXPECT_EQ(*(++it), 5);
+    EXPECT_EQ(*(++it), 11);
 
-//     it = a.lower_bound(6);
-//     EXPECT_EQ(*it, 11);
+    it = a.lower_bound(6);
+    EXPECT_EQ(*it, 11);
 
-//     it = a.lower_bound(252);
-//     EXPECT_EQ(it, --a.end());
+    it = a.lower_bound(252);
+    EXPECT_EQ(it, --a.end());
 
-//     it = a.lower_bound(253);
-//     EXPECT_EQ(it, a.end());
-// }
+    it = a.lower_bound(253);
+    EXPECT_EQ(it, a.end());
+}
 
-// TEST(MultisetTests, MultisetLowerBound2)
-// {
-//     s21::multiset<int> a;
+TEST(MultisetTests, MultisetLowerBound2)
+{
+    s21::multiset<int> a;
 
-//     auto it = a.lower_bound(5);
-//     EXPECT_EQ(it, a.end());
-// }
+    auto it = a.lower_bound(5);
+    EXPECT_EQ(it, a.end());
+}
 
 TEST(MultisetTests, MultisetUpperBound1)
 {
