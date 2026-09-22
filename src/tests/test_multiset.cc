@@ -510,8 +510,9 @@ TEST(MultisetTests, MultisetFind1)
 {
     s21::multiset<char> a{'a', 'z', 'b', 'y', 'c', 'x', 'd', 'w', 'e', 'v',
                           'a', 'z', 'b', 'c', 'x', 'd', 'w', 'e', 'v'};
-
+    // a.print_start();
     auto it = a.find('a');
+    a.print_start();
     EXPECT_EQ(*it, 'a');
     EXPECT_EQ(*(++it), 'a');
 
@@ -608,6 +609,9 @@ TEST(MultisetTests, MultisetLowerBound1)
 
     it = a.lower_bound(253);
     EXPECT_EQ(it, a.end());
+
+    // it = a.lower_bound(251);
+    // EXPECT_EQ(it, a.end());
 }
 
 TEST(MultisetTests, MultisetLowerBound2)
@@ -631,6 +635,9 @@ TEST(MultisetTests, MultisetUpperBound1)
     EXPECT_EQ(*it, 11);
 
     it = a.upper_bound(252);
+    EXPECT_EQ(it, a.end());
+
+    it = a.upper_bound(253);
     EXPECT_EQ(it, a.end());
 }
 

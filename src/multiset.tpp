@@ -37,12 +37,18 @@ namespace s21
   typename s21::multiset<Key, AllowDuplicate>::iterator
   s21::multiset<Key, AllowDuplicate>::find(const Key &key)
   {
+
     // Node node = Node();
+    // size_type quantity = this->count(key);
     std::pair<typename s21::multiset<Key, AllowDuplicate>::iterator, bool>
-        result = this->end();
-    // std::make_pair(iterator(node, this->tree_nil_, this->end_node_),
-    // false);
-    result = this->find_node(key); // переделать так как find_node вставляет
+        result = std::make_pair(this->end(), false);
+    std::pair<typename s21::multiset<Key, AllowDuplicate>::iterator, bool> res = this->find_node(key);
+    if (res.second == true)
+      result.first = res.first;
+    // for (size_type i = 0; i < quantity; i++)
+    // {
+    //   --result.first;
+    // }
     return result.first;
   }
 

@@ -85,7 +85,11 @@ namespace s21
 
         iterator upper_bound(const Key &key)
         {
-            return ++(this->find(key)); // back ++?
+            iterator result = this->end();
+            result = this->find(key);
+            if (result != this->end()) //
+                ++result;
+            return result; // back ++?
         }
 
         iterator lower_bound(const Key &key)

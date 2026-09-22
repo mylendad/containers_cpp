@@ -200,17 +200,27 @@ namespace s21
   {
     BaseNode *y;
     BaseNode *current = x;
-
     if (current->right != nil_)
     {
-      return TreeMinimum(current->right, this->nil_);
+
+      y = TreeMinimum(current->right, this->nil_);
+      return y;
     }
     y = current->p;
-    while (y != nil_ && current == y->right)
-    {
-      current = y;
-      y = y->p;
-    }
+    if (AllowDuplicate == Multiset)
+      while ((y != nil_ && current == y->right))
+      {
+        if (current->item == current->p->item)
+          break;
+        current = y;
+        y = y->p;
+      }
+    else
+      while (y != nil_ && current == y->right)
+      {
+        current = y;
+        y = y->p;
+      }
     return y;
   }
 

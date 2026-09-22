@@ -382,6 +382,68 @@ namespace s21
     y->color = z->color;
   }
 
+  // template <typename T, int AllowDuplicate>
+  // std::pair<typename tree<T, AllowDuplicate>::iterator, bool>
+  // tree<T, AllowDuplicate>::find_node(const T &obj)
+  // {
+  //   BaseNode *x = this->tree_root_;
+  //   BaseNode *y = this->tree_nil_;
+  //   bool flag = false;
+  //   BaseNode *res = this->tree_nil_;
+  //   std::pair<typename tree<T, AllowDuplicate>::iterator, bool> result =
+  //       std::make_pair(iterator(res, this->tree_nil_, this->end_node_), flag);
+
+  //   T obj_first;
+  //   T item_first;
+
+  //   // if (AllowDuplicate == Map) {
+  //   while (x != this->tree_nil_)
+  //   { // change condition
+  //     if constexpr (value_is_pair<T>)
+  //     {
+  //       obj_first = obj.first;
+  //       item_first = x->item.first;
+  //     }
+  //     else
+  //     {
+  //       obj_first = obj;
+  //       item_first = x->item;
+  //     }
+  //     y = x;
+  //     if (obj_first < item_first)
+  //     {
+  //       x = x->left;
+  //     }
+  //     else if (obj_first > item_first)
+  //     {
+  //       x = x->right;
+  //     }
+  //     else
+  //     {
+  //       flag = true;
+  //       if (AllowDuplicate == Multiset)
+  //       {
+  //         // flag = true;
+  //         res = x;
+  //         x = x->right;
+  //       }
+  //       else
+  //       {
+  //         result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
+  //                                 true);
+  //         return result;
+  //       }
+  //     }
+  //   }
+  //   if (flag == false)
+  //     result =
+  //         std::make_pair(iterator(y, this->tree_nil_, this->end_node_), flag);
+  //   else if (AllowDuplicate == Multiset)
+  //     result =
+  //         std::make_pair(iterator(res, this->tree_nil_, this->end_node_), flag);
+  //   return result;
+  // }
+
   template <typename T, int AllowDuplicate>
   std::pair<typename tree<T, AllowDuplicate>::iterator, bool>
   tree<T, AllowDuplicate>::find_node(const T &obj)
@@ -422,7 +484,7 @@ namespace s21
           else
           {
             result = std::make_pair(iterator(x, this->tree_nil_, this->end_node_),
-                                    true);
+                                    true); // change on flag
             return result;
           }
         }
@@ -458,7 +520,7 @@ namespace s21
                                     true);
             return result;
           }
-        }
+               }
       }
     }
     if (result.second == false)
